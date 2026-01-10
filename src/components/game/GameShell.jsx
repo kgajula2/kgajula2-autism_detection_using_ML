@@ -52,7 +52,7 @@ export function GameShell({
                 {/* Left: Back Button */}
                 <Button
                     variant="ghost"
-                    className="!p-2 bg-white/80 backdrop-blur text-gray-500 hover:bg-white"
+                    className="!p-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur text-gray-600 dark:text-gray-200 hover:bg-white dark:hover:bg-slate-700"
                     onClick={handleBack}
                 >
                     <ArrowLeft size={24} />
@@ -60,10 +60,10 @@ export function GameShell({
                 </Button>
 
                 {/* Center: Score & Mistakes */}
-                <Card className="!p-4 bg-white/80 backdrop-blur min-w-[120px]">
-                    <div className="text-xl font-bold text-blue-600">Score: {score}</div>
+                <Card className="!p-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur min-w-[120px]">
+                    <div className="text-xl font-bold text-blue-600 dark:text-blue-400">Score: {score}</div>
                     {mistakes !== null && (
-                        <div className="text-xs text-gray-500">Mistakes: {mistakes}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-300">Mistakes: {mistakes}</div>
                     )}
                 </Card>
 
@@ -71,11 +71,11 @@ export function GameShell({
                 {timeLeft !== null && (
                     <Card
                         className={clsx(
-                            "!p-4 bg-white/80 backdrop-blur flex items-center gap-2",
+                            "!p-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur flex items-center gap-2",
                             timeLeft < 10 && "text-red-500 animate-pulse"
                         )}
                     >
-                        <div className="text-xl font-bold">{timeLeft}s</div>
+                        <div className="text-xl font-bold dark:text-white">{timeLeft}s</div>
                     </Card>
                 )}
             </div>

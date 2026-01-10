@@ -7,7 +7,8 @@ export const Title = ({ children, className }) => (
 );
 
 export const SubTitle = ({ children, className }) => (
-    <h2 className={clsx("text-xl md:text-2xl font-semibold text-gray-600", className)}>
+    <h2 className={clsx("text-xl md:text-2xl font-semibold text-gray-600 dark:text-gray-300", className)}>
         {children}
     </h2>
 );
+

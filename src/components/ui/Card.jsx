@@ -9,7 +9,7 @@ export const Card = ({ children, className, glass = false, delay = 0, ...props }
             transition={{ delay }}
             className={clsx(
                 "rounded-2xl p-6",
-                glass ? "glass-card" : "bg-white shadow-xl rounded-2xl",
+                glass ? "glass-card" : "bg-white dark:bg-slate-800 shadow-xl rounded-2xl",
                 className
             )}
             {...props}
@@ -18,3 +18,4 @@ export const Card = ({ children, className, glass = false, delay = 0, ...props }
         </motion.div>
     );
 };
+

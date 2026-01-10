@@ -178,8 +178,8 @@ export default function RoutineSequencerGame() {
                 {/* Mascot Helper */}
                 <div className="flex items-center gap-3 mb-4">
                     <span className="text-5xl animate-bounce">{MASCOT.emoji}</span>
-                    <div className="bg-white/80 backdrop-blur px-4 py-2 rounded-2xl shadow-sm">
-                        <span className="text-gray-600 font-medium">
+                    <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2 rounded-2xl shadow-sm">
+                        <span className="text-gray-700 dark:text-gray-200 font-medium">
                             {!currentRoutine ? "Hi! Pick a routine! 👆" : "Put them in order! 🎯"}
                         </span>
                     </div>
@@ -217,12 +217,12 @@ export default function RoutineSequencerGame() {
                                     transition={{ delay: i * 0.05 }}
                                 >
                                     <Card
-                                        className="cursor-pointer hover:scale-105 transition-all border-2 border-transparent hover:border-green-400 flex flex-col items-center p-6 gap-4 min-h-[180px]"
+                                        className="cursor-pointer hover:scale-105 transition-all border-2 border-transparent hover:border-green-400 flex flex-col items-center p-6 gap-4 min-h-[180px] bg-white dark:bg-slate-800"
                                         onClick={() => selectRoutine(r)}
                                     >
                                         {/* Large emoji */}
                                         <span className="text-5xl">{r.emoji}</span>
-                                        <h3 className="text-lg font-bold text-center">{r.title}</h3>
+                                        <h3 className="text-lg font-bold text-center text-slate-800 dark:text-white">{r.title}</h3>
                                         {/* Step preview with GIFs */}
                                         <div className="flex gap-1 justify-center flex-wrap">
                                             {r.steps.slice(0, 4).map((s, idx) => (

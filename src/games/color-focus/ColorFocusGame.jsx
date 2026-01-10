@@ -260,7 +260,7 @@ export default function ColorFocusGame() {
 
                     {gameState === 'ACTIVE' && (
                         <div className="flex flex-col items-center gap-2">
-                            <span className="text-lg font-bold bg-white/80 px-4 py-1 rounded-full shadow-sm backdrop-blur">
+                            <span className="text-lg font-bold bg-white/80 dark:bg-slate-800/80 text-gray-800 dark:text-white px-4 py-1 rounded-full shadow-sm backdrop-blur">
                                 Target Color
                             </span>
                             <div
@@ -276,7 +276,7 @@ export default function ColorFocusGame() {
                 {/* Game Area */}
                 <div
                     ref={containerRef}
-                    className="relative w-full max-w-2xl h-[60vh] border border-gray-200 rounded-3xl overflow-hidden bg-gradient-to-b from-blue-50 via-purple-50/30 to-white shadow-inner"
+                    className="relative w-full max-w-2xl h-[60vh] border border-gray-200 dark:border-slate-600 rounded-3xl overflow-hidden bg-gradient-to-b from-blue-50 via-purple-50/30 to-white dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 shadow-inner"
                 >
                     <AnimatePresence mode="popLayout">
                         {bubbles.map(bubble => (
