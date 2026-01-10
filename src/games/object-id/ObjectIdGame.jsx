@@ -225,15 +225,25 @@ export default function ObjectIdGame() {
             headerColor="bg-blue-600"
         >
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto p-4 gap-6">
-                {/* Target Display */}
+                {/* Target Display - Large & Prominent */}
                 {gameState === 'ACTIVE' && target && (
-                    <div className="flex items-center gap-4">
-                        <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
-                            <span className="text-gray-400 uppercase text-[10px] font-bold tracking-widest">FIND:</span>
-                            <img src={target.image} alt={target.label} className="w-10 h-10 object-contain" />
-                            <span className="text-xl font-black text-blue-600">{target.label}</span>
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-1 rounded-2xl shadow-xl">
+                            <div className="bg-white px-8 py-6 rounded-xl flex flex-col items-center gap-4">
+                                <span className="text-gray-400 uppercase text-xs font-bold tracking-widest">🔍 FIND THIS:</span>
+                                <img
+                                    src={target.image}
+                                    alt={target.label}
+                                    className="w-32 h-32 object-contain drop-shadow-lg"
+                                />
+                                <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                                    {target.label}
+                                </span>
+                            </div>
                         </div>
-                        <div className="text-sm font-bold text-gray-500">Round {roundCount} / {MAX_ROUNDS}</div>
+                        <div className="text-lg font-bold text-gray-600 bg-gray-100 px-4 py-2 rounded-full">
+                            Round {roundCount} / {MAX_ROUNDS}
+                        </div>
                     </div>
                 )}
 
