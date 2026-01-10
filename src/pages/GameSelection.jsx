@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../store/userStore";
 import { getUserProfile } from "../services/db";
-import { Play, Activity, Smile, Search, LayoutDashboard, Gamepad2, Rocket, Star, User, Shapes, Hand, Music, Baby } from "lucide-react";
+import { Play, Activity, Smile, Search, LayoutDashboard, Gamepad2, Rocket, Star, User } from "lucide-react";
 
 export const GameSelection = () => {
     const navigate = useNavigate();
@@ -187,85 +187,43 @@ export const GameSelection = () => {
                                 </div>
                             </motion.div>
 
-                            {/* SHAPE SORTER - NEW */}
+                            {/* EMOTION */}
                             <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                                 <div
-                                    onClick={() => navigate('/game/shape-sorter')}
-                                    className="cursor-pointer h-64 rounded-3xl bg-gradient-to-br from-purple-400 to-indigo-300 p-6 relative overflow-hidden shadow-xl border-4 border-white/50 group"
-                                >
-                                    <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-125 transition-transform duration-500">
-                                        <Shapes size={120} color="white" />
-                                    </div>
-                                    <div className="flex flex-col h-full justify-between relative z-10 text-white">
-                                        <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                                            <Shapes size={32} />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Shapes</h3>
-                                            <p className="font-medium opacity-90 text-lg">Match the shapes!</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                            {/* FOLLOW HAND - NEW */}
-                            <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                                <div
-                                    onClick={() => navigate('/game/follow-hand')}
-                                    className="cursor-pointer h-64 rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-300 p-6 relative overflow-hidden shadow-xl border-4 border-white/50 group"
-                                >
-                                    <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-125 transition-transform duration-500">
-                                        <Hand size={120} color="white" />
-                                    </div>
-                                    <div className="flex flex-col h-full justify-between relative z-10 text-white">
-                                        <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                                            <Hand size={32} />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Follow</h3>
-                                            <p className="font-medium opacity-90 text-lg">Watch the hand!</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                            {/* MUSIC TAP - NEW */}
-                            <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                                <div
-                                    onClick={() => navigate('/game/music-tap')}
+                                    onClick={() => navigate('/game/emotion-mirror')}
                                     className="cursor-pointer h-64 rounded-3xl bg-gradient-to-br from-pink-400 to-rose-300 p-6 relative overflow-hidden shadow-xl border-4 border-white/50 group"
                                 >
                                     <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-125 transition-transform duration-500">
-                                        <Music size={120} color="white" />
+                                        <Smile size={120} color="white" />
                                     </div>
                                     <div className="flex flex-col h-full justify-between relative z-10 text-white">
                                         <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                                            <Music size={32} />
+                                            <Smile size={32} />
                                         </div>
                                         <div>
-                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Music</h3>
-                                            <p className="font-medium opacity-90 text-lg">Tap the beat!</p>
+                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Copy Face</h3>
+                                            <p className="font-medium opacity-90 text-lg">Show me a smile!</p>
                                         </div>
                                     </div>
                                 </div>
                             </motion.div>
 
-                            {/* PEEK-A-BOO - NEW */}
+                            {/* OBJECT HUNT */}
                             <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                                 <div
-                                    onClick={() => navigate('/game/peek-a-boo')}
-                                    className="cursor-pointer h-64 rounded-3xl bg-gradient-to-br from-yellow-400 to-amber-300 p-6 relative overflow-hidden shadow-xl border-4 border-white/50 group"
+                                    onClick={() => navigate('/game/object-id')}
+                                    className="cursor-pointer h-64 rounded-3xl bg-gradient-to-br from-orange-400 to-amber-300 p-6 relative overflow-hidden shadow-xl border-4 border-white/50 group"
                                 >
                                     <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-125 transition-transform duration-500">
-                                        <Baby size={120} color="white" />
+                                        <Search size={120} color="white" />
                                     </div>
                                     <div className="flex flex-col h-full justify-between relative z-10 text-white">
                                         <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                                            <Baby size={32} />
+                                            <Search size={32} />
                                         </div>
                                         <div>
-                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Peek!</h3>
-                                            <p className="font-medium opacity-90 text-lg">Find the face!</p>
+                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Find It</h3>
+                                            <p className="font-medium opacity-90 text-lg">Hunt for objects!</p>
                                         </div>
                                     </div>
                                 </div>
