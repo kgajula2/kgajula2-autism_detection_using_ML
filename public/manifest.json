@@ -1,0 +1,25 @@
+{
+    "name": "NeuroStep",
+    "short_name": "NeuroStep",
+    "description": "AI-powered developmental screening through engaging games",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#8b5cf6",
+    "theme_color": "#8b5cf6",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/vite.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "health",
+        "education",
+        "games"
+    ],
+    "screenshots": [],
+    "prefer_related_applications": false
+}
