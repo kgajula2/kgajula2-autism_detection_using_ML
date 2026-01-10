@@ -5,11 +5,12 @@ import { Button } from '../components/ui/Button';
 import { analyzeUserPerformance } from '../services/ml';
 import { fetchUserGameStats, getUserProfile } from '../services/db';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { Activity, Brain, TrendingUp, AlertTriangle, CheckCircle, X, ArrowLeft, Gamepad } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { Activity, Brain, TrendingUp, AlertTriangle, CheckCircle, X, ArrowLeft, Gamepad, Clock, Target, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/userStore';
 import { default as MLExplainer } from '../components/ml/MLExplainer';
+import { MASCOT } from '../config/gameConfig';
 
 export const Dashboard = () => {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ export const Dashboard = () => {
     const [childName, setChildName] = useState('Child');
     const [analysis, setAnalysis] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [expandedSession, setExpandedSession] = useState(null);
     const [stats, setStats] = useState({
         totalGames: 0,
         wins: 0,
@@ -49,7 +51,7 @@ export const Dashboard = () => {
                     totalGames: sessions.length,
                     wins: sessions.length, // Treating every completed session as a 'Win' for engagement
                     misses: totalMistakes,
-                    gameBreakdown: sessions.slice(0, 5) // Recent 5
+                    gameBreakdown: sessions.slice(0, 10) // Recent 10
                 });
 
                 // 4. Run Analysis
@@ -81,6 +83,26 @@ export const Dashboard = () => {
         return (analysis.riskScore * 100).toFixed(1);
     };
 
+    // Format round timings for display
+    const formatRoundTimings = (roundTimings) => {
+        if (!roundTimings || roundTimings.length === 0) return null;
+        return roundTimings.map((r, idx) => ({
+            name: `${idx + 1}/${roundTimings.length}`,
+            time: (r.reactionTime / 1000).toFixed(2),
+            correct: r.correct
+        }));
+    };
+
+    const getGameEmoji = (gameId) => {
+        const emojis = {
+            'color-focus': '🎯',
+            'emotion-mirror': '🪞',
+            'routine-sequencer': '📋',
+            'object-id': '🔍'
+        };
+        return emojis[gameId] || '🎮';
+    };
+
     return (
         <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto pb-10 px-4 min-h-[80vh]">
             <div className="flex justify-between items-center">
@@ -90,7 +112,8 @@ export const Dashboard = () => {
                 >
                     <ArrowLeft size={24} /> Back
                 </Button>
-                <div>
+                <div className="flex items-center gap-3">
+                    <img src={MASCOT.happyGif} alt="Ellie" className="w-12 h-12" />
                     <Title className="text-right text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
                         {childName}'s Progress
                     </Title>
@@ -167,70 +190,146 @@ export const Dashboard = () => {
                         </ResponsiveContainer>
                     </div>
                 </Card>
-                {/* Recent Activity Detailed List */}
-                <Card glass className="shadow-xl flex flex-col lg:col-span-2">
-                    <h3 className="text-xl font-bold mb-4 text-gray-700">Detailed Game History</h3>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="text-sm text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                                    <th className="p-3">Game</th>
-                                    <th className="p-3">Result</th>
-                                    <th className="p-3">Score</th>
-                                    <th className="p-3">Mistakes</th>
-                                    <th className="p-3">AI Prediction</th>
-                                    <th className="p-3">Notes</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-gray-600 text-sm">
-                                {stats.gameBreakdown.map((session, idx) => (
-                                    <tr key={idx} className="border-b border-gray-50 hover:bg-white/40 transition-colors">
-                                        <td className="p-3 font-bold capitalize text-purple-700">
-                                            {session.gameId.replace('-', ' ')}
-                                        </td>
-                                        <td className="p-3">
-                                            {session.stats?.mistakes === 0 ? (
-                                                <span className="inline-flex items-center gap-1 text-green-600 font-bold bg-green-50 px-2 py-1 rounded-full text-xs">
-                                                    <CheckCircle size={12} /> Win
-                                                </span>
-                                            ) : (
-                                                <span className="inline-flex items-center gap-1 text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-full text-xs">
-                                                    <AlertTriangle size={12} /> Review
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="p-3 font-mono font-bold">{session.score}</td>
-                                        <td className="p-3 text-red-500 font-bold">{session.stats?.mistakes || 0}</td>
-                                        <td className="p-3">
-                                            {session.stats?.riskScore ? (
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                        <div
-                                                            className="h-full bg-purple-500"
-                                                            style={{ width: `${session.stats.riskScore * 100}%` }}
-                                                        />
-                                                    </div>
-                                                    <span className="text-xs font-bold text-slate-500">{(session.stats.riskScore * 100).toFixed(0)}%</span>
-                                                </div>
-                                            ) : '-'}
-                                        </td>
-                                        <td className="p-3 italic text-gray-500 max-w-xs truncate">
-                                            {session.stats?.aiInsights || "Data captured."}
-                                        </td>
-                                    </tr>
-                                ))}
-                                {stats.totalGames === 0 && (
-                                    <tr>
-                                        <td colSpan="6" className="p-8 text-center text-gray-400 italic">
-                                            No sessions recorded yet. Play a game to see detailed stats!
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+
+                {/* AI Insights Card */}
+                <Card glass className="shadow-xl rounded-[2rem] border-white/50">
+                    <h3 className="text-2xl font-black text-gray-700 mb-4 px-4 flex items-center gap-2">
+                        <Brain size={24} className="text-purple-500" />
+                        AI Observations
+                    </h3>
+                    <div className="px-4 pb-4 space-y-4">
+                        {analysis?.insights?.length > 0 ? (
+                            analysis.insights.map((insight, idx) => (
+                                <div key={idx} className="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                                    <p className="text-purple-800 font-medium">{insight}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-500 italic text-center py-8">
+                                Play more games to unlock personalized insights!
+                            </p>
+                        )}
                     </div>
                 </Card>
             </div>
+
+            {/* Detailed Game History with Expandable Rows */}
+            <Card glass className="shadow-xl flex flex-col">
+                <h3 className="text-xl font-bold mb-4 text-gray-700 flex items-center gap-2">
+                    <Clock size={20} className="text-blue-500" />
+                    Detailed Game History
+                    <span className="text-sm font-normal text-gray-400">(tap a row for timing details)</span>
+                </h3>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="text-sm text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                <th className="p-3">Game</th>
+                                <th className="p-3">Result</th>
+                                <th className="p-3">Score</th>
+                                <th className="p-3">Duration</th>
+                                <th className="p-3">Avg Reaction</th>
+                                <th className="p-3">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-gray-600 text-sm">
+                            {stats.gameBreakdown.map((session, idx) => (
+                                <>
+                                    <tr
+                                        key={idx}
+                                        className="border-b border-gray-50 hover:bg-white/40 transition-colors cursor-pointer"
+                                        onClick={() => setExpandedSession(expandedSession === idx ? null : idx)}
+                                    >
+                                        <td className="p-3 font-bold text-purple-700">
+                                            <span className="text-2xl mr-2">{getGameEmoji(session.gameId)}</span>
+                                            <span className="capitalize">{session.gameId.replace('-', ' ')}</span>
+                                        </td>
+                                        <td className="p-3">
+                                            {(session.stats?.mistakes || 0) === 0 ? (
+                                                <span className="inline-flex items-center gap-1 text-green-600 font-bold bg-green-50 px-2 py-1 rounded-full text-xs">
+                                                    <CheckCircle size={12} /> Perfect!
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-full text-xs">
+                                                    <AlertTriangle size={12} /> {session.stats?.mistakes} misses
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="p-3 font-mono font-bold text-lg">{session.score}</td>
+                                        <td className="p-3">
+                                            {session.stats?.duration ? (
+                                                <span className="font-bold">{session.stats.duration.toFixed(1)}s</span>
+                                            ) : '-'}
+                                        </td>
+                                        <td className="p-3">
+                                            {session.stats?.roundTimings?.length > 0 ? (
+                                                <span className="font-bold text-blue-600">
+                                                    {(session.stats.roundTimings.reduce((sum, r) => sum + r.reactionTime, 0) / session.stats.roundTimings.length / 1000).toFixed(2)}s
+                                                </span>
+                                            ) : '-'}
+                                        </td>
+                                        <td className="p-3">
+                                            <Button variant="ghost" className="!p-2">
+                                                {expandedSession === idx ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                    {/* Expanded Row - Per-Round Details */}
+                                    {expandedSession === idx && session.stats?.roundTimings && (
+                                        <tr>
+                                            <td colSpan="6" className="bg-slate-50 p-4">
+                                                <div className="space-y-3">
+                                                    <h4 className="font-bold text-slate-700 flex items-center gap-2">
+                                                        <Target size={16} className="text-blue-500" />
+                                                        Per-Round Reaction Times
+                                                    </h4>
+                                                    <div className="h-[150px]">
+                                                        <ResponsiveContainer width="100%" height="100%">
+                                                            <BarChart data={formatRoundTimings(session.stats.roundTimings)}>
+                                                                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                                                                <XAxis dataKey="name" fontSize={12} />
+                                                                <YAxis unit="s" fontSize={12} />
+                                                                <Tooltip
+                                                                    formatter={(value) => [`${value}s`, 'Reaction Time']}
+                                                                    contentStyle={{ borderRadius: '0.5rem' }}
+                                                                />
+                                                                <Bar
+                                                                    dataKey="time"
+                                                                    fill="#8b5cf6"
+                                                                    radius={[4, 4, 0, 0]}
+                                                                />
+                                                            </BarChart>
+                                                        </ResponsiveContainer>
+                                                    </div>
+                                                    <div className="grid grid-cols-5 gap-2 mt-2">
+                                                        {session.stats.roundTimings.map((r, rIdx) => (
+                                                            <div
+                                                                key={rIdx}
+                                                                className={`text-center p-2 rounded-lg ${r.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
+                                                            >
+                                                                <div className="font-bold">{rIdx + 1}/{session.stats.roundTimings.length}</div>
+                                                                <div className="text-sm">{(r.reactionTime / 1000).toFixed(2)}s</div>
+                                                                <div className="text-xs">{r.correct ? '✓' : '✗'}</div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </>
+                            ))}
+                            {stats.totalGames === 0 && (
+                                <tr>
+                                    <td colSpan="6" className="p-8 text-center text-gray-400 italic">
+                                        No sessions recorded yet. Play a game to see detailed stats!
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
 
             {/* AI Modal */}
             <AnimatePresence>

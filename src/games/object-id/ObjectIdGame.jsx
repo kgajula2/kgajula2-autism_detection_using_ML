@@ -27,6 +27,8 @@ export default function ObjectIdGame() {
     const [isLoading, setIsLoading] = useState(true);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const startTimeRef = useRef(0);
+    const roundStartTimeRef = useRef(0);  // Track per-round timing
+    const roundTimingsRef = useRef([]);   // Store all round timings
 
     // Preload Images
     useEffect(() => {
@@ -67,6 +69,9 @@ export default function ObjectIdGame() {
         const roundOptions = shuffle([...pool, newTarget]);
         setOptions(roundOptions);
         setRoundCount(prev => prev + 1);
+
+        // Mark round start time
+        roundStartTimeRef.current = Date.now();
     };
 
     const startGame = async () => {
@@ -76,6 +81,7 @@ export default function ObjectIdGame() {
             setGameStats({ correct: 0, mistakes: 0 });
             setAnalysisResult(null);
             startTimeRef.current = Date.now();
+            roundTimingsRef.current = []; // Reset round timings
 
             const userId = getAuth().currentUser?.uid;
             if (userId) {
@@ -98,7 +104,12 @@ export default function ObjectIdGame() {
         setIsAnalyzing(true);
 
         const duration = (Date.now() - startTimeRef.current) / 1000;
-        const finalStats = { ...gameStats, score, duration };
+        const finalStats = {
+            ...gameStats,
+            score,
+            duration,
+            roundTimings: roundTimingsRef.current  // Include per-round timings
+        };
 
         if (sessionId) {
             await endGameSession(sessionId, score, finalStats);
@@ -120,20 +131,42 @@ export default function ObjectIdGame() {
     const handleSelect = (item) => {
         if (gameState !== 'ACTIVE' || feedback) return;
 
+        const selectionTime = Date.now();
+        const roundDuration = selectionTime - roundStartTimeRef.current;
         const isCorrect = item.id === target.id;
+
+        // Store round timing data
+        const roundData = {
+            round: roundCount,
+            target: target.id,
+            selected: item.id,
+            correct: isCorrect,
+            roundStartTime: roundStartTimeRef.current,
+            selectionTime: selectionTime,
+            reactionTime: roundDuration, // Time to identify object (ms)
+        };
+        roundTimingsRef.current.push(roundData);
 
         if (isCorrect) {
             setFeedback({ id: item.id, type: 'success' });
             incrementScore(10);
             setGameStats(prev => ({ ...prev, correct: prev.correct + 1 }));
 
+            // Log detailed round metrics to Firebase
             if (sessionId) {
                 logRoundMetrics(sessionId, {
+                    type: 'object_identification',
                     game: 'object-id',
+                    round: roundCount,
+                    roundLabel: `${roundCount}/${MAX_ROUNDS}`,
                     target: target.id,
                     selected: item.id,
                     correct: true,
-                    timestamp: Date.now()
+                    roundStartTime: roundStartTimeRef.current,
+                    selectionTime: selectionTime,
+                    reactionTimeMs: roundDuration,
+                    reactionTimeSec: (roundDuration / 1000).toFixed(2),
+                    timestamp: selectionTime
                 });
             }
 
@@ -145,11 +178,17 @@ export default function ObjectIdGame() {
 
             if (sessionId) {
                 logRoundMetrics(sessionId, {
+                    type: 'object_identification',
                     game: 'object-id',
+                    round: roundCount,
+                    roundLabel: `${roundCount}/${MAX_ROUNDS}`,
                     target: target.id,
                     selected: item.id,
                     correct: false,
-                    timestamp: Date.now()
+                    roundStartTime: roundStartTimeRef.current,
+                    selectionTime: selectionTime,
+                    reactionTimeMs: roundDuration,
+                    timestamp: selectionTime
                 });
             }
 
@@ -161,10 +200,16 @@ export default function ObjectIdGame() {
         const duration = startTimeRef.current
             ? ((Date.now() - startTimeRef.current) / 1000).toFixed(1)
             : '0';
+
+        // Calculate average reaction time
+        const avgReaction = roundTimingsRef.current.length > 0
+            ? Math.round(roundTimingsRef.current.reduce((sum, r) => sum + r.reactionTime, 0) / roundTimingsRef.current.length)
+            : 0;
+
         return [
             { label: 'Correct', value: gameStats.correct },
             { label: 'Mistakes', value: gameStats.mistakes },
-            { label: 'Time', value: `${duration}s` },
+            { label: 'Avg Time', value: avgReaction > 0 ? `${(avgReaction / 1000).toFixed(1)}s` : '-' },
         ];
     };
 

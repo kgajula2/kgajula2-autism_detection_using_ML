@@ -10,7 +10,7 @@ import { analyzeUserPerformance } from '../../services/ml';
 import clsx from 'clsx';
 import { CheckCircle, XCircle, RefreshCcw } from 'lucide-react';
 import { getAuth } from 'firebase/auth';
-import { ROUTINES, ROUTINE_ICONS } from '../../config/gameConfig';
+import { ROUTINES, ROUTINE_ICONS, MASCOT } from '../../config/gameConfig';
 import { shuffle } from '../../utils/utils';
 
 export default function RoutineSequencerGame() {
@@ -26,7 +26,7 @@ export default function RoutineSequencerGame() {
     const startTimeRef = useRef(0);
 
     const selectRoutine = async (routine) => {
-        // Prepare steps with resolved icons
+        // Prepare steps with resolved icons and GIFs
         const stepsWithIcons = routine.steps.map(step => ({
             ...step,
             icon: ROUTINE_ICONS[step.iconName]
@@ -102,7 +102,7 @@ export default function RoutineSequencerGame() {
 
         try {
             const gameData = {
-                'routine-sequencer': { score: score + 20, mistakes, routine: currentRoutine.id, timeTaken }
+                'routine-sequencer': { score: score + 20, mistakes, completed: true, routine: currentRoutine.id, timeTaken }
             };
             const result = await analyzeUserPerformance(gameData);
             setAnalysisResult(result);
@@ -147,6 +147,20 @@ export default function RoutineSequencerGame() {
             headerColor="bg-green-600"
         >
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto p-4">
+                {/* Mascot Helper */}
+                <div className="flex items-center gap-3 mb-4">
+                    <img
+                        src={MASCOT.wavingGif}
+                        alt="Ellie the Elephant"
+                        className="w-16 h-16 animate-bounce"
+                    />
+                    <div className="bg-white/80 backdrop-blur px-4 py-2 rounded-2xl shadow-sm">
+                        <span className="text-gray-600 font-medium">
+                            {!currentRoutine ? "Hi! Pick a routine! 👆" : "Put them in order! 🎯"}
+                        </span>
+                    </div>
+                </div>
+
                 {/* Reset Button */}
                 {currentRoutine && gameState === 'ACTIVE' && (
                     <div className="w-full flex justify-end mb-4">
@@ -158,46 +172,57 @@ export default function RoutineSequencerGame() {
 
                 <AnimatePresence mode="wait">
                     {!currentRoutine ? (
-                        /* Selection Screen */
+                        /* Selection Screen - Using emoji GIFs */
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full"
+                            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full"
                             key="selection"
                         >
-                            <div className="md:col-span-2 text-center mb-4">
+                            <div className="col-span-full text-center mb-4">
                                 <Title>Daily Routines</Title>
-                                <SubTitle>Choose a routine to practice sequencing.</SubTitle>
+                                <SubTitle>Tap a routine to practice!</SubTitle>
                             </div>
 
                             {ROUTINES.map((r, i) => (
-                                <Card
+                                <motion.div
                                     key={r.id}
-                                    className="cursor-pointer hover:bg-brand-primary/10 transition-colors border border-transparent hover:border-brand-primary/30 flex flex-col items-center p-6 gap-4"
-                                    onClick={() => selectRoutine(r)}
-                                    delay={i * 0.1}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.05 }}
                                 >
-                                    <h3 className="text-xl font-bold mb-2">{r.title}</h3>
-                                    <div className="flex gap-2 justify-center">
-                                        {r.steps.map((s, idx) => (
-                                            <div key={idx} className={`w-8 h-8 rounded-full ${s.color} flex items-center justify-center opacity-70`} />
-                                        ))}
-                                    </div>
-                                </Card>
+                                    <Card
+                                        className="cursor-pointer hover:scale-105 transition-all border-2 border-transparent hover:border-green-400 flex flex-col items-center p-6 gap-4 min-h-[180px]"
+                                        onClick={() => selectRoutine(r)}
+                                    >
+                                        {/* Large emoji */}
+                                        <span className="text-5xl">{r.emoji}</span>
+                                        <h3 className="text-lg font-bold text-center">{r.title}</h3>
+                                        {/* Step preview with GIFs */}
+                                        <div className="flex gap-1 justify-center flex-wrap">
+                                            {r.steps.slice(0, 4).map((s, idx) => (
+                                                <span key={idx} className="text-xl">{s.emoji}</span>
+                                            ))}
+                                        </div>
+                                    </Card>
+                                </motion.div>
                             ))}
                         </motion.div>
                     ) : (
-                        /* Game Screen */
+                        /* Game Screen - Using GIFs instead of icons */
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="w-full grid grid-cols-1 md:grid-cols-2 gap-12"
+                            className="w-full grid grid-cols-1 md:grid-cols-2 gap-8"
                             key="game"
                         >
                             {/* Left: Slots (Timeline) */}
                             <div className="flex flex-col gap-4 items-center">
-                                <h3 className="text-xl font-bold text-gray-700">{currentRoutine.title}</h3>
+                                <h3 className="text-2xl font-bold text-gray-700 flex items-center gap-2">
+                                    <span className="text-3xl">{currentRoutine.emoji}</span>
+                                    {currentRoutine.title}
+                                </h3>
                                 <div className="w-full max-w-sm bg-white/50 rounded-2xl p-6 min-h-[400px] flex flex-col gap-4 relative shadow-inner">
                                     {/* Error Overlay */}
                                     <AnimatePresence>
@@ -214,18 +239,20 @@ export default function RoutineSequencerGame() {
                                     {filledSlots.map((slot, idx) => (
                                         <div
                                             key={idx}
-                                            className="w-full h-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-white/40 relative overflow-hidden transition-all"
+                                            className="w-full h-20 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-white/40 relative overflow-hidden transition-all"
                                         >
                                             <span className="absolute left-4 text-gray-300 font-bold text-3xl opacity-30">{idx + 1}</span>
                                             {slot && (
                                                 <motion.div
                                                     layoutId={slot.id}
-                                                    className={clsx("w-full h-full flex items-center justify-between px-6 font-bold text-gray-700 shadow-sm", slot.color)}
+                                                    className={clsx("w-full h-full flex items-center justify-center gap-4 font-bold text-gray-700 shadow-sm rounded-xl", slot.color)}
                                                 >
-                                                    <div className="bg-white/30 p-2 rounded-full">
-                                                        {slot.icon && <slot.icon size={32} />}
-                                                    </div>
-                                                    <span className="text-lg">{slot.label}</span>
+                                                    {/* Use GIF if available, otherwise emoji */}
+                                                    {slot.gif ? (
+                                                        <img src={slot.gif} alt={slot.emoji} className="w-12 h-12" />
+                                                    ) : (
+                                                        <span className="text-4xl">{slot.emoji}</span>
+                                                    )}
                                                 </motion.div>
                                             )}
                                         </div>
@@ -233,26 +260,28 @@ export default function RoutineSequencerGame() {
                                 </div>
                             </div>
 
-                            {/* Right: Options Pool */}
+                            {/* Right: Options Pool - Using GIFs */}
                             <div className="flex flex-col gap-6 justify-center">
-                                <SubTitle className="text-center mb-4">Tap the next step!</SubTitle>
+                                <SubTitle className="text-center mb-2">Tap the next step! 👇</SubTitle>
                                 <div className="grid grid-cols-2 gap-4">
                                     {shuffledSteps.map(step => (
                                         <motion.div
                                             key={step.id}
                                             layoutId={step.id}
                                             whileTap={{ scale: 0.95 }}
-                                            whileHover={{ scale: 1.05 }}
+                                            whileHover={{ scale: 1.08 }}
                                             onClick={() => handleStepClick(step)}
                                             className={clsx(
-                                                "flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg cursor-pointer font-bold text-center border-b-4 border-black/10 select-none aspect-square gap-3 transition-colors",
+                                                "flex flex-col items-center justify-center p-6 rounded-2xl shadow-lg cursor-pointer font-bold text-center border-b-4 border-black/10 select-none aspect-square gap-2 transition-colors hover:shadow-xl",
                                                 step.color
                                             )}
                                         >
-                                            <div className="bg-white/40 p-3 rounded-full shadow-sm text-gray-800">
-                                                {step.icon && <step.icon size={32} />}
-                                            </div>
-                                            <span className="text-sm leading-tight">{step.label}</span>
+                                            {/* Use animated GIF if available */}
+                                            {step.gif ? (
+                                                <img src={step.gif} alt={step.emoji} className="w-16 h-16" />
+                                            ) : (
+                                                <span className="text-5xl">{step.emoji}</span>
+                                            )}
                                         </motion.div>
                                     ))}
                                 </div>

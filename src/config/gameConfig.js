@@ -27,7 +27,7 @@ export const COLOR_FOCUS_CONFIG = {
 // ============================================================================
 // EMOTION MIRROR GAME
 // ============================================================================
-import { Smile, Meh, AlertCircle } from 'lucide-react';
+import { Smile, Meh, AlertCircle, Sun, Moon, Star, Bath, Bed, Book, Shirt, Backpack, Bus } from 'lucide-react';
 
 export const EMOTION_TARGETS = [
     { id: 'smile', label: 'Smile!', icon: Smile, color: 'text-yellow-500' },
@@ -60,28 +60,86 @@ export const EMOTION_MIRROR_CONFIG = {
 
 // ============================================================================
 // ROUTINE SEQUENCER GAME
+// Uses emoji GIFs from CDN for universal understanding (no text needed)
 // ============================================================================
 import { Sparkles, Utensils, Droplets, Smile as SmileIcon, Hand } from 'lucide-react';
 
 export const ROUTINES = [
     {
         id: 'brushing',
-        title: 'Brushing Teeth',
+        title: '🦷 Brushing Teeth',
+        emoji: '🦷',
         steps: [
-            { id: 'r1-s1', label: 'Get Toothbrush', color: 'bg-blue-200', iconName: 'Hand' },
-            { id: 'r1-s2', label: 'Add Toothpaste', color: 'bg-blue-300', iconName: 'Sparkles' },
-            { id: 'r1-s3', label: 'Brush Teeth', color: 'bg-blue-400', iconName: 'Smile' },
-            { id: 'r1-s4', label: 'Rinse Mouth', color: 'bg-blue-500', iconName: 'Droplets' },
+            { id: 'r1-s1', label: '🪥', emoji: '🪥', color: 'bg-blue-200', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1faa5/512.gif' },
+            { id: 'r1-s2', label: '💧', emoji: '💧', color: 'bg-blue-300', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4a7/512.gif' },
+            { id: 'r1-s3', label: '😁', emoji: '😁', color: 'bg-blue-400', iconName: 'Smile', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f601/512.gif' },
+            { id: 'r1-s4', label: '🚿', emoji: '🚿', color: 'bg-blue-500', iconName: 'Droplets', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6bf/512.gif' },
         ]
     },
     {
         id: 'eating',
-        title: 'Eating Breakfast',
+        title: '🍳 Eating Breakfast',
+        emoji: '🍳',
         steps: [
-            { id: 'r2-s1', label: 'Wash Hands', color: 'bg-green-200', iconName: 'Droplets' },
-            { id: 'r2-s2', label: 'Sit at Table', color: 'bg-green-300', iconName: 'Hand' },
-            { id: 'r2-s3', label: 'Eat Food', color: 'bg-green-400', iconName: 'Utensils' },
-            { id: 'r2-s4', label: 'Clean Dishes', color: 'bg-green-500', iconName: 'Sparkles' },
+            { id: 'r2-s1', label: '🧼', emoji: '🧼', color: 'bg-green-200', iconName: 'Droplets', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9fc/512.gif' },
+            { id: 'r2-s2', label: '🪑', emoji: '🪑', color: 'bg-green-300', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1fa91/512.gif' },
+            { id: 'r2-s3', label: '🍽️', emoji: '🍽️', color: 'bg-green-400', iconName: 'Utensils', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f37d_fe0f/512.gif' },
+            { id: 'r2-s4', label: '✨', emoji: '✨', color: 'bg-green-500', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.gif' },
+        ]
+    },
+    {
+        id: 'bedtime',
+        title: '🌙 Going to Bed',
+        emoji: '🌙',
+        steps: [
+            { id: 'r3-s1', label: '🛁', emoji: '🛁', color: 'bg-purple-200', iconName: 'Bath', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6c1/512.gif' },
+            { id: 'r3-s2', label: '👕', emoji: '👕', color: 'bg-purple-300', iconName: 'Shirt', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f455/512.gif' },
+            { id: 'r3-s3', label: '📖', emoji: '📖', color: 'bg-purple-400', iconName: 'Book', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4d6/512.gif' },
+            { id: 'r3-s4', label: '🛏️', emoji: '🛏️', color: 'bg-purple-500', iconName: 'Bed', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6cf_fe0f/512.gif' },
+        ]
+    },
+    {
+        id: 'school',
+        title: '🎒 Going to School',
+        emoji: '🎒',
+        steps: [
+            { id: 'r4-s1', label: '🌅', emoji: '🌅', color: 'bg-orange-200', iconName: 'Sun', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f305/512.gif' },
+            { id: 'r4-s2', label: '👕', emoji: '👕', color: 'bg-orange-300', iconName: 'Shirt', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f455/512.gif' },
+            { id: 'r4-s3', label: '🎒', emoji: '🎒', color: 'bg-orange-400', iconName: 'Backpack', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f392/512.gif' },
+            { id: 'r4-s4', label: '🚌', emoji: '🚌', color: 'bg-orange-500', iconName: 'Bus', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f68c/512.gif' },
+        ]
+    },
+    {
+        id: 'handwash',
+        title: '🧴 Washing Hands',
+        emoji: '🧴',
+        steps: [
+            { id: 'r5-s1', label: '💧', emoji: '💧', color: 'bg-cyan-200', iconName: 'Droplets', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4a7/512.gif' },
+            { id: 'r5-s2', label: '🧼', emoji: '🧼', color: 'bg-cyan-300', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9fc/512.gif' },
+            { id: 'r5-s3', label: '👏', emoji: '👏', color: 'bg-cyan-400', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f44f/512.gif' },
+            { id: 'r5-s4', label: '🧻', emoji: '🧻', color: 'bg-cyan-500', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9fb/512.gif' },
+        ]
+    },
+    {
+        id: 'playtime',
+        title: '🎮 Playtime',
+        emoji: '🎮',
+        steps: [
+            { id: 'r6-s1', label: '📺', emoji: '📺', color: 'bg-pink-200', iconName: 'Star', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4fa/512.gif' },
+            { id: 'r6-s2', label: '🧸', emoji: '🧸', color: 'bg-pink-300', iconName: 'Smile', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9f8/512.gif' },
+            { id: 'r6-s3', label: '🎨', emoji: '🎨', color: 'bg-pink-400', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f3a8/512.gif' },
+            { id: 'r6-s4', label: '🧹', emoji: '🧹', color: 'bg-pink-500', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9f9/512.gif' },
+        ]
+    },
+    {
+        id: 'snacktime',
+        title: '🍎 Snack Time',
+        emoji: '🍎',
+        steps: [
+            { id: 'r7-s1', label: '🧼', emoji: '🧼', color: 'bg-red-200', iconName: 'Droplets', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9fc/512.gif' },
+            { id: 'r7-s2', label: '🍎', emoji: '🍎', color: 'bg-red-300', iconName: 'Utensils', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f34e/512.gif' },
+            { id: 'r7-s3', label: '🥛', emoji: '🥛', color: 'bg-red-400', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f95b/512.gif' },
+            { id: 'r7-s4', label: '✨', emoji: '✨', color: 'bg-red-500', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.gif' },
         ]
     }
 ];
@@ -93,6 +151,15 @@ export const ROUTINE_ICONS = {
     Smile: SmileIcon,
     Droplets: Droplets,
     Utensils: Utensils,
+    Bath: Bath,
+    Bed: Bed,
+    Book: Book,
+    Shirt: Shirt,
+    Backpack: Backpack,
+    Bus: Bus,
+    Sun: Sun,
+    Moon: Moon,
+    Star: Star,
 };
 
 // ============================================================================
@@ -149,3 +216,17 @@ export const ML_FEATURE_MAPPING = {
         },
     },
 };
+
+// ============================================================================
+// KID-FRIENDLY MASCOT & UI ELEMENTS
+// ============================================================================
+export const MASCOT = {
+    name: 'Ellie',
+    character: '🐘',
+    wavingGif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f418/512.gif',
+    celebrateGif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.gif',
+    thinkingGif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f914/512.gif',
+    happyGif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f60a/512.gif',
+};
+
+export const CELEBRATION_EMOJIS = ['🎉', '⭐', '🌟', '✨', '🎊', '🏆', '🥳'];

@@ -47,7 +47,7 @@ export const predictRisk = async (gameRisks, demographics = {}) => {
     if (!modelData) {
         console.warn("Model not loaded, attempting load...");
         const loaded = await loadModel();
-        if (!loaded) return null;
+        if (!loaded) return 0.15; // Return a baseline instead of null
     }
 
     const { coefficients, intercept, scaler_mean, scaler_scale, feature_names } = modelData.level_2_model;
@@ -57,7 +57,7 @@ export const predictRisk = async (gameRisks, demographics = {}) => {
         if (name.includes('_risk')) {
             // Game risk feature (e.g., "color_focus_risk")
             const gameKey = name.replace('_risk', '');
-            return gameRisks[gameKey] || 0;
+            return gameRisks[gameKey] ?? 0.3; // Default to 0.3 (baseline risk) if not played
         }
         // Demographic features
         switch (name) {
@@ -69,6 +69,8 @@ export const predictRisk = async (gameRisks, demographics = {}) => {
         }
     });
 
+    console.log("📊 ML Features:", features);
+
     // Apply StandardScaler transformation
     const scaledFeatures = features.map((val, i) => {
         const mean = scaler_mean[i] || 0;
@@ -76,57 +78,80 @@ export const predictRisk = async (gameRisks, demographics = {}) => {
         return (val - mean) / scale;
     });
 
+    console.log("📊 Scaled Features:", scaledFeatures);
+
     // Linear combination: z = X * coefficients + intercept
     const z = scaledFeatures.reduce((sum, x, i) => sum + x * coefficients[i], intercept);
 
+    console.log("📊 Z-score:", z);
+
     // Apply sigmoid for probability
-    return sigmoid(z);
+    const probability = sigmoid(z);
+    console.log("📊 Risk Probability:", probability);
+
+    return probability;
 };
 
 /**
  * Calculate per-game risk scores based on performance metrics
- * These scores are inputs to the Level-2 global model
+ * These scores are continuous values from 0.0 (excellent) to 1.0 (concerning)
  */
 export const calculateGameRisks = (gamesData) => {
     const gameRisks = {
-        color_focus: 0,
-        routine_sequencer: 0,
-        emotion_mirror: 0,
-        object_hunt: 0,
+        color_focus: 0.3,      // Baseline - will be adjusted based on performance
+        routine_sequencer: 0.3,
+        emotion_mirror: 0.3,
+        object_hunt: 0.3,
     };
     const insights = [];
 
     // --- Color Focus ---
     if (gamesData['color-focus']) {
-        const { score, errors } = gamesData['color-focus'];
+        const { score, errors, duration } = gamesData['color-focus'];
         const config = ML_FEATURE_MAPPING['color-focus'].thresholds;
 
-        let risk = 0;
+        // Calculate risk as continuous value based on performance
+        // Higher score = lower risk, more errors = higher risk
+        let risk = 0.3; // baseline
+
         if (score < config.lowScore) {
-            risk += 0.5;
-            insights.push("Color Focus: Low score suggests attention challenges.");
+            risk += 0.3; // Low score increases risk
+            insights.push("🎯 Color Focus: Attention patterns show room for improvement.");
+        } else if (score > 80) {
+            risk -= 0.15; // High score decreases risk
+            insights.push("🌟 Color Focus: Excellent attention span demonstrated!");
         }
+
         if (errors > config.highErrors) {
-            risk += 0.5;
-            insights.push("Color Focus: High errors indicate impulsive responses.");
+            risk += 0.2; // Many errors increase risk
+            insights.push("⚡ Color Focus: Quick reactions noted - working on precision.");
+        } else if (errors < 2) {
+            risk -= 0.1;
+            insights.push("✨ Color Focus: Great impulse control!");
         }
-        if (risk === 0) {
-            insights.push("Color Focus: Good attention and impulse control.");
-        }
-        gameRisks.color_focus = Math.min(risk, 1);
+
+        gameRisks.color_focus = Math.max(0.05, Math.min(0.95, risk)); // Clamp between 0.05-0.95
     }
 
     // --- Routine Sequencer ---
     if (gamesData['routine-sequencer']) {
-        const { mistakes, completed } = gamesData['routine-sequencer'];
+        const { mistakes, completed, score } = gamesData['routine-sequencer'];
         const config = ML_FEATURE_MAPPING['routine-sequencer'].thresholds;
 
+        let risk = 0.3;
+
         if (mistakes > config.highMistakes) {
-            gameRisks.routine_sequencer = 0.7;
-            insights.push("Routine Sequencer: Difficulty with sequential steps.");
+            risk += 0.35;
+            insights.push("🧩 Routine Sequencer: Sequential ordering is being developed.");
+        } else if (mistakes === 0 && completed) {
+            risk -= 0.2;
+            insights.push("🌟 Routine Sequencer: Perfect sequence recognition!");
         } else if (completed) {
-            insights.push("Routine Sequencer: Strong sequencing ability.");
+            risk -= 0.1;
+            insights.push("✨ Routine Sequencer: Good understanding of daily routines.");
         }
+
+        gameRisks.routine_sequencer = Math.max(0.05, Math.min(0.95, risk));
     }
 
     // --- Emotion Mirror ---
@@ -134,27 +159,50 @@ export const calculateGameRisks = (gamesData) => {
         const { score, attempts } = gamesData['emotion-mirror'];
         const config = ML_FEATURE_MAPPING['emotion-mirror'].thresholds;
 
-        if (score < config.lowScore) {
-            gameRisks.emotion_mirror = 0.8;
-            insights.push("Emotion Mirror: Challenges with expression recognition.");
+        let risk = 0.3;
+
+        // Calculate accuracy
+        const accuracy = attempts > 0 ? (score / (attempts * 15)) * 100 : 0;
+
+        if (accuracy < 40) {
+            risk += 0.4;
+            insights.push("🪞 Emotion Mirror: Facial expression recognition is developing.");
+        } else if (accuracy > 80) {
+            risk -= 0.2;
+            insights.push("🌟 Emotion Mirror: Excellent expression mirroring ability!");
         } else {
-            insights.push("Emotion Mirror: Excellent facial expression mirroring.");
+            insights.push("✨ Emotion Mirror: Good emotional recognition skills.");
         }
+
+        gameRisks.emotion_mirror = Math.max(0.05, Math.min(0.95, risk));
     }
 
     // --- Object ID (Hunt) ---
     if (gamesData['object-id']) {
-        const { correct, wrong } = gamesData['object-id'];
+        const { correct, wrong, score } = gamesData['object-id'];
         const config = ML_FEATURE_MAPPING['object-id'].thresholds;
+        const total = correct + wrong;
 
-        if (wrong > config.highWrong) {
-            gameRisks.object_hunt = 0.6;
-            insights.push("Object ID: Struggles with visual discrimination.");
-        } else if (correct > config.highCorrect && wrong < config.lowWrong) {
-            insights.push("Object ID: High precision in visual identification.");
+        let risk = 0.3;
+
+        if (total > 0) {
+            const accuracy = correct / total;
+
+            if (accuracy < 0.5) {
+                risk += 0.3;
+                insights.push("🔍 Object ID: Visual discrimination is being strengthened.");
+            } else if (accuracy > 0.9) {
+                risk -= 0.2;
+                insights.push("🌟 Object ID: Excellent visual identification skills!");
+            } else {
+                insights.push("✨ Object ID: Good object recognition ability.");
+            }
         }
+
+        gameRisks.object_hunt = Math.max(0.05, Math.min(0.95, risk));
     }
 
+    console.log("📊 Game Risks Calculated:", gameRisks);
     return { gameRisks, insights };
 };
 
@@ -162,6 +210,11 @@ export const calculateGameRisks = (gamesData) => {
  * Main analysis function - processes game data and returns risk assessment
  */
 export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
+    // Ensure model is loaded
+    if (!modelData) {
+        await loadModel();
+    }
+
     // Step 1: Calculate game-level risks
     const { gameRisks, insights } = calculateGameRisks(gamesData);
 
@@ -171,10 +224,13 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
     // Step 3: Generate AI insights (optional, may fail gracefully)
     let aiInsights = null;
     try {
-        aiInsights = await generateGeminiInsights(gamesData, riskScore);
+        aiInsights = await generateGeminiInsights(gamesData, riskScore, insights);
     } catch (e) {
         console.error("Gemini Insight Generation Failed:", e);
-        aiInsights = `AI Analysis unavailable: ${e.message}`;
+        // Fallback to rule-based insights
+        aiInsights = insights.length > 0
+            ? insights.join(' ')
+            : "Great job completing the game! Keep practicing to improve your skills.";
     }
 
     return {
@@ -188,11 +244,14 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
 /**
  * Generate narrative insights using Gemini AI
  */
-export const generateGeminiInsights = async (gamesData, riskScore) => {
+export const generateGeminiInsights = async (gamesData, riskScore, ruleBasedInsights = []) => {
     try {
         const model = getGeminiModel();
         if (!model) {
-            return "AI model not configured.";
+            // Return rule-based insights if AI not available
+            return ruleBasedInsights.length > 0
+                ? ruleBasedInsights.join(' ')
+                : "Good effort! Continue playing to track progress over time.";
         }
 
         const prompt = `
@@ -203,13 +262,16 @@ export const generateGeminiInsights = async (gamesData, riskScore) => {
         Game Data:
         ${JSON.stringify(gamesData, null, 2)}
         
+        Rule-based observations:
+        ${ruleBasedInsights.join('\n')}
+        
         Provide a gentle, supportive, and professional summary for the parent. 
         Focus on:
         1. Observable strengths (e.g., "fast reaction time", "high accuracy")
         2. Areas that might need attention (e.g., "impulsive clicking", "difficulty with patterns")
         3. A soft recommendation based on the risk score (e.g., "Suggest consulting a specialist" if high, or "Keep monitoring" if low).
         
-        Keep it under 3-4 sentences. Use a warm tone.
+        Keep it under 3-4 sentences. Use a warm, encouraging tone that celebrates effort.
         `;
 
         const result = await model.generateContent(prompt);
@@ -218,11 +280,10 @@ export const generateGeminiInsights = async (gamesData, riskScore) => {
     } catch (error) {
         console.error("Error calling Gemini:", error);
 
-        if (error.message?.includes('Quota') || error.message?.includes('429')) {
-            return "Our AI is currently experiencing high traffic. Please try again later for detailed insights.";
-        }
-
-        return "Detailed AI narrative is temporarily unavailable. Please refer to the visual risk score.";
+        // Fallback to rule-based insights
+        return ruleBasedInsights.length > 0
+            ? ruleBasedInsights.join(' ')
+            : "Great progress today! Regular practice helps develop important skills.";
     }
 };
 

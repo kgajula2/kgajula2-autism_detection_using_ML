@@ -86,6 +86,9 @@ export default function ColorFocusGame() {
     const handlePop = (id, colorName, spawnTime) => {
         if (gameState !== 'ACTIVE') return;
 
+        const popTime = Date.now();
+        const lifespan = popTime - spawnTime; // Time from spawn to pop in ms
+
         setBubbles(prev => {
             const exists = prev.find(b => b.id === id);
             if (!exists) return prev;
@@ -94,22 +97,28 @@ export default function ColorFocusGame() {
 
         const isCorrect = colorName === targetColor.name;
 
+        // Log detailed bubble lifespan data to Firebase
         if (sessionId) {
             logRoundMetrics(sessionId, {
-                type: 'interaction',
+                type: 'bubble_interaction',
                 game: 'color-focus',
+                bubbleId: id,
                 action: 'pop',
-                target: targetColor.name,
-                popped: colorName,
+                targetColor: targetColor.name,
+                poppedColor: colorName,
                 correct: isCorrect,
-                timestamp: Date.now()
+                // Detailed timestamp tracking
+                birthTime: spawnTime,      // When bubble spawned
+                deathTime: popTime,        // When bubble was popped
+                lifespan: lifespan,        // Time alive (ms)
+                reactionTime: lifespan,    // Alias for clarity
+                timestamp: popTime
             });
         }
 
         if (isCorrect) {
             incrementScore(10);
-            const latency = Date.now() - spawnTime;
-            latenciesRef.current.push(latency);
+            latenciesRef.current.push(lifespan);
         } else {
             incrementScore(-5);
             setMistakes(m => m + 1);
