@@ -116,7 +116,7 @@ function ResultsModal({
 }) {
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
-            <Card className="w-full max-w-lg bg-white/95 shadow-2xl overflow-hidden p-0 max-h-[85vh] flex flex-col scale-100">
+            <Card className="w-full max-w-lg bg-white/95 dark:bg-slate-800/95 shadow-2xl overflow-hidden p-0 max-h-[85vh] flex flex-col scale-100">
                 {/* Header */}
                 <div className={clsx("p-6 text-white text-center flex-shrink-0", headerColor)}>
                     <Title className="!text-white mb-2">Game Over!</Title>
@@ -129,7 +129,7 @@ function ResultsModal({
                     {isAnalyzing ? (
                         <div className="flex flex-col items-center py-8 space-y-4">
                             <BrainCircuit size={48} className="animate-pulse text-purple-500" />
-                            <p className="text-gray-500 font-medium">Analyzing results...</p>
+                            <p className="text-gray-500 dark:text-gray-300 font-medium">Analyzing results...</p>
                         </div>
                     ) : (
                         <>
@@ -139,12 +139,12 @@ function ResultsModal({
                                     {stats.map((stat, i) => (
                                         <div
                                             key={i}
-                                            className="bg-gray-50 p-4 rounded-xl text-center border border-gray-100"
+                                            className="bg-gray-50 dark:bg-slate-700 p-4 rounded-xl text-center border border-gray-100 dark:border-slate-600"
                                         >
-                                            <div className="text-2xl font-bold text-gray-800">
+                                            <div className="text-2xl font-bold text-gray-800 dark:text-white">
                                                 {stat.value}
                                             </div>
-                                            <div className="text-xs text-gray-400 uppercase tracking-wider font-bold">
+                                            <div className="text-xs text-gray-400 dark:text-gray-300 uppercase tracking-wider font-bold">
                                                 {stat.label}
                                             </div>
                                         </div>
@@ -154,11 +154,11 @@ function ResultsModal({
 
                             {/* AI Insights */}
                             {analysisResult?.aiInsights && (
-                                <div className="bg-purple-50 border border-purple-100 rounded-xl p-4">
-                                    <h4 className="font-bold text-purple-800 mb-2 flex items-center gap-2">
+                                <div className="bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-800 rounded-xl p-4">
+                                    <h4 className="font-bold text-purple-800 dark:text-purple-300 mb-2 flex items-center gap-2">
                                         <BrainCircuit size={18} /> AI Insights
                                     </h4>
-                                    <p className="text-sm text-purple-700">
+                                    <p className="text-sm text-purple-700 dark:text-purple-200">
                                         {analysisResult.aiInsights}
                                     </p>
                                 </div>
@@ -166,10 +166,10 @@ function ResultsModal({
 
                             {/* Not Played Warning */}
                             {analysisResult?.notPlayed && (
-                                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+                                <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-4 text-center">
                                     <div className="text-4xl mb-2">🎮</div>
-                                    <h4 className="font-bold text-amber-800 mb-1">No Activity Detected</h4>
-                                    <p className="text-sm text-amber-700">
+                                    <h4 className="font-bold text-amber-800 dark:text-amber-300 mb-1">No Activity Detected</h4>
+                                    <p className="text-sm text-amber-700 dark:text-amber-200">
                                         Play the game to get your personalized analysis!
                                     </p>
                                 </div>
@@ -179,10 +179,10 @@ function ResultsModal({
                             {!analysisResult?.notPlayed && analysisResult?.riskScore !== undefined && analysisResult?.riskScore !== null && (
                                 <div className="flex items-center justify-center gap-4 py-2">
                                     <div className="text-center">
-                                        <div className="text-3xl font-black text-slate-800">
+                                        <div className="text-3xl font-black text-slate-800 dark:text-white">
                                             {(analysisResult.riskScore * 100).toFixed(0)}%
                                         </div>
-                                        <div className="text-xs text-slate-400 uppercase tracking-wider">
+                                        <div className="text-xs text-slate-500 dark:text-slate-300 uppercase tracking-wider">
                                             Risk Indicator
                                         </div>
                                     </div>
