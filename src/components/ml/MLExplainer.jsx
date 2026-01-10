@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '../ui/Card';
 import { Title, SubTitle } from '../ui/Typography';
-import { Activity, Brain, CheckCircle, Target, Zap, Layers, ArrowRight } from 'lucide-react';
+import { Activity, Brain, CheckCircle, Target, Zap, Layers, ArrowRight, TrendingUp, User } from 'lucide-react';
+import { fetchUserGameStats } from '../../services/db';
+import { getAuth } from 'firebase/auth';
 
 const MetricCard = ({ label, value, icon: Icon, color, delay }) => (
     <motion.div
@@ -19,6 +21,35 @@ const MetricCard = ({ label, value, icon: Icon, color, delay }) => (
     </motion.div>
 );
 
+// Dynamic per-game accuracy card
+const GameAccuracyCard = ({ game, accuracy, gamesPlayed, icon, delay }) => (
+    <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay }}
+        className="bg-gradient-to-br from-white to-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm"
+    >
+        <div className="flex items-center gap-3 mb-3">
+            <span className="text-2xl">{icon}</span>
+            <div>
+                <div className="font-bold text-slate-700 text-sm">{game}</div>
+                <div className="text-xs text-slate-400">{gamesPlayed} sessions</div>
+            </div>
+        </div>
+        <div className="flex items-end justify-between">
+            <div>
+                <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
+                    {accuracy.toFixed(1)}%
+                </div>
+                <div className="text-xs text-slate-400 uppercase">Your Accuracy</div>
+            </div>
+            <div className={`text-xs px-2 py-1 rounded-full ${accuracy >= 70 ? 'bg-green-100 text-green-700' : accuracy >= 50 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                {accuracy >= 70 ? '🌟 Great!' : accuracy >= 50 ? '👍 Good' : '📈 Improving'}
+            </div>
+        </div>
+    </motion.div>
+);
+
 const HierarchicalViz = ({ modelData }) => {
     if (!modelData) return null;
 
@@ -29,10 +60,6 @@ const HierarchicalViz = ({ modelData }) => {
         { id: 'emotion_mirror', name: 'Emotion Mirror', icon: '🙂', color: 'bg-yellow-500' },
         { id: 'object_hunt', name: 'Object Hunt', icon: '🔍', color: 'bg-green-500' }
     ];
-
-    // Get feature importance (coefficients) from Level 2 model
-    // Features are ordered: [game1_risk, game2_risk, game3_risk, game4_risk, age, gender...]
-    // We map roughly assuming order to just show "Contribution" visual
 
     return (
         <div className="relative w-full p-8 bg-slate-900 rounded-2xl overflow-hidden shadow-inner flex flex-col md:flex-row items-center justify-between gap-8">
@@ -108,25 +135,87 @@ const HierarchicalViz = ({ modelData }) => {
 export default function MLExplainer() {
     const [metrics, setMetrics] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [userStats, setUserStats] = useState(null);
 
     useEffect(() => {
+        // Load static model metrics
         fetch('/models/model_weights.json')
             .then(res => res.json())
             .then(data => {
-                // Parse new structure
                 if (data.global_metrics) {
                     setMetrics(data.global_metrics);
                 } else {
-                    // Fallback for old structure if logic fails
                     setMetrics(data.metadata);
                 }
-                setLoading(false);
             })
             .catch(err => {
                 console.error("Failed to load metrics", err);
-                setLoading(false);
             });
+
+        // Load dynamic user stats
+        const loadUserStats = async () => {
+            try {
+                const user = getAuth().currentUser;
+                if (user) {
+                    const { sessions, aggregated } = await fetchUserGameStats(user.uid);
+
+                    // Calculate per-game accuracy
+                    const gameAccuracies = {};
+                    const gameCounts = {};
+
+                    sessions.forEach(session => {
+                        const gameId = session.gameId;
+                        if (!gameAccuracies[gameId]) {
+                            gameAccuracies[gameId] = [];
+                            gameCounts[gameId] = 0;
+                        }
+
+                        // Calculate accuracy based on game type
+                        let accuracy = 0;
+                        if (session.score > 0) {
+                            const mistakes = session.stats?.mistakes || session.stats?.errors || 0;
+                            const total = session.score + (mistakes * 10);
+                            accuracy = total > 0 ? (session.score / total) * 100 : 0;
+                        }
+
+                        gameAccuracies[gameId].push(accuracy);
+                        gameCounts[gameId]++;
+                    });
+
+                    // Average accuracy per game
+                    const averages = {};
+                    Object.keys(gameAccuracies).forEach(gameId => {
+                        const arr = gameAccuracies[gameId];
+                        averages[gameId] = arr.length > 0
+                            ? arr.reduce((a, b) => a + b, 0) / arr.length
+                            : 0;
+                    });
+
+                    setUserStats({ averages, counts: gameCounts, totalGames: sessions.length });
+                }
+            } catch (e) {
+                console.error("Failed to load user stats:", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadUserStats();
     }, []);
+
+    const gameIcons = {
+        'color-focus': '🎯',
+        'routine-sequencer': '📋',
+        'emotion-mirror': '🪞',
+        'object-id': '🔍'
+    };
+
+    const gameNames = {
+        'color-focus': 'Color Focus',
+        'routine-sequencer': 'Routine Sequencer',
+        'emotion-mirror': 'Emotion Mirror',
+        'object-id': 'Object ID'
+    };
 
     if (loading) return <div className="p-8 text-center text-gray-400 animate-pulse">Loading AI Brain Data...</div>;
 
@@ -138,39 +227,71 @@ export default function MLExplainer() {
                 <SubTitle>A Two-Level System for Robust Risk Estimation</SubTitle>
             </div>
 
-            {/* 1. Academic Metrics (Global) */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <MetricCard
-                    label="Global Accuracy"
-                    value={metrics?.accuracy || 0}
-                    icon={CheckCircle}
-                    color="text-green-600 bg-green-50"
-                    delay={0.1}
-                />
-                <MetricCard
-                    label="Precision"
-                    value={metrics?.precision || 0}
-                    icon={Target}
-                    color="text-blue-600 bg-blue-50"
-                    delay={0.2}
-                />
-                <MetricCard
-                    label="Recall"
-                    value={metrics?.recall || 0}
-                    icon={Zap}
-                    color="text-purple-600 bg-purple-50"
-                    delay={0.3}
-                />
-                <MetricCard
-                    label="F1 Score"
-                    value={metrics?.f1_score || 0}
-                    icon={Activity}
-                    color="text-indigo-600 bg-indigo-50"
-                    delay={0.4}
-                />
-            </div>
+            {/* 1. DYNAMIC: Your Performance Section */}
+            {userStats && userStats.totalGames > 0 && (
+                <Card className="p-6 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+                    <div className="flex items-center gap-2 mb-4">
+                        <User className="text-purple-600" />
+                        <h3 className="font-bold text-purple-800">Your Performance</h3>
+                        <span className="text-xs bg-purple-200 text-purple-700 px-2 py-1 rounded-full ml-auto">
+                            {userStats.totalGames} games played
+                        </span>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {Object.keys(userStats.averages).map((gameId, idx) => (
+                            <GameAccuracyCard
+                                key={gameId}
+                                game={gameNames[gameId] || gameId}
+                                accuracy={userStats.averages[gameId]}
+                                gamesPlayed={userStats.counts[gameId]}
+                                icon={gameIcons[gameId] || '🎮'}
+                                delay={idx * 0.1}
+                            />
+                        ))}
+                    </div>
+                </Card>
+            )}
 
-            {/* 2. Hierarchical Visualization */}
+            {/* 2. STATIC: Academic Model Metrics */}
+            <Card className="p-6 border-slate-200">
+                <div className="flex items-center gap-2 mb-4">
+                    <Brain className="text-slate-600" />
+                    <h3 className="font-bold text-slate-700">Model Training Metrics</h3>
+                    <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-full ml-auto">Static</span>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <MetricCard
+                        label="Global Accuracy"
+                        value={metrics?.accuracy || 0}
+                        icon={CheckCircle}
+                        color="text-green-600 bg-green-50"
+                        delay={0.1}
+                    />
+                    <MetricCard
+                        label="Precision"
+                        value={metrics?.precision || 0}
+                        icon={Target}
+                        color="text-blue-600 bg-blue-50"
+                        delay={0.2}
+                    />
+                    <MetricCard
+                        label="Recall"
+                        value={metrics?.recall || 0}
+                        icon={Zap}
+                        color="text-purple-600 bg-purple-50"
+                        delay={0.3}
+                    />
+                    <MetricCard
+                        label="F1 Score"
+                        value={metrics?.f1_score || 0}
+                        icon={Activity}
+                        color="text-indigo-600 bg-indigo-50"
+                        delay={0.4}
+                    />
+                </div>
+            </Card>
+
+            {/* 3. Hierarchical Visualization */}
             <Card className="p-6 border-slate-200">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-gray-700 flex items-center gap-2">
@@ -184,7 +305,7 @@ export default function MLExplainer() {
                 </p>
             </Card>
 
-            {/* 3. Confusion Matrix Proof */}
+            {/* 4. Confusion Matrix Proof */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card className="p-0 overflow-hidden bg-slate-50 border-slate-200">
                     <div className="p-4 border-b border-slate-200">
@@ -225,3 +346,4 @@ export default function MLExplainer() {
         </div>
     );
 }
+
