@@ -117,18 +117,19 @@ export default function ColorFocusGame() {
             });
         }
 
+        // Store detailed bubble data for dashboard (ALL pops, not just correct)
+        bubblePopDataRef.current.push({
+            bubbleId: id,
+            correct: isCorrect,
+            reactionTime: lifespan,
+            targetColor: targetColor.name,
+            poppedColor: colorName,
+            timestamp: popTime
+        });
+
         if (isCorrect) {
             incrementScore(10);
             latenciesRef.current.push(lifespan);
-            // Store detailed bubble data for dashboard
-            bubblePopDataRef.current.push({
-                bubbleId: id,
-                correct: true,
-                reactionTime: lifespan,
-                targetColor: targetColor.name,
-                poppedColor: colorName,
-                timestamp: popTime
-            });
         } else {
             incrementScore(-5);
             setMistakes(m => m + 1);

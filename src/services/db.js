@@ -224,25 +224,39 @@ export const fetchUserGameStats = async (userId) => {
             sessions.push({ id: doc.id, ...doc.data() });
         });
 
-        // Sort in memory to avoid needing a composite index
+        // Sort in memory to avoid needing a composite index (most recent first)
         sessions.sort((a, b) => {
             const timeA = a.endTime?.seconds || 0;
             const timeB = b.endTime?.seconds || 0;
             return timeB - timeA; // Descending
         });
 
-        // Aggregate by game
+        // Aggregate by game - use LATEST (most recent) session stats for ML analysis
         const aggregated = {};
         sessions.forEach(session => {
-            if (!aggregated[session.gameId]) {
-                aggregated[session.gameId] = {
-                    score: 0,
-                    count: 0,
-                    ...session.stats
+            const gameId = session.gameId;
+            if (!aggregated[gameId]) {
+                // First occurrence is the MOST RECENT (since we sorted descending)
+                aggregated[gameId] = {
+                    score: session.score || 0,
+                    count: 1,
+                    mistakes: session.stats?.mistakes || 0,
+                    errors: session.stats?.errors || 0,
+                    duration: session.stats?.duration || 0,
+                    correct: session.stats?.correct || 0,
+                    wrong: session.stats?.wrong || 0,
+                    attempts: session.stats?.attempts || 0,
+                    completed: session.stats?.completed || false,
+                    avgLatency: session.stats?.avgLatency || 0,
                 };
+            } else {
+                // Accumulate count only
+                aggregated[gameId].count += 1;
+                // Use best score
+                if (session.score > aggregated[gameId].score) {
+                    aggregated[gameId].score = session.score;
+                }
             }
-            aggregated[session.gameId].score = Math.max(aggregated[session.gameId].score, session.score);
-            aggregated[session.gameId].count += 1;
         });
 
         return { sessions, aggregated };
