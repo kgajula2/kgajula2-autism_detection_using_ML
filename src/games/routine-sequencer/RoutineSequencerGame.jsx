@@ -24,6 +24,8 @@ export default function RoutineSequencerGame() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [sessionId, setSessionId] = useState(null);
     const startTimeRef = useRef(0);
+    const stepStartTimeRef = useRef(0);  // Track each step start time
+    const stepTimingsRef = useRef([]);   // Store all step timings
 
     const selectRoutine = async (routine) => {
         // Prepare steps with resolved icons and GIFs
@@ -38,6 +40,8 @@ export default function RoutineSequencerGame() {
         setMistakes(0);
         setFeedback(null);
         startTimeRef.current = Date.now();
+        stepStartTimeRef.current = Date.now();
+        stepTimingsRef.current = [];
 
         const userId = getAuth().currentUser?.uid;
         if (userId) {
@@ -62,6 +66,22 @@ export default function RoutineSequencerGame() {
         const isCorrect = step.id === correctStep.id;
 
         if (isCorrect) {
+            const stepTime = Date.now();
+            const stepDuration = stepTime - stepStartTimeRef.current;
+
+            // Store step timing data
+            stepTimingsRef.current.push({
+                step: firstEmptyIndex + 1,
+                totalSteps: currentRoutine.steps.length,
+                stepId: step.id,
+                correct: true,
+                reactionTime: stepDuration,
+                timestamp: stepTime
+            });
+
+            // Reset timer for next step
+            stepStartTimeRef.current = Date.now();
+
             const newSlots = [...filledSlots];
             newSlots[firstEmptyIndex] = step;
             setFilledSlots(newSlots);
@@ -97,7 +117,15 @@ export default function RoutineSequencerGame() {
         const timeTaken = (Date.now() - startTimeRef.current) / 1000;
 
         if (sessionId) {
-            await endGameSession(sessionId, score + 20, { mistakes, completed: true, duration: timeTaken });
+            await endGameSession(sessionId, score + 20, {
+                mistakes,
+                completed: true,
+                duration: timeTaken,
+                routine: currentRoutine.id,
+                routineTitle: currentRoutine.title,
+                totalSteps: currentRoutine.steps.length,
+                roundTimings: stepTimingsRef.current  // Include step timings for dashboard
+            });
         }
 
         try {

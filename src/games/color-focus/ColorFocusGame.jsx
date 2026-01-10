@@ -33,6 +33,7 @@ export default function ColorFocusGame() {
     const lastSpawnRef = useRef(0);
     const containerRef = useRef(null);
     const latenciesRef = useRef([]);
+    const bubblePopDataRef = useRef([]); // Store all bubble pop details for dashboard
 
     // Timer Effect
     useEffect(() => {
@@ -119,6 +120,15 @@ export default function ColorFocusGame() {
         if (isCorrect) {
             incrementScore(10);
             latenciesRef.current.push(lifespan);
+            // Store detailed bubble data for dashboard
+            bubblePopDataRef.current.push({
+                bubbleId: id,
+                correct: true,
+                reactionTime: lifespan,
+                targetColor: targetColor.name,
+                poppedColor: colorName,
+                timestamp: popTime
+            });
         } else {
             incrementScore(-5);
             setMistakes(m => m + 1);
@@ -128,6 +138,7 @@ export default function ColorFocusGame() {
     const startGame = async () => {
         resetGame();
         latenciesRef.current = [];
+        bubblePopDataRef.current = []; // Reset bubble data
         setBubbles([]);
         setTimeLeft(GAME_DURATION);
         setMistakes(0);
@@ -175,9 +186,15 @@ export default function ColorFocusGame() {
             if (sessionId) {
                 await endGameSession(sessionId, score, {
                     mistakes,
+                    duration: GAME_DURATION - timeLeft,
+                    avgLatency,
                     riskScore: result.riskScore,
                     aiInsights: result.aiInsights,
-                    gameRisks: result.gameRisks
+                    gameRisks: result.gameRisks,
+                    // Include bubble lifespan data for dashboard
+                    roundTimings: bubblePopDataRef.current,
+                    bubblesPoppedCorrectly: latenciesRef.current.length,
+                    allLatencies: latenciesRef.current
                 });
             }
         } catch (e) {

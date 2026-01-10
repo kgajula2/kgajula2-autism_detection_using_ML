@@ -283,44 +283,61 @@ export const Dashboard = () => {
                                             </td>
                                         </tr>
                                         {/* Expanded Row - Per-Round Details */}
-                                        {expandedSession === idx && session.stats?.roundTimings && (
+                                        {expandedSession === idx && (
                                             <tr>
                                                 <td colSpan="6" className="bg-slate-50 p-4">
                                                     <div className="space-y-3">
-                                                        <h4 className="font-bold text-slate-700 flex items-center gap-2">
-                                                            <Target size={16} className="text-blue-500" />
-                                                            Per-Round Reaction Times
-                                                        </h4>
-                                                        <div className="h-[150px]">
-                                                            <ResponsiveContainer width="100%" height="100%">
-                                                                <BarChart data={formatRoundTimings(session.stats.roundTimings)}>
-                                                                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                                                                    <XAxis dataKey="name" fontSize={12} />
-                                                                    <YAxis unit="s" fontSize={12} />
-                                                                    <Tooltip
-                                                                        formatter={(value) => [`${value}s`, 'Reaction Time']}
-                                                                        contentStyle={{ borderRadius: '0.5rem' }}
-                                                                    />
-                                                                    <Bar
-                                                                        dataKey="time"
-                                                                        fill="#8b5cf6"
-                                                                        radius={[4, 4, 0, 0]}
-                                                                    />
-                                                                </BarChart>
-                                                            </ResponsiveContainer>
-                                                        </div>
-                                                        <div className="grid grid-cols-5 gap-2 mt-2">
-                                                            {session.stats.roundTimings.map((r, rIdx) => (
-                                                                <div
-                                                                    key={rIdx}
-                                                                    className={`text-center p-2 rounded-lg ${r.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
-                                                                >
-                                                                    <div className="font-bold">{rIdx + 1}/{session.stats.roundTimings.length}</div>
-                                                                    <div className="text-sm">{(r.reactionTime / 1000).toFixed(2)}s</div>
-                                                                    <div className="text-xs">{r.correct ? '✓' : '✗'}</div>
+                                                        {session.stats?.roundTimings && session.stats.roundTimings.length > 0 ? (
+                                                            <>
+                                                                <h4 className="font-bold text-slate-700 flex items-center gap-2">
+                                                                    <Target size={16} className="text-blue-500" />
+                                                                    {session.gameId === 'color-focus' ? 'Bubble Pop Reaction Times' :
+                                                                        session.gameId === 'routine-sequencer' ? 'Step Completion Times' :
+                                                                            'Per-Round Reaction Times'}
+                                                                </h4>
+                                                                <div className="h-[150px]">
+                                                                    <ResponsiveContainer width="100%" height="100%">
+                                                                        <BarChart data={formatRoundTimings(session.stats.roundTimings)}>
+                                                                            <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                                                                            <XAxis dataKey="name" fontSize={12} />
+                                                                            <YAxis unit="s" fontSize={12} />
+                                                                            <Tooltip
+                                                                                formatter={(value) => [`${value}s`, 'Reaction Time']}
+                                                                                contentStyle={{ borderRadius: '0.5rem' }}
+                                                                            />
+                                                                            <Bar
+                                                                                dataKey="time"
+                                                                                fill="#8b5cf6"
+                                                                                radius={[4, 4, 0, 0]}
+                                                                            />
+                                                                        </BarChart>
+                                                                    </ResponsiveContainer>
                                                                 </div>
-                                                            ))}
-                                                        </div>
+                                                                <div className="grid grid-cols-5 gap-2 mt-2">
+                                                                    {session.stats.roundTimings.map((r, rIdx) => (
+                                                                        <div
+                                                                            key={rIdx}
+                                                                            className={`text-center p-2 rounded-lg ${r.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
+                                                                        >
+                                                                            <div className="font-bold">{rIdx + 1}/{session.stats.roundTimings.length}</div>
+                                                                            <div className="text-sm">{(r.reactionTime / 1000).toFixed(2)}s</div>
+                                                                            <div className="text-xs">{r.correct ? '✓' : '✗'}</div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <div className="text-center py-6 text-gray-400">
+                                                                <div className="text-3xl mb-2">📊</div>
+                                                                <p className="font-medium">Detailed timing data not available</p>
+                                                                <p className="text-sm">Play new games to see per-round reaction times!</p>
+                                                                {session.stats?.duration && (
+                                                                    <p className="mt-2 text-gray-600">
+                                                                        Total Duration: <span className="font-bold">{session.stats.duration.toFixed(1)}s</span>
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
