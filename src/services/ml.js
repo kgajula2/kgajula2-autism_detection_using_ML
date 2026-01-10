@@ -215,6 +215,25 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
         await loadModel();
     }
 
+    // Check if player actually played (has any meaningful score or interactions)
+    const hasPlayed = Object.values(gamesData).some(game => {
+        const score = game?.score || 0;
+        const correct = game?.correct || 0;
+        const attempts = game?.attempts || 0;
+        return score > 0 || correct > 0 || attempts > 0;
+    });
+
+    // If player didn't actually play, return special "not played" result
+    if (!hasPlayed) {
+        return {
+            riskScore: null,  // null indicates not played
+            notPlayed: true,
+            insights: [],
+            gameRisks: {},
+            aiInsights: "No game activity detected. Please play the game to get your analysis!",
+        };
+    }
+
     // Step 1: Calculate game-level risks
     const { gameRisks, insights } = calculateGameRisks(gamesData);
 
@@ -235,6 +254,7 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
 
     return {
         riskScore,
+        notPlayed: false,
         insights,
         gameRisks,
         aiInsights,

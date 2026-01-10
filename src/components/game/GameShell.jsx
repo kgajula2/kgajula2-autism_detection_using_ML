@@ -164,8 +164,19 @@ function ResultsModal({
                                 </div>
                             )}
 
-                            {/* Risk Score (if available) */}
-                            {analysisResult?.riskScore !== undefined && analysisResult?.riskScore !== null && (
+                            {/* Not Played Warning */}
+                            {analysisResult?.notPlayed && (
+                                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+                                    <div className="text-4xl mb-2">🎮</div>
+                                    <h4 className="font-bold text-amber-800 mb-1">No Activity Detected</h4>
+                                    <p className="text-sm text-amber-700">
+                                        Play the game to get your personalized analysis!
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Risk Score (only if actually played) */}
+                            {!analysisResult?.notPlayed && analysisResult?.riskScore !== undefined && analysisResult?.riskScore !== null && (
                                 <div className="flex items-center justify-center gap-4 py-2">
                                     <div className="text-center">
                                         <div className="text-3xl font-black text-slate-800">

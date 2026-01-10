@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Title, SubTitle } from '../components/ui/Typography';
 import { Button } from '../components/ui/Button';
@@ -233,92 +233,101 @@ export const Dashboard = () => {
                             </tr>
                         </thead>
                         <tbody className="text-gray-600 text-sm">
-                            {stats.gameBreakdown.map((session, idx) => (
-                                <>
-                                    <tr
-                                        key={idx}
-                                        className="border-b border-gray-50 hover:bg-white/40 transition-colors cursor-pointer"
-                                        onClick={() => setExpandedSession(expandedSession === idx ? null : idx)}
-                                    >
-                                        <td className="p-3 font-bold text-purple-700">
-                                            <span className="text-2xl mr-2">{getGameEmoji(session.gameId)}</span>
-                                            <span className="capitalize">{session.gameId.replace('-', ' ')}</span>
-                                        </td>
-                                        <td className="p-3">
-                                            {(session.stats?.mistakes || 0) === 0 ? (
-                                                <span className="inline-flex items-center gap-1 text-green-600 font-bold bg-green-50 px-2 py-1 rounded-full text-xs">
-                                                    <CheckCircle size={12} /> Perfect!
-                                                </span>
-                                            ) : (
-                                                <span className="inline-flex items-center gap-1 text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-full text-xs">
-                                                    <AlertTriangle size={12} /> {session.stats?.mistakes} misses
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="p-3 font-mono font-bold text-lg">{session.score}</td>
-                                        <td className="p-3">
-                                            {session.stats?.duration ? (
-                                                <span className="font-bold">{session.stats.duration.toFixed(1)}s</span>
-                                            ) : '-'}
-                                        </td>
-                                        <td className="p-3">
-                                            {session.stats?.roundTimings?.length > 0 ? (
-                                                <span className="font-bold text-blue-600">
-                                                    {(session.stats.roundTimings.reduce((sum, r) => sum + r.reactionTime, 0) / session.stats.roundTimings.length / 1000).toFixed(2)}s
-                                                </span>
-                                            ) : '-'}
-                                        </td>
-                                        <td className="p-3">
-                                            <Button variant="ghost" className="!p-2">
-                                                {expandedSession === idx ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                    {/* Expanded Row - Per-Round Details */}
-                                    {expandedSession === idx && session.stats?.roundTimings && (
-                                        <tr>
-                                            <td colSpan="6" className="bg-slate-50 p-4">
-                                                <div className="space-y-3">
-                                                    <h4 className="font-bold text-slate-700 flex items-center gap-2">
-                                                        <Target size={16} className="text-blue-500" />
-                                                        Per-Round Reaction Times
-                                                    </h4>
-                                                    <div className="h-[150px]">
-                                                        <ResponsiveContainer width="100%" height="100%">
-                                                            <BarChart data={formatRoundTimings(session.stats.roundTimings)}>
-                                                                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                                                                <XAxis dataKey="name" fontSize={12} />
-                                                                <YAxis unit="s" fontSize={12} />
-                                                                <Tooltip
-                                                                    formatter={(value) => [`${value}s`, 'Reaction Time']}
-                                                                    contentStyle={{ borderRadius: '0.5rem' }}
-                                                                />
-                                                                <Bar
-                                                                    dataKey="time"
-                                                                    fill="#8b5cf6"
-                                                                    radius={[4, 4, 0, 0]}
-                                                                />
-                                                            </BarChart>
-                                                        </ResponsiveContainer>
-                                                    </div>
-                                                    <div className="grid grid-cols-5 gap-2 mt-2">
-                                                        {session.stats.roundTimings.map((r, rIdx) => (
-                                                            <div
-                                                                key={rIdx}
-                                                                className={`text-center p-2 rounded-lg ${r.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
-                                                            >
-                                                                <div className="font-bold">{rIdx + 1}/{session.stats.roundTimings.length}</div>
-                                                                <div className="text-sm">{(r.reactionTime / 1000).toFixed(2)}s</div>
-                                                                <div className="text-xs">{r.correct ? '✓' : '✗'}</div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
+                            {stats.gameBreakdown.map((session, idx) => {
+                                // Check if player actually played (score > 0)
+                                const hasPlayed = session.score > 0 || (session.stats?.correct || 0) > 0;
+                                const mistakes = session.stats?.mistakes || session.stats?.errors || session.stats?.wrong || 0;
+
+                                return (
+                                    <React.Fragment key={idx}>
+                                        <tr
+                                            className="border-b border-gray-50 hover:bg-white/40 transition-colors cursor-pointer"
+                                            onClick={() => setExpandedSession(expandedSession === idx ? null : idx)}
+                                        >
+                                            <td className="p-3 font-bold text-purple-700">
+                                                <span className="text-2xl mr-2">{getGameEmoji(session.gameId)}</span>
+                                                <span className="capitalize">{session.gameId.replace('-', ' ')}</span>
+                                            </td>
+                                            <td className="p-3">
+                                                {!hasPlayed ? (
+                                                    <span className="inline-flex items-center gap-1 text-gray-500 font-bold bg-gray-100 px-2 py-1 rounded-full text-xs">
+                                                        🎮 Not Played
+                                                    </span>
+                                                ) : mistakes === 0 ? (
+                                                    <span className="inline-flex items-center gap-1 text-green-600 font-bold bg-green-50 px-2 py-1 rounded-full text-xs">
+                                                        <CheckCircle size={12} /> Perfect!
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1 text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-full text-xs">
+                                                        <AlertTriangle size={12} /> {mistakes} misses
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="p-3 font-mono font-bold text-lg">{session.score}</td>
+                                            <td className="p-3">
+                                                {session.stats?.duration ? (
+                                                    <span className="font-bold">{session.stats.duration.toFixed(1)}s</span>
+                                                ) : '-'}
+                                            </td>
+                                            <td className="p-3">
+                                                {session.stats?.roundTimings?.length > 0 ? (
+                                                    <span className="font-bold text-blue-600">
+                                                        {(session.stats.roundTimings.reduce((sum, r) => sum + r.reactionTime, 0) / session.stats.roundTimings.length / 1000).toFixed(2)}s
+                                                    </span>
+                                                ) : '-'}
+                                            </td>
+                                            <td className="p-3">
+                                                <Button variant="ghost" className="!p-2" onClick={(e) => { e.stopPropagation(); setExpandedSession(expandedSession === idx ? null : idx); }}>
+                                                    {expandedSession === idx ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                                                </Button>
                                             </td>
                                         </tr>
-                                    )}
-                                </>
-                            ))}
+                                        {/* Expanded Row - Per-Round Details */}
+                                        {expandedSession === idx && session.stats?.roundTimings && (
+                                            <tr>
+                                                <td colSpan="6" className="bg-slate-50 p-4">
+                                                    <div className="space-y-3">
+                                                        <h4 className="font-bold text-slate-700 flex items-center gap-2">
+                                                            <Target size={16} className="text-blue-500" />
+                                                            Per-Round Reaction Times
+                                                        </h4>
+                                                        <div className="h-[150px]">
+                                                            <ResponsiveContainer width="100%" height="100%">
+                                                                <BarChart data={formatRoundTimings(session.stats.roundTimings)}>
+                                                                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                                                                    <XAxis dataKey="name" fontSize={12} />
+                                                                    <YAxis unit="s" fontSize={12} />
+                                                                    <Tooltip
+                                                                        formatter={(value) => [`${value}s`, 'Reaction Time']}
+                                                                        contentStyle={{ borderRadius: '0.5rem' }}
+                                                                    />
+                                                                    <Bar
+                                                                        dataKey="time"
+                                                                        fill="#8b5cf6"
+                                                                        radius={[4, 4, 0, 0]}
+                                                                    />
+                                                                </BarChart>
+                                                            </ResponsiveContainer>
+                                                        </div>
+                                                        <div className="grid grid-cols-5 gap-2 mt-2">
+                                                            {session.stats.roundTimings.map((r, rIdx) => (
+                                                                <div
+                                                                    key={rIdx}
+                                                                    className={`text-center p-2 rounded-lg ${r.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
+                                                                >
+                                                                    <div className="font-bold">{rIdx + 1}/{session.stats.roundTimings.length}</div>
+                                                                    <div className="text-sm">{(r.reactionTime / 1000).toFixed(2)}s</div>
+                                                                    <div className="text-xs">{r.correct ? '✓' : '✗'}</div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </React.Fragment>
+                                );
+                            })}
                             {stats.totalGames === 0 && (
                                 <tr>
                                     <td colSpan="6" className="p-8 text-center text-gray-400 italic">
