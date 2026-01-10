@@ -52,8 +52,11 @@ export default function Onboarding() {
         }
     };
 
+    // Common input classes with dark mode support
+    const inputClasses = "p-3 rounded-xl border border-gray-200 dark:border-slate-600 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400";
+
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-900 dark:to-slate-800">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -67,12 +70,12 @@ export default function Onboarding() {
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <div className="flex flex-col gap-2">
-                            <label className="font-bold text-gray-700 text-sm uppercase tracking-wide">Child's Name</label>
+                            <label className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide">Child's Name</label>
                             <input
                                 required
                                 type="text"
                                 placeholder="e.g. Alex"
-                                className="p-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all bg-gray-50"
+                                className={inputClasses}
                                 value={formData.childName}
                                 onChange={e => setFormData({ ...formData, childName: e.target.value })}
                             />
@@ -80,21 +83,21 @@ export default function Onboarding() {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="flex flex-col gap-2">
-                                <label className="font-bold text-gray-700 text-sm uppercase tracking-wide">Age</label>
+                                <label className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide">Age</label>
                                 <input
                                     required
                                     type="number"
                                     min="2" max="10"
-                                    className="p-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all bg-gray-50"
+                                    className={inputClasses}
                                     value={formData.age}
                                     onChange={e => setFormData({ ...formData, age: e.target.value })}
                                 />
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label className="font-bold text-gray-700 text-sm uppercase tracking-wide">Gender</label>
+                                <label className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide">Gender</label>
                                 <select
                                     required
-                                    className="p-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all bg-gray-50"
+                                    className={inputClasses}
                                     value={formData.gender}
                                     onChange={e => setFormData({ ...formData, gender: e.target.value })}
                                 >
@@ -107,11 +110,11 @@ export default function Onboarding() {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="font-bold text-gray-700 text-sm uppercase tracking-wide">Date of Birth</label>
+                            <label className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide">Date of Birth</label>
                             <input
                                 required
                                 type="date"
-                                className="p-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all bg-gray-50"
+                                className={inputClasses}
                                 value={formData.dob}
                                 onChange={e => setFormData({ ...formData, dob: e.target.value })}
                             />
@@ -130,3 +133,4 @@ export default function Onboarding() {
         </div>
     );
 }
+
