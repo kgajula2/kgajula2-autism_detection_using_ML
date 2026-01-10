@@ -113,7 +113,7 @@ export const Dashboard = () => {
                     <ArrowLeft size={24} /> Back
                 </Button>
                 <div className="flex items-center gap-3">
-                    <img src={MASCOT.happyGif} alt="Ellie" className="w-12 h-12" />
+                    <span className="text-4xl">{MASCOT.emoji}</span>
                     <Title className="text-right text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
                         {childName}'s Progress
                     </Title>

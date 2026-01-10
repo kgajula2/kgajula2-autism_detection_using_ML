@@ -60,7 +60,7 @@ export const EMOTION_MIRROR_CONFIG = {
 
 // ============================================================================
 // ROUTINE SEQUENCER GAME
-// Uses emoji GIFs from CDN for universal understanding (no text needed)
+// Uses native emojis (universally supported, no loading required)
 // ============================================================================
 import { Sparkles, Utensils, Droplets, Smile as SmileIcon, Hand } from 'lucide-react';
 
@@ -70,10 +70,10 @@ export const ROUTINES = [
         title: '🦷 Brushing Teeth',
         emoji: '🦷',
         steps: [
-            { id: 'r1-s1', label: '🪥', emoji: '🪥', color: 'bg-blue-200', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1faa5/512.gif' },
-            { id: 'r1-s2', label: '💧', emoji: '💧', color: 'bg-blue-300', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4a7/512.gif' },
-            { id: 'r1-s3', label: '😁', emoji: '😁', color: 'bg-blue-400', iconName: 'Smile', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f601/512.gif' },
-            { id: 'r1-s4', label: '🚿', emoji: '🚿', color: 'bg-blue-500', iconName: 'Droplets', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6bf/512.gif' },
+            { id: 'r1-s1', emoji: '🪥', color: 'bg-blue-200', iconName: 'Hand' },
+            { id: 'r1-s2', emoji: '💧', color: 'bg-blue-300', iconName: 'Sparkles' },
+            { id: 'r1-s3', emoji: '😁', color: 'bg-blue-400', iconName: 'Smile' },
+            { id: 'r1-s4', emoji: '🚿', color: 'bg-blue-500', iconName: 'Droplets' },
         ]
     },
     {
@@ -81,10 +81,10 @@ export const ROUTINES = [
         title: '🍳 Eating Breakfast',
         emoji: '🍳',
         steps: [
-            { id: 'r2-s1', label: '🧼', emoji: '🧼', color: 'bg-green-200', iconName: 'Droplets', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9fc/512.gif' },
-            { id: 'r2-s2', label: '🪑', emoji: '🪑', color: 'bg-green-300', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1fa91/512.gif' },
-            { id: 'r2-s3', label: '🍽️', emoji: '🍽️', color: 'bg-green-400', iconName: 'Utensils', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f37d_fe0f/512.gif' },
-            { id: 'r2-s4', label: '✨', emoji: '✨', color: 'bg-green-500', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.gif' },
+            { id: 'r2-s1', emoji: '🧼', color: 'bg-green-200', iconName: 'Droplets' },
+            { id: 'r2-s2', emoji: '🪑', color: 'bg-green-300', iconName: 'Hand' },
+            { id: 'r2-s3', emoji: '🍽️', color: 'bg-green-400', iconName: 'Utensils' },
+            { id: 'r2-s4', emoji: '✨', color: 'bg-green-500', iconName: 'Sparkles' },
         ]
     },
     {
@@ -92,10 +92,10 @@ export const ROUTINES = [
         title: '🌙 Going to Bed',
         emoji: '🌙',
         steps: [
-            { id: 'r3-s1', label: '🛁', emoji: '🛁', color: 'bg-purple-200', iconName: 'Bath', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6c1/512.gif' },
-            { id: 'r3-s2', label: '👕', emoji: '👕', color: 'bg-purple-300', iconName: 'Shirt', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f455/512.gif' },
-            { id: 'r3-s3', label: '📖', emoji: '📖', color: 'bg-purple-400', iconName: 'Book', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4d6/512.gif' },
-            { id: 'r3-s4', label: '🛏️', emoji: '🛏️', color: 'bg-purple-500', iconName: 'Bed', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6cf_fe0f/512.gif' },
+            { id: 'r3-s1', emoji: '🛁', color: 'bg-purple-200', iconName: 'Bath' },
+            { id: 'r3-s2', emoji: '👕', color: 'bg-purple-300', iconName: 'Shirt' },
+            { id: 'r3-s3', emoji: '📖', color: 'bg-purple-400', iconName: 'Book' },
+            { id: 'r3-s4', emoji: '🛏️', color: 'bg-purple-500', iconName: 'Bed' },
         ]
     },
     {
@@ -103,10 +103,10 @@ export const ROUTINES = [
         title: '🎒 Going to School',
         emoji: '🎒',
         steps: [
-            { id: 'r4-s1', label: '🌅', emoji: '🌅', color: 'bg-orange-200', iconName: 'Sun', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f305/512.gif' },
-            { id: 'r4-s2', label: '👕', emoji: '👕', color: 'bg-orange-300', iconName: 'Shirt', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f455/512.gif' },
-            { id: 'r4-s3', label: '🎒', emoji: '🎒', color: 'bg-orange-400', iconName: 'Backpack', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f392/512.gif' },
-            { id: 'r4-s4', label: '🚌', emoji: '🚌', color: 'bg-orange-500', iconName: 'Bus', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f68c/512.gif' },
+            { id: 'r4-s1', emoji: '🌅', color: 'bg-orange-200', iconName: 'Sun' },
+            { id: 'r4-s2', emoji: '👕', color: 'bg-orange-300', iconName: 'Shirt' },
+            { id: 'r4-s3', emoji: '🎒', color: 'bg-orange-400', iconName: 'Backpack' },
+            { id: 'r4-s4', emoji: '🚌', color: 'bg-orange-500', iconName: 'Bus' },
         ]
     },
     {
@@ -114,10 +114,10 @@ export const ROUTINES = [
         title: '🧴 Washing Hands',
         emoji: '🧴',
         steps: [
-            { id: 'r5-s1', label: '💧', emoji: '💧', color: 'bg-cyan-200', iconName: 'Droplets', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4a7/512.gif' },
-            { id: 'r5-s2', label: '🧼', emoji: '🧼', color: 'bg-cyan-300', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9fc/512.gif' },
-            { id: 'r5-s3', label: '👏', emoji: '👏', color: 'bg-cyan-400', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f44f/512.gif' },
-            { id: 'r5-s4', label: '🧻', emoji: '🧻', color: 'bg-cyan-500', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9fb/512.gif' },
+            { id: 'r5-s1', emoji: '💧', color: 'bg-cyan-200', iconName: 'Droplets' },
+            { id: 'r5-s2', emoji: '🧼', color: 'bg-cyan-300', iconName: 'Sparkles' },
+            { id: 'r5-s3', emoji: '👏', color: 'bg-cyan-400', iconName: 'Hand' },
+            { id: 'r5-s4', emoji: '🧻', color: 'bg-cyan-500', iconName: 'Sparkles' },
         ]
     },
     {
@@ -125,10 +125,10 @@ export const ROUTINES = [
         title: '🎮 Playtime',
         emoji: '🎮',
         steps: [
-            { id: 'r6-s1', label: '📺', emoji: '📺', color: 'bg-pink-200', iconName: 'Star', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4fa/512.gif' },
-            { id: 'r6-s2', label: '🧸', emoji: '🧸', color: 'bg-pink-300', iconName: 'Smile', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9f8/512.gif' },
-            { id: 'r6-s3', label: '🎨', emoji: '🎨', color: 'bg-pink-400', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f3a8/512.gif' },
-            { id: 'r6-s4', label: '🧹', emoji: '🧹', color: 'bg-pink-500', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9f9/512.gif' },
+            { id: 'r6-s1', emoji: '📺', color: 'bg-pink-200', iconName: 'Star' },
+            { id: 'r6-s2', emoji: '🧸', color: 'bg-pink-300', iconName: 'Smile' },
+            { id: 'r6-s3', emoji: '🎨', color: 'bg-pink-400', iconName: 'Sparkles' },
+            { id: 'r6-s4', emoji: '🧹', color: 'bg-pink-500', iconName: 'Hand' },
         ]
     },
     {
@@ -136,10 +136,10 @@ export const ROUTINES = [
         title: '🍎 Snack Time',
         emoji: '🍎',
         steps: [
-            { id: 'r7-s1', label: '🧼', emoji: '🧼', color: 'bg-red-200', iconName: 'Droplets', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9fc/512.gif' },
-            { id: 'r7-s2', label: '🍎', emoji: '🍎', color: 'bg-red-300', iconName: 'Utensils', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f34e/512.gif' },
-            { id: 'r7-s3', label: '🥛', emoji: '🥛', color: 'bg-red-400', iconName: 'Sparkles', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f95b/512.gif' },
-            { id: 'r7-s4', label: '✨', emoji: '✨', color: 'bg-red-500', iconName: 'Hand', gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.gif' },
+            { id: 'r7-s1', emoji: '🧼', color: 'bg-red-200', iconName: 'Droplets' },
+            { id: 'r7-s2', emoji: '🍎', color: 'bg-red-300', iconName: 'Utensils' },
+            { id: 'r7-s3', emoji: '🥛', color: 'bg-red-400', iconName: 'Sparkles' },
+            { id: 'r7-s4', emoji: '✨', color: 'bg-red-500', iconName: 'Hand' },
         ]
     }
 ];
@@ -219,14 +219,15 @@ export const ML_FEATURE_MAPPING = {
 
 // ============================================================================
 // KID-FRIENDLY MASCOT & UI ELEMENTS
+// Using native emojis for universal compatibility
 // ============================================================================
 export const MASCOT = {
     name: 'Ellie',
-    character: '🐘',
-    wavingGif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f418/512.gif',
-    celebrateGif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.gif',
-    thinkingGif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f914/512.gif',
-    happyGif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f60a/512.gif',
+    emoji: '🐘',
+    waving: '🐘👋',
+    celebrate: '🎉',
+    thinking: '🤔',
+    happy: '😊',
 };
 
 export const CELEBRATION_EMOJIS = ['🎉', '⭐', '🌟', '✨', '🎊', '🏆', '🥳'];

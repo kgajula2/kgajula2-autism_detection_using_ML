@@ -149,11 +149,7 @@ export default function RoutineSequencerGame() {
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto p-4">
                 {/* Mascot Helper */}
                 <div className="flex items-center gap-3 mb-4">
-                    <img
-                        src={MASCOT.wavingGif}
-                        alt="Ellie the Elephant"
-                        className="w-16 h-16 animate-bounce"
-                    />
+                    <span className="text-5xl animate-bounce">{MASCOT.emoji}</span>
                     <div className="bg-white/80 backdrop-blur px-4 py-2 rounded-2xl shadow-sm">
                         <span className="text-gray-600 font-medium">
                             {!currentRoutine ? "Hi! Pick a routine! 👆" : "Put them in order! 🎯"}
@@ -247,12 +243,7 @@ export default function RoutineSequencerGame() {
                                                     layoutId={slot.id}
                                                     className={clsx("w-full h-full flex items-center justify-center gap-4 font-bold text-gray-700 shadow-sm rounded-xl", slot.color)}
                                                 >
-                                                    {/* Use GIF if available, otherwise emoji */}
-                                                    {slot.gif ? (
-                                                        <img src={slot.gif} alt={slot.emoji} className="w-12 h-12" />
-                                                    ) : (
-                                                        <span className="text-4xl">{slot.emoji}</span>
-                                                    )}
+                                                    <span className="text-4xl">{slot.emoji}</span>
                                                 </motion.div>
                                             )}
                                         </div>
@@ -276,12 +267,7 @@ export default function RoutineSequencerGame() {
                                                 step.color
                                             )}
                                         >
-                                            {/* Use animated GIF if available */}
-                                            {step.gif ? (
-                                                <img src={step.gif} alt={step.emoji} className="w-16 h-16" />
-                                            ) : (
-                                                <span className="text-5xl">{step.emoji}</span>
-                                            )}
+                                            <span className="text-5xl">{step.emoji}</span>
                                         </motion.div>
                                     ))}
                                 </div>
