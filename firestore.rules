@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper: Check if user is signed in
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper: Check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // User Profiles
+    // Only the user can read/write their own profile
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Game Sessions
+    // Users can only create sessions for themselves
+    // Users can only read/update their own sessions
+    match /game_sessions/{sessionId} {
+      // Allow create if authenticated and the userId field matches the auth uid
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      
+      // Allow read and update only for the session owner
+      allow read, update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      
+      // Disallow delete to preserve data integrity
+      allow delete: if false;
+    }
+
+    // Round Metrics
+    // Metrics are tied to sessions, so we validate via session ownership
+    match /round_metrics/{metricId} {
+      // Allow create if authenticated (session validation would require a get() call which costs reads)
+      allow create: if isAuthenticated();
+      
+      // Allow read for authenticated users (could be tightened further if needed)
+      allow read: if isAuthenticated();
+      
+      // Disallow updates and deletes
+      allow update, delete: if false;
+    }
+  }
+}

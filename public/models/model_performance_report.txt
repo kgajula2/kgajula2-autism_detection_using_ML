@@ -1,0 +1,24 @@
+NeuroStep Hierarchical Model System Report
+==========================================
+
+System Architecture:
+1. Level-1: Independent Game Models (RF/LR) -> Behavioral Feature Subsets
+2. Level-2: Global Aggregator (LR) -> Game Risks + Demographics
+
+GLOBAL PERFORMANCE (Level 2):
+                 precision    recall  f1-score   support
+
+        No Risk       0.95      0.93      0.94       767
+Risk Identified       0.85      0.89      0.87       337
+
+       accuracy                           0.92      1104
+      macro avg       0.90      0.91      0.90      1104
+   weighted avg       0.92      0.92      0.92      1104
+
+
+------------------------------------------------
+LEVEL 1 COMPONENT PERFORMANCE:
+COLOR_FOCUS: Acc=0.7745, Prec=0.693, Rec=0.4688
+ROUTINE_SEQUENCER: Acc=0.7672, Prec=0.5922, Rec=0.7626
+EMOTION_MIRROR: Acc=0.8134, Prec=0.7529, Rec=0.5786
+OBJECT_HUNT: Acc=0.6884, Prec=0.491, Rec=0.5668
