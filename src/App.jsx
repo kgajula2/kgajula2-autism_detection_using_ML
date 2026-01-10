@@ -4,6 +4,7 @@ import { MainLayout } from "./components/layout/MainLayout";
 import { Login } from "./pages/Login";
 import { LandingPage } from "./pages/LandingPage";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
+import { SettingsProvider } from "./contexts/SettingsContext";
 
 // Lazy load heavy components to reduce initial bundle size
 const Dashboard = lazy(() => import("./pages/Dashboard").then(m => ({ default: m.Dashboard })));
@@ -15,6 +16,15 @@ const ColorFocusGame = lazy(() => import("./games/color-focus/ColorFocusGame"));
 const RoutineSequencerGame = lazy(() => import("./games/routine-sequencer/RoutineSequencerGame"));
 const EmotionMirrorGame = lazy(() => import("./games/emotion-mirror/EmotionMirrorGame"));
 const ObjectIdGame = lazy(() => import("./games/object-id/ObjectIdGame"));
+
+// Lazy load new pages
+const Profile = lazy(() => import("./pages/Profile"));
+const Help = lazy(() => import("./pages/Help"));
+const About = lazy(() => import("./pages/About"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback component
 function LoadingFallback() {
@@ -30,69 +40,114 @@ function LoadingFallback() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
+    <SettingsProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<MainLayout />}>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
 
-          {/* Protected Routes - Wrapped in Suspense for lazy loading */}
-          <Route path="/onboarding" element={
-            <ProtectedRoute>
+            {/* Public Info Pages */}
+            <Route path="/about" element={
               <Suspense fallback={<LoadingFallback />}>
-                <Onboarding />
+                <About />
               </Suspense>
-            </ProtectedRoute>
-          } />
+            } />
+            <Route path="/help" element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Help />
+              </Suspense>
+            } />
+            <Route path="/privacy" element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Privacy />
+              </Suspense>
+            } />
+            <Route path="/terms" element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Terms />
+              </Suspense>
+            } />
+            <Route path="/contact" element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Contact />
+              </Suspense>
+            } />
 
-          <Route path="/home" element={
-            <ProtectedRoute>
-              <Suspense fallback={<LoadingFallback />}>
-                <GameSelection />
-              </Suspense>
-            </ProtectedRoute>
-          } />
+            {/* Protected Routes - Wrapped in Suspense for lazy loading */}
+            <Route path="/onboarding" element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Onboarding />
+                </Suspense>
+              </ProtectedRoute>
+            } />
 
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Suspense fallback={<LoadingFallback />}>
-                <Dashboard />
-              </Suspense>
-            </ProtectedRoute>
-          } />
+            <Route path="/home" element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <GameSelection />
+                </Suspense>
+              </ProtectedRoute>
+            } />
 
-          {/* Game Routes - Lazy loaded for performance */}
-          <Route path="/game/color-focus" element={
-            <ProtectedRoute>
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Dashboard />
+                </Suspense>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Profile />
+                </Suspense>
+              </ProtectedRoute>
+            } />
+
+            {/* Game Routes - Lazy loaded for performance */}
+            <Route path="/game/color-focus" element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <ColorFocusGame />
+                </Suspense>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/routine-sequencer" element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <RoutineSequencerGame />
+                </Suspense>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/emotion-mirror" element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <EmotionMirrorGame />
+                </Suspense>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/object-id" element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <ObjectIdGame />
+                </Suspense>
+              </ProtectedRoute>
+            } />
+
+            {/* 404 Catch-all */}
+            <Route path="*" element={
               <Suspense fallback={<LoadingFallback />}>
-                <ColorFocusGame />
+                <NotFound />
               </Suspense>
-            </ProtectedRoute>
-          } />
-          <Route path="/game/routine-sequencer" element={
-            <ProtectedRoute>
-              <Suspense fallback={<LoadingFallback />}>
-                <RoutineSequencerGame />
-              </Suspense>
-            </ProtectedRoute>
-          } />
-          <Route path="/game/emotion-mirror" element={
-            <ProtectedRoute>
-              <Suspense fallback={<LoadingFallback />}>
-                <EmotionMirrorGame />
-              </Suspense>
-            </ProtectedRoute>
-          } />
-          <Route path="/game/object-id" element={
-            <ProtectedRoute>
-              <Suspense fallback={<LoadingFallback />}>
-                <ObjectIdGame />
-              </Suspense>
-            </ProtectedRoute>
-          } />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            } />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </SettingsProvider>
   );
 }
+

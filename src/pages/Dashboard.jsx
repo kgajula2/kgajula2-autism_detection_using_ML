@@ -5,12 +5,14 @@ import { Button } from '../components/ui/Button';
 import { analyzeUserPerformance } from '../services/ml';
 import { fetchUserGameStats, getUserProfile } from '../services/db';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Activity, Brain, TrendingUp, AlertTriangle, CheckCircle, X, ArrowLeft, Gamepad, Clock, Target, ChevronDown, ChevronUp } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
+import { Activity, Brain, TrendingUp, AlertTriangle, CheckCircle, X, ArrowLeft, Gamepad, Clock, Target, ChevronDown, ChevronUp, Flame, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/userStore';
 import { default as MLExplainer } from '../components/ml/MLExplainer';
 import { MASCOT } from '../config/gameConfig';
+import { calculateStreak, getAchievementProgress } from '../config/achievements';
+import Footer from '../components/layout/Footer';
 
 export const Dashboard = () => {
     const navigate = useNavigate();
@@ -27,6 +29,9 @@ export const Dashboard = () => {
     });
     const [showMLModal, setShowMLModal] = useState(false);
     const [mlError, setMlError] = useState(null);
+    const [streak, setStreak] = useState(0);
+    const [achievements, setAchievements] = useState({ unlocked: 0, total: 13, achievements: [] });
+    const [progressData, setProgressData] = useState([]);
 
     useEffect(() => {
         const loadRealData = async () => {
@@ -54,7 +59,50 @@ export const Dashboard = () => {
                     gameBreakdown: sessions.slice(0, 10) // Recent 10
                 });
 
-                // 4. Run Analysis
+                // 4. Calculate Streak
+                const currentStreak = calculateStreak(sessions);
+                setStreak(currentStreak);
+
+                // 5. Calculate Achievements
+                const achStats = {
+                    totalGames: sessions.length,
+                    hasPerfectGame: sessions.some(s => (s.stats?.mistakes || 0) === 0 && s.score > 0),
+                    averageAccuracy: sessions.length > 0
+                        ? sessions.reduce((acc, s) => acc + (s.score || 0), 0) / sessions.length
+                        : 0,
+                    streak: currentStreak,
+                    gamesPlayed: [...new Set(sessions.map(s => s.gameId))]
+                };
+                const achProgress = getAchievementProgress(achStats);
+                setAchievements(achProgress);
+
+                // 6. Build Progress Over Time Data (last 7 days)
+                const last7Days = [];
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    date.setHours(0, 0, 0, 0);
+                    const dateStr = date.toLocaleDateString('en-US', { weekday: 'short' });
+
+                    const daySessions = sessions.filter(s => {
+                        const sDate = new Date(s.startedAt?.toDate?.() || s.startedAt);
+                        sDate.setHours(0, 0, 0, 0);
+                        return sDate.getTime() === date.getTime();
+                    });
+
+                    const avgScore = daySessions.length > 0
+                        ? Math.round(daySessions.reduce((acc, s) => acc + (s.score || 0), 0) / daySessions.length)
+                        : 0;
+
+                    last7Days.push({
+                        day: dateStr,
+                        games: daySessions.length,
+                        score: avgScore
+                    });
+                }
+                setProgressData(last7Days);
+
+                // 7. Run Analysis
                 try {
                     const result = await analyzeUserPerformance(aggregated);
                     setAnalysis(result);
@@ -121,24 +169,43 @@ export const Dashboard = () => {
             </div>
 
             {/* Top Stats Cards - Child Friendly Shapes */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
                 {/* Games Counter */}
                 <motion.div whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-blue-400 to-cyan-300 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40">
                     <Gamepad className="absolute top-4 right-4 opacity-30 w-24 h-24" />
                     <div className="h-full flex flex-col justify-between relative z-10">
-                        <span className="text-xl font-bold opacity-90">Games Played</span>
-                        <span className="text-7xl font-black drop-shadow-md">{stats.totalGames}</span>
+                        <span className="text-lg font-bold opacity-90">Games Played</span>
+                        <span className="text-6xl font-black drop-shadow-md">{stats.totalGames}</span>
                     </div>
                 </motion.div>
 
-                {/* Engagement Status */}
-                <motion.div whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-green-400 to-emerald-300 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40">
-                    <TrendingUp className="absolute top-4 right-4 opacity-30 w-24 h-24" />
+                {/* Daily Streak */}
+                <motion.div whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-orange-400 to-red-400 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40">
+                    <Flame className="absolute top-4 right-4 opacity-30 w-24 h-24" />
                     <div className="h-full flex flex-col justify-between relative z-10">
-                        <span className="text-xl font-bold opacity-90">Activity Level</span>
-                        <span className="text-5xl font-black drop-shadow-md mt-2">
-                            {stats.totalGames > 0 ? 'Super!' : 'Ready?'}
+                        <span className="text-lg font-bold opacity-90">🔥 Daily Streak</span>
+                        <div className="flex items-end gap-2">
+                            <span className="text-6xl font-black drop-shadow-md">{streak}</span>
+                            <span className="text-2xl font-bold opacity-80 mb-2">days</span>
+                        </div>
+                        <span className="text-white/80 text-xs">
+                            {streak === 0 ? 'Play today to start!' : streak >= 7 ? '🌟 Amazing consistency!' : 'Keep it up!'}
+                        </span>
+                    </div>
+                </motion.div>
+
+                {/* Achievements */}
+                <motion.div whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-yellow-400 to-amber-400 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40">
+                    <Award className="absolute top-4 right-4 opacity-30 w-24 h-24" />
+                    <div className="h-full flex flex-col justify-between relative z-10">
+                        <span className="text-lg font-bold opacity-90">🏆 Achievements</span>
+                        <div className="flex items-end gap-2">
+                            <span className="text-6xl font-black drop-shadow-md">{achievements.unlocked}</span>
+                            <span className="text-2xl font-bold opacity-80 mb-2">/ {achievements.total}</span>
+                        </div>
+                        <span className="text-white/80 text-xs">
+                            {achievements.percentage}% unlocked
                         </span>
                     </div>
                 </motion.div>
@@ -222,6 +289,57 @@ export const Dashboard = () => {
                     </div>
                 </Card>
             </div>
+
+            {/* Progress Over Time Chart */}
+            <Card glass className="shadow-xl rounded-[2rem] border-white/50 p-6">
+                <h3 className="text-2xl font-black text-gray-700 mb-6 flex items-center gap-2">
+                    <TrendingUp size={24} className="text-green-500" />
+                    Progress Over Time (Last 7 Days)
+                </h3>
+                <div className="h-[250px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={progressData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                            <XAxis dataKey="day" stroke="#6b7280" fontSize={12} />
+                            <YAxis stroke="#6b7280" fontSize={12} />
+                            <Tooltip
+                                contentStyle={{
+                                    borderRadius: '1rem',
+                                    border: 'none',
+                                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                                    background: 'white'
+                                }}
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="games"
+                                stroke="#8b5cf6"
+                                strokeWidth={3}
+                                dot={{ fill: '#8b5cf6', strokeWidth: 2 }}
+                                name="Games Played"
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="score"
+                                stroke="#10b981"
+                                strokeWidth={3}
+                                dot={{ fill: '#10b981', strokeWidth: 2 }}
+                                name="Avg Score"
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+                <div className="flex justify-center gap-6 mt-4">
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-purple-500" />
+                        <span className="text-sm text-gray-600">Games Played</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-green-500" />
+                        <span className="text-sm text-gray-600">Avg Score</span>
+                    </div>
+                </div>
+            </Card>
 
             {/* Detailed Game History with Expandable Rows */}
             <Card glass className="shadow-xl flex flex-col">
@@ -404,6 +522,6 @@ export const Dashboard = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 };

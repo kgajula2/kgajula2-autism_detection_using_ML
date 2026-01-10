@@ -12,6 +12,7 @@ import { analyzeUserPerformance } from '../../services/ml';
 import { getAuth } from 'firebase/auth';
 import { generateUniqueId } from '../../utils/utils';
 import { COLORS, COLOR_FOCUS_CONFIG } from '../../config/gameConfig';
+import { soundService } from '../../services/sound';
 
 const { GAME_DURATION, SPAWN_RATE, BUBBLE_SIZE_MIN, BUBBLE_SIZE_MAX, BUBBLE_SPEED_BASE, BUBBLE_SPEED_VARIANCE, SPEED_INCREASE_PER_ROUND } = COLOR_FOCUS_CONFIG;
 
@@ -130,9 +131,11 @@ export default function ColorFocusGame() {
         if (isCorrect) {
             incrementScore(10);
             latenciesRef.current.push(lifespan);
+            soundService.pop(); // Play pop sound
         } else {
             incrementScore(-5);
             setMistakes(m => m + 1);
+            soundService.error(); // Play error sound
         }
     };
 
