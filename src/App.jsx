@@ -15,8 +15,12 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 // Lazy load game components (largest chunks)
 const ColorFocusGame = lazy(() => import("./games/color-focus/ColorFocusGame"));
 const RoutineSequencerGame = lazy(() => import("./games/routine-sequencer/RoutineSequencerGame"));
-const EmotionMirrorGame = lazy(() => import("./games/emotion-mirror/EmotionMirrorGame"));
 const ObjectIdGame = lazy(() => import("./games/object-id/ObjectIdGame"));
+// New toddler-friendly games
+const ShapeSorterGame = lazy(() => import("./games/shape-sorter/ShapeSorterGame"));
+const FollowHandGame = lazy(() => import("./games/follow-hand/FollowHandGame"));
+const MusicTapGame = lazy(() => import("./games/music-tap/MusicTapGame"));
+const PeekaBooGame = lazy(() => import("./games/peek-a-boo/PeekaBooGame"));
 
 // Lazy load new pages
 const Profile = lazy(() => import("./pages/Profile"));
@@ -128,20 +132,50 @@ export default function App() {
                 </GameErrorBoundary>
               </ProtectedRoute>
             } />
-            <Route path="/game/emotion-mirror" element={
-              <ProtectedRoute>
-                <GameErrorBoundary gameName="Emotion Mirror">
-                  <Suspense fallback={<LoadingFallback />}>
-                    <EmotionMirrorGame />
-                  </Suspense>
-                </GameErrorBoundary>
-              </ProtectedRoute>
-            } />
             <Route path="/game/object-id" element={
               <ProtectedRoute>
                 <GameErrorBoundary gameName="Object ID">
                   <Suspense fallback={<LoadingFallback />}>
                     <ObjectIdGame />
+                  </Suspense>
+                </GameErrorBoundary>
+              </ProtectedRoute>
+            } />
+
+
+            {/* New Toddler-Friendly Games */}
+            <Route path="/game/shape-sorter" element={
+              <ProtectedRoute>
+                <GameErrorBoundary gameName="Shape Sorter">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ShapeSorterGame />
+                  </Suspense>
+                </GameErrorBoundary>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/follow-hand" element={
+              <ProtectedRoute>
+                <GameErrorBoundary gameName="Follow the Hand">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <FollowHandGame />
+                  </Suspense>
+                </GameErrorBoundary>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/music-tap" element={
+              <ProtectedRoute>
+                <GameErrorBoundary gameName="Music & Tap">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <MusicTapGame />
+                  </Suspense>
+                </GameErrorBoundary>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/peek-a-boo" element={
+              <ProtectedRoute>
+                <GameErrorBoundary gameName="Peek-a-Boo">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <PeekaBooGame />
                   </Suspense>
                 </GameErrorBoundary>
               </ProtectedRoute>
@@ -156,7 +190,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </SettingsProvider>
+    </SettingsProvider >
   );
 }
 
