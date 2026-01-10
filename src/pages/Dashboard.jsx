@@ -143,7 +143,7 @@ export const Dashboard = () => {
                     </div>
                 </motion.div>
 
-                {/* AI Card */}
+                {/* AI Card - Behavioral Analysis */}
                 <motion.div
                     whileHover={{ scale: 1.02 }}
                     onClick={() => setShowMLModal(true)}
@@ -151,14 +151,24 @@ export const Dashboard = () => {
                 >
                     <Brain className="absolute top-4 right-4 opacity-30 w-24 h-24 group-hover:scale-110 transition-transform" />
                     <div className="h-full flex flex-col justify-between relative z-10">
-                        <span className="text-xl font-bold opacity-90 flex items-center gap-2">
-                            Unique Pattern
-                            <span className="bg-white/20 text-xs px-2 py-1 rounded-full">AI</span>
-                        </span>
-                        <div className="flex items-end gap-2">
-                            <span className="text-7xl font-black drop-shadow-md">{getRiskPercentage()}<span className="text-4xl">%</span></span>
+                        <div>
+                            <span className="text-lg font-bold opacity-90 flex items-center gap-2">
+                                Behavioral Analysis
+                                <span className="bg-white/20 text-xs px-2 py-1 rounded-full">AI</span>
+                            </span>
+                            <p className="text-white/70 text-xs mt-1">Based on gameplay patterns</p>
                         </div>
-                        <span className="text-white/80 text-sm font-medium underline decoration-white/50">Tap for details</span>
+                        <div className="flex items-end gap-2 my-2">
+                            <span className="text-6xl font-black drop-shadow-md">{getRiskPercentage()}<span className="text-3xl">%</span></span>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <span className="text-white/90 text-xs">
+                                {getRiskPercentage() < 20 ? '✅ Low concern - Great patterns!' :
+                                    getRiskPercentage() < 50 ? '📊 Moderate - Keep observing' :
+                                        '⚠️ Consider professional consultation'}
+                            </span>
+                            <span className="text-white/80 text-sm font-medium underline decoration-white/50">Tap to see how it works →</span>
+                        </div>
                     </div>
                 </motion.div>
             </div>
