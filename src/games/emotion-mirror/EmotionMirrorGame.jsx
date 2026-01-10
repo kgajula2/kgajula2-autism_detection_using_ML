@@ -8,10 +8,11 @@ import { Button } from '../../components/ui/Button';
 import { GameShell } from '../../components/game/GameShell';
 import { logRoundMetrics, createGameSession, endGameSession } from '../../services/db';
 import { analyzeUserPerformance } from '../../services/ml';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Camera } from 'lucide-react';
 import { getAuth } from 'firebase/auth';
 import { EMOTION_TARGETS, EXPRESSION_THRESHOLDS, EMOTION_MIRROR_CONFIG } from '../../config/gameConfig';
+import GameTutorial, { TutorialConfigs } from '../../components/game/GameTutorial';
 
 const { MAX_ROUNDS, HOLD_TIME_REQUIRED } = EMOTION_MIRROR_CONFIG;
 
@@ -29,6 +30,7 @@ export default function EmotionMirrorGame() {
     const [sessionId, setSessionId] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [showTutorial, setShowTutorial] = useState(true);
 
     const stateRef = useRef({
         target: EMOTION_TARGETS[0],
@@ -197,6 +199,7 @@ export default function EmotionMirrorGame() {
             setRoundCount(0);
             setAnalysisResult(null);
             setCurrentTarget(EMOTION_TARGETS[0]);
+            setShowTutorial(true);
             stateRef.current = {
                 target: EMOTION_TARGETS[0],
                 holdTime: 0,
@@ -240,10 +243,23 @@ export default function EmotionMirrorGame() {
             headerColor="bg-purple-600"
         >
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto p-4 gap-6">
+
+                {/* Tutorial Overlay */}
+                <AnimatePresence>
+                    {gameState === 'ACTIVE' && showTutorial && (
+                        <div className="absolute inset-0 z-50 flex items-center justify-center">
+                            <GameTutorial
+                                {...TutorialConfigs.emotionMirror}
+                                onComplete={() => setShowTutorial(false)}
+                            />
+                        </div>
+                    )}
+                </AnimatePresence>
+
                 {/* Round Counter */}
                 {gameState === 'ACTIVE' && (
                     <div className="flex items-center gap-4">
-                        <div className="text-sm font-bold text-gray-500">Round {roundCount + 1} / {MAX_ROUNDS}</div>
+                        <div className="text-xl font-bold text-gray-400">Round {roundCount + 1} / {MAX_ROUNDS}</div>
                         <Card className="!p-3 bg-red-100/50 border-red-200">
                             <div className="flex items-center gap-2">
                                 <div className={`w-3 h-3 rounded-full ${streamActive ? 'bg-red-500 animate-pulse' : 'bg-gray-400'}`} />
@@ -254,16 +270,16 @@ export default function EmotionMirrorGame() {
                 )}
 
                 {gameState === 'IDLE' && (
-                    <Card glass className="p-10 text-center max-w-lg mt-10">
+                    <Card glass className="p-10 text-center max-w-lg mt-10 shadow-2xl">
                         <Title>Emotion Mirror</Title>
-                        <SubTitle className="mb-8">Mimic the facial expressions shown on screen!</SubTitle>
-                        <div className="text-left text-gray-600 mb-8 space-y-2">
-                            <p>1. Allow camera access.</p>
-                            <p>2. Hold the requested expression for 2 seconds.</p>
-                            <p>3. Smile, Look Surprised, or Stay Neutral.</p>
+                        <SubTitle className="mb-8 font-light text-2xl">Copy the face! 😐😊😮</SubTitle>
+                        <div className="flex gap-4 justify-center mb-10">
+                            <span className="text-6xl animate-bounce" style={{ animationDelay: '0s' }}>😊</span>
+                            <span className="text-6xl animate-bounce" style={{ animationDelay: '0.2s' }}>😮</span>
+                            <span className="text-6xl animate-bounce" style={{ animationDelay: '0.4s' }}>😐</span>
                         </div>
-                        <Button onClick={startGame} className="w-full text-lg">
-                            <Camera size={20} className="mr-2" /> Start Camera
+                        <Button onClick={startGame} className="w-full text-xl py-6 shadow-xl">
+                            <Camera size={28} className="mr-3" /> Start Camera
                         </Button>
                     </Card>
                 )}
@@ -271,44 +287,39 @@ export default function EmotionMirrorGame() {
                 {gameState === 'ACTIVE' && (
                     <div className="flex flex-col md:flex-row gap-8 items-center w-full">
                         {/* Video Feed */}
-                        <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full max-w-lg aspect-[4/3] bg-black">
+                        <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full max-w-lg aspect-[4/3] bg-black border-4 border-white dark:border-slate-600">
                             <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover transform -scale-x-100" />
 
-                            {/* Progress Bar */}
-                            <div className="absolute bottom-4 left-4 right-4 h-4 bg-gray-700/50 rounded-full backdrop-blur overflow-hidden">
+                            {/* Progress Bar - Large & Clear */}
+                            <div className="absolute bottom-6 left-6 right-6 h-6 bg-gray-700/50 rounded-full backdrop-blur overflow-hidden border-2 border-white/20">
                                 <motion.div
-                                    className="h-full bg-green-500"
+                                    className="h-full bg-gradient-to-r from-green-400 to-green-500"
                                     initial={{ width: 0 }}
                                     animate={{ width: `${holdProgress}%` }}
                                     transition={{ duration: 0.1 }}
                                 />
                             </div>
 
-                            {/* Debug Overlay */}
-                            <div className="absolute top-4 left-4 flex flex-col items-start gap-1">
-                                <div className="bg-black/50 text-white px-3 py-1 rounded-full text-xs backdrop-blur font-bold">
-                                    Detected: {detection.toUpperCase()}
-                                </div>
-                                <div className="bg-black/40 text-[10px] text-white p-2 rounded-lg backdrop-blur font-mono">
-                                    <div className="text-yellow-300 font-bold">👶 Child Mode</div>
-                                    <div>Wd: {debugInfo.mouthWidth?.toFixed(2)} / Cv: {debugInfo.smileCurve?.toFixed(3)}</div>
-                                    <div>Op: {debugInfo.mouthOpen?.toFixed(2)} / Lf: {debugInfo.browLift?.toFixed(2)}</div>
+                            {/* Detected Status Pill */}
+                            <div className="absolute top-6 right-6">
+                                <div className="bg-black/60 text-white px-4 py-2 rounded-full text-lg backdrop-blur font-bold border border-white/10">
+                                    {detection === 'none' ? '...' : detection === 'unknown' ? '?' : detection.toUpperCase()}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Target Display */}
+                        {/* Target Display - Massive for Kids */}
                         <div className="flex flex-col items-center justify-center gap-4 min-w-[200px]">
-                            <div className="text-gray-500 uppercase tracking-widest font-bold text-sm">Target</div>
                             <motion.div
                                 key={currentTarget.id}
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                className="bg-white rounded-3xl p-8 shadow-xl flex flex-col items-center gap-4"
+                                className="bg-white dark:bg-slate-800 rounded-[2rem] p-10 shadow-2xl flex flex-col items-center gap-6 border-4 border-purple-100 dark:border-purple-900/50"
                             >
-                                <currentTarget.icon size={80} className={currentTarget.color} />
-                                <h2 className={`text-3xl font-black ${currentTarget.color}`}>{currentTarget.label}</h2>
+                                <currentTarget.icon size={120} className={currentTarget.color} />
+                                {/* Large Emoji or Icon Representation */}
                             </motion.div>
+                            <h2 className={`text-4xl font-black tracking-wider ${currentTarget.color}`}>{currentTarget.label}</h2>
                         </div>
                     </div>
                 )}

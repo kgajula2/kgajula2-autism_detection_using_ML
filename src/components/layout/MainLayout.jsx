@@ -4,6 +4,7 @@ import { Button } from "../ui/Button";
 import { useState, useEffect } from "react";
 import { subscribeToAuthChanges, logoutUser } from "../../services/auth";
 import FeedbackButton from "./FeedbackButton";
+import AIChatbot from "./AIChatbot";
 import { User } from "lucide-react";
 
 const variants = {
@@ -89,6 +90,9 @@ export const MainLayout = () => {
 
             {/* Floating Feedback Button */}
             <FeedbackButton />
+
+            {/* AI Chatbot */}
+            <AIChatbot />
         </div>
     );
 };

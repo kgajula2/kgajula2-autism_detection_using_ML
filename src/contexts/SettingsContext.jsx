@@ -21,6 +21,7 @@ const defaultSettings = {
     // Game
     difficulty: 'medium', // easy, medium, hard
     showHints: true,
+    toddlerMode: true, // Specific mode for 3-5 year olds (simplified UI, tutorials)
 
     // Notifications
     dailyReminder: false,

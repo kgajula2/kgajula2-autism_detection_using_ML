@@ -177,14 +177,20 @@ function ResultsModal({
 
                             {/* Risk Score (only if actually played) */}
                             {!analysisResult?.notPlayed && analysisResult?.riskScore !== undefined && analysisResult?.riskScore !== null && (
-                                <div className="flex items-center justify-center gap-4 py-2">
-                                    <div className="text-center">
-                                        <div className="text-3xl font-black text-slate-800 dark:text-white">
-                                            {(analysisResult.riskScore * 100).toFixed(0)}%
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-center gap-4 py-2">
+                                        <div className="text-center">
+                                            <div className="text-3xl font-black text-slate-800 dark:text-white">
+                                                {(analysisResult.riskScore * 100).toFixed(0)}%
+                                            </div>
+                                            <div className="text-xs text-slate-500 dark:text-slate-300 uppercase tracking-wider">
+                                                Risk Indicator
+                                            </div>
                                         </div>
-                                        <div className="text-xs text-slate-500 dark:text-slate-300 uppercase tracking-wider">
-                                            Risk Indicator
-                                        </div>
+                                    </div>
+                                    {/* Medical Disclaimer */}
+                                    <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3 text-xs text-amber-800 dark:text-amber-200">
+                                        <strong>⚠️ Important:</strong> This is NOT a medical diagnosis. Scores are based on gameplay patterns only. Consult a healthcare professional for clinical evaluation.
                                     </div>
                                 </div>
                             )}

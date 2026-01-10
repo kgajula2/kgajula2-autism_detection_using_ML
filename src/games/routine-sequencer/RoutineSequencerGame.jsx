@@ -12,6 +12,7 @@ import { CheckCircle, XCircle, RefreshCcw } from 'lucide-react';
 import { getAuth } from 'firebase/auth';
 import { ROUTINES, ROUTINE_ICONS, MASCOT } from '../../config/gameConfig';
 import { shuffle } from '../../utils/utils';
+import GameTutorial, { TutorialConfigs } from '../../components/game/GameTutorial';
 
 export default function RoutineSequencerGame() {
     const { gameState, score, setGameState, incrementScore, resetGame } = useGameStore();
@@ -26,6 +27,18 @@ export default function RoutineSequencerGame() {
     const startTimeRef = useRef(0);
     const stepStartTimeRef = useRef(0);  // Track each step start time
     const stepTimingsRef = useRef([]);   // Store all step timings
+    const [showTutorial, setShowTutorial] = useState(true);
+
+    const handleReset = () => {
+        resetGame();
+        setFilledSlots([]);
+        setShuffledSteps([]);
+        setCurrentRoutine(null);
+        setAnalysisResult(null);
+        setSessionId(null);
+        setShowTutorial(true);
+        setFeedback(null);
+    };
 
     const selectRoutine = async (routine) => {
         // Prepare steps with resolved icons and GIFs
@@ -141,16 +154,6 @@ export default function RoutineSequencerGame() {
         }
     };
 
-    const handleReset = () => {
-        resetGame();
-        setCurrentRoutine(null);
-        setFilledSlots([]);
-        setShuffledSteps([]);
-        setFeedback(null);
-        setAnalysisResult(null);
-        setSessionId(null);
-    };
-
     const getStats = () => {
         const duration = startTimeRef.current
             ? ((Date.now() - startTimeRef.current) / 1000).toFixed(1)
@@ -234,7 +237,7 @@ export default function RoutineSequencerGame() {
                             ))}
                         </motion.div>
                     ) : (
-                        /* Game Screen - Using GIFs instead of icons */
+                        /* Game Screen */
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -243,11 +246,21 @@ export default function RoutineSequencerGame() {
                         >
                             {/* Left: Slots (Timeline) */}
                             <div className="flex flex-col gap-4 items-center">
-                                <h3 className="text-2xl font-bold text-gray-700 flex items-center gap-2">
-                                    <span className="text-3xl">{currentRoutine.emoji}</span>
-                                    {currentRoutine.title}
+                                {/* Tutorial Overlay */}
+                                <AnimatePresence>
+                                    {showTutorial && (
+                                        <GameTutorial
+                                            {...TutorialConfigs.routineSequencer}
+                                            title="Put in order!"
+                                            onComplete={() => setShowTutorial(false)}
+                                        />
+                                    )}
+                                </AnimatePresence>
+
+                                <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                                    <span className="text-4xl">{currentRoutine.emoji}</span>
                                 </h3>
-                                <div className="w-full max-w-sm bg-white/50 rounded-2xl p-6 min-h-[400px] flex flex-col gap-4 relative shadow-inner">
+                                <div className="w-full max-w-sm bg-white/50 dark:bg-slate-700/50 rounded-2xl p-6 min-h-[400px] flex flex-col gap-4 relative shadow-inner">
                                     {/* Error Overlay */}
                                     <AnimatePresence>
                                         {feedback === 'error' && (
@@ -263,15 +276,15 @@ export default function RoutineSequencerGame() {
                                     {filledSlots.map((slot, idx) => (
                                         <div
                                             key={idx}
-                                            className="w-full h-20 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-white/40 relative overflow-hidden transition-all"
+                                            className="w-full h-24 rounded-xl border-4 border-dashed border-gray-300 dark:border-slate-500 flex items-center justify-center bg-white/40 dark:bg-slate-800/40 relative overflow-hidden transition-all"
                                         >
-                                            <span className="absolute left-4 text-gray-300 font-bold text-3xl opacity-30">{idx + 1}</span>
+                                            <span className="absolute left-4 text-gray-300 dark:text-gray-600 font-bold text-6xl opacity-30 select-none">{idx + 1}</span>
                                             {slot && (
                                                 <motion.div
                                                     layoutId={slot.id}
                                                     className={clsx("w-full h-full flex items-center justify-center gap-4 font-bold text-gray-700 shadow-sm rounded-xl", slot.color)}
                                                 >
-                                                    <span className="text-4xl">{slot.emoji}</span>
+                                                    <span className="text-5xl drop-shadow-md">{slot.emoji}</span>
                                                 </motion.div>
                                             )}
                                         </div>
@@ -279,7 +292,7 @@ export default function RoutineSequencerGame() {
                                 </div>
                             </div>
 
-                            {/* Right: Options Pool - Using GIFs */}
+                            {/* Right: Options Pool */}
                             <div className="flex flex-col gap-6 justify-center">
                                 <SubTitle className="text-center mb-2">Tap the next step! 👇</SubTitle>
                                 <div className="grid grid-cols-2 gap-4">
@@ -295,7 +308,7 @@ export default function RoutineSequencerGame() {
                                                 step.color
                                             )}
                                         >
-                                            <span className="text-5xl">{step.emoji}</span>
+                                            <span className="text-6xl drop-shadow-md">{step.emoji}</span>
                                         </motion.div>
                                     ))}
                                 </div>

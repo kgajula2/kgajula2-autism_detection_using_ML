@@ -13,6 +13,7 @@ import { getAuth } from 'firebase/auth';
 import { generateUniqueId } from '../../utils/utils';
 import { COLORS, COLOR_FOCUS_CONFIG } from '../../config/gameConfig';
 import { soundService } from '../../services/sound';
+import GameTutorial, { TutorialConfigs } from '../../components/game/GameTutorial';
 
 const { GAME_DURATION, SPAWN_RATE, BUBBLE_SIZE_MIN, BUBBLE_SIZE_MAX, BUBBLE_SPEED_BASE, BUBBLE_SPEED_VARIANCE, SPEED_INCREASE_PER_ROUND } = COLOR_FOCUS_CONFIG;
 
@@ -30,6 +31,10 @@ export default function ColorFocusGame() {
     const [sessionId, setSessionId] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [showTutorial, setShowTutorial] = useState(true);
+
+    // Child-friendly constraints
+    const MIN_BUBBLE_SIZE = 60; // Increased from 35/50 for small fingers
 
     const lastSpawnRef = useRef(0);
     const containerRef = useRef(null);
@@ -78,7 +83,8 @@ export default function ColorFocusGame() {
 
         const id = generateUniqueId();
         const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-        const size = Math.random() * (BUBBLE_SIZE_MAX - BUBBLE_SIZE_MIN) + BUBBLE_SIZE_MIN;
+        // Use larger minimum size for child friendliness
+        const size = Math.random() * (BUBBLE_SIZE_MAX - MIN_BUBBLE_SIZE) + MIN_BUBBLE_SIZE;
         const x = Math.random() * (width - size);
         const speed = Math.random() * BUBBLE_SPEED_VARIANCE + BUBBLE_SPEED_BASE + (round * SPEED_INCREASE_PER_ROUND);
 
@@ -237,43 +243,60 @@ export default function ColorFocusGame() {
             headerColor="bg-blue-600"
         >
             <div className="flex flex-col items-center w-full">
-                {/* Pre-game Instructions */}
-                <div className="mb-4 z-10 text-center relative w-full flex justify-center">
-                    {gameState === 'IDLE' && (
-                        <Card className="p-8 max-w-md bg-white/90 z-20 shadow-xl">
-                            <Title className="mb-4 text-blue-600">Color Focus</Title>
-                            <p className="mb-6 text-gray-600">
-                                Pop only the{' '}
-                                <strong
-                                    className="px-2 py-1 rounded bg-gray-100 border border-gray-200"
-                                    style={{ color: targetColor.hex }}
+                {/* Pre-game Instructions / Start Screen */}
+                {gameState === 'IDLE' && (
+                    <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl">
+                        {showTutorial ? (
+                            <GameTutorial
+                                {...TutorialConfigs.colorFocus}
+                                onComplete={() => {
+                                    setShowTutorial(false);
+                                    setGameState('ACTIVE');
+                                    spawnBubble();
+                                }}
+                            />
+                        ) : (
+                            <Card className="p-8 max-w-sm w-full flex flex-col items-center gap-6 shadow-2xl animate-in scale-95 duration-200">
+                                <Title className="text-blue-600">Color Focus</Title>
+                                <p className="text-center text-gray-600 dark:text-gray-300">
+                                    Pop only the <strong style={{ color: targetColor.hex }}>{targetColor.name}</strong> bubbles!
+                                </p>
+                                <div className="text-6xl animate-bounce">🎈</div>
+                                <Button
+                                    onClick={() => {
+                                        setGameState('ACTIVE');
+                                        spawnBubble();
+                                    }}
+                                    className="w-full text-lg shadow-lg hover:shadow-xl transition-all"
                                 >
-                                    {targetColor.name}
-                                </strong>{' '}
-                                bubbles! Be quick, you have {GAME_DURATION} seconds.
-                            </p>
-                            <Button onClick={startGame} className="w-full text-lg shadow-lg hover:shadow-xl transition-all">
-                                Start Game
-                            </Button>
-                        </Card>
-                    )}
+                                    Start Game
+                                </Button>
+                            </Card>
+                        )}
+                    </div>
+                )}
 
-                    {gameState === 'ACTIVE' && (
-                        <div className="flex flex-col items-center gap-2">
-                            <span className="text-lg font-bold bg-white/80 dark:bg-slate-800/80 text-gray-800 dark:text-white px-4 py-1 rounded-full shadow-sm backdrop-blur">
-                                Target Color
-                            </span>
+                {/* Game Area Header (Active State) */}
+                {gameState === 'ACTIVE' && (
+                    <div className="flex flex-col items-center gap-2 mb-4 z-20">
+                        <span className="text-lg font-bold bg-white/80 dark:bg-slate-800/80 text-gray-800 dark:text-white px-4 py-1 rounded-full shadow-sm backdrop-blur">
+                            Target Color
+                        </span>
+                        <div className="flex items-center gap-3">
                             <div
                                 className={clsx(
-                                    "w-16 h-16 rounded-full shadow-lg border-4 border-white animate-pulse transition-colors duration-300",
+                                    "w-16 h-16 rounded-full shadow-lg border-4 border-white dark:border-slate-600 animate-pulse transition-colors duration-300",
                                     targetColor.bg
                                 )}
                             />
+                            <span className="text-3xl font-black transition-colors duration-300" style={{ color: targetColor.hex }}>
+                                {targetColor.name}
+                            </span>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
 
-                {/* Game Area */}
+                {/* Game Container */}
                 <div
                     ref={containerRef}
                     className="relative w-full max-w-2xl h-[60vh] border border-gray-200 dark:border-slate-600 rounded-3xl overflow-hidden bg-gradient-to-b from-blue-50 via-purple-50/30 to-white dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 shadow-inner"

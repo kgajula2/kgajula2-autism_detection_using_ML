@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../store/userStore";
 import { getUserProfile } from "../services/db";
-import { Play, Activity, Smile, Search, LayoutDashboard, Gamepad2, Rocket, Star } from "lucide-react";
+import { Play, Activity, Smile, Search, LayoutDashboard, Gamepad2, Rocket, Star, User } from "lucide-react";
 
 export const GameSelection = () => {
     const navigate = useNavigate();
@@ -112,6 +112,16 @@ export const GameSelection = () => {
                             >
                                 <LayoutDashboard className="w-6 h-6" />
                                 Parent Dashboard
+                            </button>
+                        </motion.div>
+
+                        <motion.div whileHover={{ scale: 1.05 }} className="w-full">
+                            <button
+                                onClick={() => navigate('/profile')}
+                                className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 border border-white shadow-lg flex items-center justify-center gap-3 text-white font-bold text-xl hover:opacity-90 transition-all"
+                            >
+                                <User className="w-6 h-6" />
+                                My Profile
                             </button>
                         </motion.div>
                     </motion.div>

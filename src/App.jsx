@@ -5,6 +5,7 @@ import { Login } from "./pages/Login";
 import { LandingPage } from "./pages/LandingPage";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { SettingsProvider } from "./contexts/SettingsContext";
+import GameErrorBoundary from "./components/game/GameErrorBoundary";
 
 // Lazy load heavy components to reduce initial bundle size
 const Dashboard = lazy(() => import("./pages/Dashboard").then(m => ({ default: m.Dashboard })));
@@ -108,33 +109,41 @@ export default function App() {
               </ProtectedRoute>
             } />
 
-            {/* Game Routes - Lazy loaded for performance */}
+            {/* Game Routes - Lazy loaded with Error Boundaries */}
             <Route path="/game/color-focus" element={
               <ProtectedRoute>
-                <Suspense fallback={<LoadingFallback />}>
-                  <ColorFocusGame />
-                </Suspense>
+                <GameErrorBoundary gameName="Color Focus">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ColorFocusGame />
+                  </Suspense>
+                </GameErrorBoundary>
               </ProtectedRoute>
             } />
             <Route path="/game/routine-sequencer" element={
               <ProtectedRoute>
-                <Suspense fallback={<LoadingFallback />}>
-                  <RoutineSequencerGame />
-                </Suspense>
+                <GameErrorBoundary gameName="Routine Sequencer">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <RoutineSequencerGame />
+                  </Suspense>
+                </GameErrorBoundary>
               </ProtectedRoute>
             } />
             <Route path="/game/emotion-mirror" element={
               <ProtectedRoute>
-                <Suspense fallback={<LoadingFallback />}>
-                  <EmotionMirrorGame />
-                </Suspense>
+                <GameErrorBoundary gameName="Emotion Mirror">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <EmotionMirrorGame />
+                  </Suspense>
+                </GameErrorBoundary>
               </ProtectedRoute>
             } />
             <Route path="/game/object-id" element={
               <ProtectedRoute>
-                <Suspense fallback={<LoadingFallback />}>
-                  <ObjectIdGame />
-                </Suspense>
+                <GameErrorBoundary gameName="Object ID">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ObjectIdGame />
+                  </Suspense>
+                </GameErrorBoundary>
               </ProtectedRoute>
             } />
 
