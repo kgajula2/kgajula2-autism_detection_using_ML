@@ -17,6 +17,9 @@ const ColorFocusGame = lazy(() => import("./games/color-focus/ColorFocusGame"));
 const RoutineSequencerGame = lazy(() => import("./games/routine-sequencer/RoutineSequencerGame"));
 const EmotionMirrorGame = lazy(() => import("./games/emotion-mirror/EmotionMirrorGame"));
 const ObjectIdGame = lazy(() => import("./games/object-id/ObjectIdGame"));
+const FreeToyTapGame = lazy(() => import("./games/free-toy-tap/FreeToyTapGame"));
+const ShapeSwitchGame = lazy(() => import("./games/shape-switch/ShapeSwitchGame"));
+const AttentionCallGame = lazy(() => import("./games/attention-call/AttentionCallGame"));
 
 // Lazy load new pages
 const Profile = lazy(() => import("./pages/Profile"));
@@ -142,6 +145,33 @@ export default function App() {
                 <GameErrorBoundary gameName="Object ID">
                   <Suspense fallback={<LoadingFallback />}>
                     <ObjectIdGame />
+                  </Suspense>
+                </GameErrorBoundary>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/free-toy-tap" element={
+              <ProtectedRoute>
+                <GameErrorBoundary gameName="Free Toy Tap">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <FreeToyTapGame />
+                  </Suspense>
+                </GameErrorBoundary>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/shape-switch" element={
+              <ProtectedRoute>
+                <GameErrorBoundary gameName="Shape Switch">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ShapeSwitchGame />
+                  </Suspense>
+                </GameErrorBoundary>
+              </ProtectedRoute>
+            } />
+            <Route path="/game/attention-call" element={
+              <ProtectedRoute>
+                <GameErrorBoundary gameName="Attention Call">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <AttentionCallGame />
                   </Suspense>
                 </GameErrorBoundary>
               </ProtectedRoute>

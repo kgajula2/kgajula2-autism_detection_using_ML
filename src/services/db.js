@@ -248,6 +248,13 @@ export const fetchUserGameStats = async (userId) => {
                     attempts: session.stats?.attempts || 0,
                     completed: session.stats?.completed || false,
                     avgLatency: session.stats?.avgLatency || 0,
+                    // Free Toy Tap enhanced metrics
+                    objectFixationEntropy: session.stats?.objectFixationEntropy || 0,
+                    repetitionRate: session.stats?.repetitionRate || 0,
+                    switchFrequency: session.stats?.switchFrequency || 0,
+                    engagementTime: session.stats?.engagementTime || 0,
+                    totalTaps: session.stats?.totalTaps || 0,
+                    pauseCount: session.stats?.pauseCount || 0,
                 };
             } else {
                 // Accumulate count only

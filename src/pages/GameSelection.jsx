@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../store/userStore";
 import { getUserProfile } from "../services/db";
-import { Play, Activity, Smile, Search, LayoutDashboard, Gamepad2, Rocket, Star, User } from "lucide-react";
+import { Play, Activity, Smile, Search, LayoutDashboard, Gamepad2, Rocket, Star, User, Package, Shapes, Bell } from "lucide-react";
 
 export const GameSelection = () => {
     const navigate = useNavigate();
@@ -144,6 +144,69 @@ export const GameSelection = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8">
+
+                            {/* FREE TOY TAP (PRIORITY #1) */}
+                            <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                                <div
+                                    onClick={() => navigate('/game/free-toy-tap')}
+                                    className="cursor-pointer h-64 rounded-3xl bg-gradient-to-br from-indigo-400 to-violet-300 p-6 relative overflow-hidden shadow-xl border-4 border-white/50 group"
+                                >
+                                    <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-125 transition-transform duration-500">
+                                        <Package size={120} color="white" />
+                                    </div>
+                                    <div className="flex flex-col h-full justify-between relative z-10 text-white">
+                                        <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                            <Package size={32} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Toy Box</h3>
+                                            <p className="font-medium opacity-90 text-lg">Play with toys!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {/* SHAPE SWITCH (PRIORITY #2) */}
+                            <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                                <div
+                                    onClick={() => navigate('/game/shape-switch')}
+                                    className="cursor-pointer h-64 rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-300 p-6 relative overflow-hidden shadow-xl border-4 border-white/50 group"
+                                >
+                                    <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-125 transition-transform duration-500">
+                                        <Shapes size={120} color="white" />
+                                    </div>
+                                    <div className="flex flex-col h-full justify-between relative z-10 text-white">
+                                        <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                            <Shapes size={32} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Shape Play</h3>
+                                            <p className="font-medium opacity-90 text-lg">Tap the glow!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {/* ATTENTION CALL (PRIORITY #3) */}
+                            <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                                <div
+                                    onClick={() => navigate('/game/attention-call')}
+                                    className="cursor-pointer h-64 rounded-3xl bg-gradient-to-br from-rose-400 to-pink-300 p-6 relative overflow-hidden shadow-xl border-4 border-white/50 group"
+                                >
+                                    <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-125 transition-transform duration-500">
+                                        <Bell size={120} color="white" />
+                                    </div>
+                                    <div className="flex flex-col h-full justify-between relative z-10 text-white">
+                                        <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                            <Bell size={32} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-4xl font-black mb-2 drop-shadow-md">Hi There!</h3>
+                                            <p className="font-medium opacity-90 text-lg">Listen for your name!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
 
                             {/* COLOR FOCUS */}
                             <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>

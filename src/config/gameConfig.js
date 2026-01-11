@@ -172,6 +172,56 @@ export const OBJECT_ID_CONFIG = {
 };
 
 // ============================================================================
+// FREE TOY TAP GAME (Exploration - No Goals)
+// ============================================================================
+export const FREE_TOY_TAP_TOYS = [
+    { id: 'car', emoji: '🚗', color: '#ef4444' },
+    { id: 'balloon', emoji: '🎈', color: '#f97316' },
+    { id: 'star', emoji: '⭐', color: '#eab308' },
+    { id: 'bear', emoji: '🐻', color: '#84cc16' },
+    { id: 'rainbow', emoji: '🌈', color: '#22c55e' },
+    { id: 'bow', emoji: '🎀', color: '#ec4899' },
+    { id: 'rocket', emoji: '🚀', color: '#8b5cf6' },
+    { id: 'gift', emoji: '🎁', color: '#3b82f6' },
+];
+
+export const FREE_TOY_TAP_CONFIG = {
+    GAME_DURATION: 75000, // 75 seconds (hidden from child)
+    TOY_COUNT: 6, // Number of toys on screen
+    TOY_SIZE_MIN: 80,
+    TOY_SIZE_MAX: 120,
+    MOVEMENT_SPEED: 0.5, // pixels per frame
+    BOUNCE_AMPLITUDE: 20, // vertical bounce pixels
+};
+
+// ============================================================================
+// SHAPE SWITCH GAME (Resistance to Change)
+// ============================================================================
+export const SHAPE_SWITCH_SHAPES = [
+    { id: 'circle', name: 'Circle', color: '#ef4444' },
+    { id: 'square', name: 'Square', color: '#3b82f6' },
+    { id: 'triangle', name: 'Triangle', color: '#22c55e' },
+];
+
+export const SHAPE_SWITCH_CONFIG = {
+    TAPS_BEFORE_SWITCH: 5, // Successful taps before rule changes
+    TOTAL_SWITCHES: 3, // Number of rule changes
+    GLOW_PULSE_SPEED: 1000, // ms for glow animation
+    REWARD_DURATION: 500, // ms for sparkle effect
+};
+
+// ============================================================================
+// ATTENTION CALL GAME (Name Response)
+// ============================================================================
+export const ATTENTION_CALL_CONFIG = {
+    MAX_CALLS: 3, // Maximum name calls
+    INITIAL_DELAY: 4000, // ms before first call
+    BETWEEN_CALLS_DELAY: 8000, // ms between calls
+    RESPONSE_WINDOW: 5000, // ms to detect response
+    FALLBACK_GREETING: "Hey there!", // If name not available
+};
+
+// ============================================================================
 // ML FEATURE MAPPING
 // Game metrics -> AQ-10 style behavioral features
 // This mapping is used by ml.js to convert game performance into model inputs
@@ -208,6 +258,31 @@ export const ML_FEATURE_MAPPING = {
             highWrong: 5,
         },
     },
+    'free-toy-tap': {
+        // Repetitive Behavior & Restricted Interests
+        features: ['A3', 'A4'],
+        thresholds: {
+            lowEntropy: 1.0,       // Below = object fixation
+            highRepetition: 0.5,  // Above = repetitive behavior
+            lowSwitchFreq: 0.15,  // Below = restricted exploration
+        },
+    },
+    'shape-switch': {
+        // Resistance to Change / Cognitive Flexibility
+        features: ['A8'],
+        thresholds: {
+            highConfusion: 5000,   // ms to adapt after switch
+            highPerseveration: 3,  // wrong taps after switch
+        },
+    },
+    'attention-call': {
+        // Social Attention & Name Response
+        features: ['A1', 'A5'],
+        thresholds: {
+            lowResponseRate: 0.33, // Less than 1/3 responses
+            highLatency: 3000,     // ms to respond
+        },
+    },
 };
 
 // ============================================================================
@@ -224,3 +299,4 @@ export const MASCOT = {
 };
 
 export const CELEBRATION_EMOJIS = ['🎉', '⭐', '🌟', '✨', '🎊', '🏆', '🥳'];
+

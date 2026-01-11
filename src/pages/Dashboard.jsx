@@ -146,7 +146,10 @@ export const Dashboard = () => {
             'color-focus': '🎯',
             'emotion-mirror': '🪞',
             'routine-sequencer': '📋',
-            'object-id': '🔍'
+            'object-id': '🔍',
+            'free-toy-tap': '🧸',
+            'shape-switch': '🔷',
+            'attention-call': '🔔'
         };
         return emojis[gameId] || '🎮';
     };
@@ -415,7 +418,79 @@ export const Dashboard = () => {
                                             <tr>
                                                 <td colSpan="6" className="bg-slate-50 p-4">
                                                     <div className="space-y-3">
-                                                        {session.stats?.roundTimings && session.stats.roundTimings.length > 0 ? (
+                                                        {/* Free Toy Tap specific metrics */}
+                                                        {session.gameId === 'free-toy-tap' && session.stats ? (
+                                                            <div className="space-y-4">
+                                                                <h4 className="font-bold text-slate-700 flex items-center gap-2">
+                                                                    <span className="text-2xl">🧸</span>
+                                                                    Behavioral Analysis Metrics
+                                                                </h4>
+                                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                                                    <div className="bg-purple-50 p-3 rounded-xl text-center border border-purple-100">
+                                                                        <div className="text-2xl font-black text-purple-600">
+                                                                            {session.stats.objectFixationEntropy?.toFixed(2) || session.stats.stats?.objectFixationEntropy?.toFixed(2) || '0.00'}
+                                                                        </div>
+                                                                        <div className="text-xs text-purple-700 font-bold uppercase tracking-wide">Fixation Entropy</div>
+                                                                        <div className="text-xs text-gray-500 mt-1">Higher = better variety</div>
+                                                                    </div>
+                                                                    <div className="bg-blue-50 p-3 rounded-xl text-center border border-blue-100">
+                                                                        <div className="text-2xl font-black text-blue-600">
+                                                                            {((session.stats.repetitionRate || session.stats.stats?.repetitionRate || 0) * 100).toFixed(0)}%
+                                                                        </div>
+                                                                        <div className="text-xs text-blue-700 font-bold uppercase tracking-wide">Repetition Rate</div>
+                                                                        <div className="text-xs text-gray-500 mt-1">Same object taps</div>
+                                                                    </div>
+                                                                    <div className="bg-green-50 p-3 rounded-xl text-center border border-green-100">
+                                                                        <div className="text-2xl font-black text-green-600">
+                                                                            {((session.stats.switchFrequency || session.stats.stats?.switchFrequency || 0) * 100).toFixed(0)}%
+                                                                        </div>
+                                                                        <div className="text-xs text-green-700 font-bold uppercase tracking-wide">Switch Frequency</div>
+                                                                        <div className="text-xs text-gray-500 mt-1">Object switching</div>
+                                                                    </div>
+                                                                    <div className="bg-orange-50 p-3 rounded-xl text-center border border-orange-100">
+                                                                        <div className="text-2xl font-black text-orange-600">
+                                                                            {session.stats.engagementTime || session.stats.stats?.engagementTime || 0}s
+                                                                        </div>
+                                                                        <div className="text-xs text-orange-700 font-bold uppercase tracking-wide">Engagement Time</div>
+                                                                        <div className="text-xs text-gray-500 mt-1">Active play time</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="grid grid-cols-2 gap-3 mt-2">
+                                                                    <div className="bg-slate-100 p-3 rounded-xl text-center">
+                                                                        <div className="text-xl font-bold text-slate-700">{session.stats.totalTaps || session.stats.stats?.totalTaps || session.score || 0}</div>
+                                                                        <div className="text-xs text-slate-600">Total Taps</div>
+                                                                    </div>
+                                                                    <div className="bg-slate-100 p-3 rounded-xl text-center">
+                                                                        <div className="text-xl font-bold text-slate-700">{session.stats.pauseCount || session.stats.stats?.pauseCount || 0}</div>
+                                                                        <div className="text-xs text-slate-600">Pauses (&gt;5s)</div>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Per-Toy Tap Breakdown */}
+                                                                {(session.stats.toyTapBreakdown || session.stats.stats?.toyTapBreakdown) && (
+                                                                    <div className="mt-4">
+                                                                        <h5 className="font-bold text-slate-600 text-sm mb-3 flex items-center gap-2">
+                                                                            🎯 Taps Per Toy
+                                                                        </h5>
+                                                                        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                                                                            {Object.entries(session.stats.toyTapBreakdown || session.stats.stats?.toyTapBreakdown || {}).map(([toyId, count]) => {
+                                                                                const toyEmojis = {
+                                                                                    car: '🚗', balloon: '🎈', star: '⭐', bear: '🐻',
+                                                                                    rainbow: '🌈', bow: '🎀', rocket: '🚀', gift: '🎁'
+                                                                                };
+                                                                                return (
+                                                                                    <div key={toyId} className="bg-white p-3 rounded-xl text-center border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                                                                        <div className="text-3xl mb-1">{toyEmojis[toyId] || '🧸'}</div>
+                                                                                        <div className="text-lg font-black text-indigo-600">{count}</div>
+                                                                                        <div className="text-xs text-slate-500 capitalize">{toyId}</div>
+                                                                                    </div>
+                                                                                );
+                                                                            })}
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ) : session.stats?.roundTimings && session.stats.roundTimings.length > 0 ? (
                                                             <>
                                                                 <h4 className="font-bold text-slate-700 flex items-center gap-2">
                                                                     <Target size={16} className="text-blue-500" />
