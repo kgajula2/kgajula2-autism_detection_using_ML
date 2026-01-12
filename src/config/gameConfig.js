@@ -214,11 +214,16 @@ export const SHAPE_SWITCH_CONFIG = {
 // ATTENTION CALL GAME (Name Response)
 // ============================================================================
 export const ATTENTION_CALL_CONFIG = {
-    MAX_CALLS: 3, // Maximum name calls
-    INITIAL_DELAY: 4000, // ms before first call
-    BETWEEN_CALLS_DELAY: 8000, // ms between calls
-    RESPONSE_WINDOW: 5000, // ms to detect response
-    FALLBACK_GREETING: "Hey there!", // If name not available
+    MAX_CALLS: 5,                    // Maximum name calls before ending
+    INITIAL_DELAY: 2000,             // 2 seconds before first call
+    BETWEEN_CALLS_DELAY: 2000,       // 2 seconds between calls
+    RESPONSE_WINDOW: 3000,           // 3 seconds to detect response after call
+    FALLBACK_GREETING: "Hey there",  // If name not available
+    SPEECH_PITCH: 1.3,               // Higher pitch for child-friendly tone
+    SPEECH_RATE: 0.85,               // Slightly slower for clarity
+    GAZE_THRESHOLD: 0.3,             // Iris offset threshold - more lenient (was 0.15)
+    MOVEMENT_THRESHOLD: 0.03,        // Head position change threshold
+    GREETING_PREFIX: "Hey, hi",      // Prefix before name
 };
 
 // ============================================================================

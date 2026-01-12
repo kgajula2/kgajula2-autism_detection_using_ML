@@ -116,7 +116,7 @@ const SHAPE_COMPONENTS = {
 export default function ShapeSwitchGame() {
     const navigate = useNavigate();
     const { user } = useUserStore();
-    const { startSession, endSession } = useGameSession();
+    const { startSession, endSession } = useGameSession('shape-switch');
 
     // Game states
     const [gameState, setGameState] = useState('TUTORIAL'); // TUTORIAL, PLAYING, FINISHED
@@ -175,7 +175,7 @@ export default function ShapeSwitchGame() {
         switchTimeRef.current = null;
 
         if (user?.uid) {
-            const sid = await startSession(user.uid, 'shape-switch', {
+            const sid = await startSession({
                 totalSwitches: TOTAL_SWITCHES,
                 tapsBeforeSwitch: TAPS_BEFORE_SWITCH,
             });
@@ -238,7 +238,7 @@ export default function ShapeSwitchGame() {
 
         // End session
         if (sessionId) {
-            await endSession(sessionId, correctTaps, stats);
+            await endSession(correctTaps, stats);
         }
 
         setShowResultModal(true);

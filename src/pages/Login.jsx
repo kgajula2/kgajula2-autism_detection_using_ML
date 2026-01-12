@@ -84,7 +84,7 @@ export const Login = () => {
                     setError(redirectErr.message);
                 }
             } else {
-                setError(err.message);
+                setError(`Firebase Error (${err.code}): ${err.message}`);
             }
         } finally {
             setLoading(false);
