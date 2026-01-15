@@ -485,8 +485,8 @@ export const Dashboard = () => {
                                                                                 <div
                                                                                     key={cIdx}
                                                                                     className={`p-3 rounded-xl text-center min-w-[80px] ${call.response !== 'none'
-                                                                                            ? 'bg-green-100 border-2 border-green-400'
-                                                                                            : 'bg-gray-100 border border-gray-200'
+                                                                                        ? 'bg-green-100 border-2 border-green-400'
+                                                                                        : 'bg-gray-100 border border-gray-200'
                                                                                         }`}
                                                                                 >
                                                                                     <div className="text-2xl mb-1">
@@ -635,6 +635,26 @@ export const Dashboard = () => {
                                                                         </div>
                                                                     ))}
                                                                 </div>
+
+                                                                {/* Step Completion Summary */}
+                                                                {session.gameId === 'routine-sequencer' && (
+                                                                    <div className="mt-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                                                                        <div className="flex items-center justify-between">
+                                                                            <div className="flex items-center gap-2">
+                                                                                <span className="text-2xl">✅</span>
+                                                                                <span className="font-bold text-green-700">Steps Completed</span>
+                                                                            </div>
+                                                                            <div className="text-2xl font-black text-green-600">
+                                                                                {session.stats.roundTimings.filter(r => r.correct).length} / {session.stats.totalSteps || session.stats.roundTimings.length}
+                                                                            </div>
+                                                                        </div>
+                                                                        {session.stats.routineTitle && (
+                                                                            <div className="text-sm text-gray-600 mt-1">
+                                                                                Routine: <span className="font-medium">{session.stats.routineTitle}</span>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                )}
                                                             </>
                                                         ) : (
                                                             <div className="text-center py-6 text-gray-400">
