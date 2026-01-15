@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Title, SubTitle } from '../components/ui/Typography';
 import { Button } from '../components/ui/Button';
+import { AnimatedCounter } from '../components/ui/AnimatedCounter';
 import { analyzeUserPerformance } from '../services/ml';
 import { fetchUserGameStats, getUserProfile } from '../services/db';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -175,21 +176,29 @@ export const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
                 {/* Games Counter */}
-                <motion.div whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-blue-400 to-cyan-300 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40">
-                    <Gamepad className="absolute top-4 right-4 opacity-30 w-24 h-24" />
+                <motion.div whileHover={{ scale: 1.02, y: -5 }} className="bg-gradient-to-br from-blue-400 to-cyan-300 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40 group">
+                    <Gamepad className="absolute top-4 right-4 opacity-30 w-24 h-24 group-hover:scale-110 transition-transform" />
                     <div className="h-full flex flex-col justify-between relative z-10">
                         <span className="text-lg font-bold opacity-90">Games Played</span>
-                        <span className="text-6xl font-black drop-shadow-md">{stats.totalGames}</span>
+                        <AnimatedCounter
+                            value={stats.totalGames}
+                            className="text-6xl font-black drop-shadow-md"
+                            delay={0}
+                        />
                     </div>
                 </motion.div>
 
                 {/* Daily Streak */}
-                <motion.div whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-orange-400 to-red-400 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40">
-                    <Flame className="absolute top-4 right-4 opacity-30 w-24 h-24" />
+                <motion.div whileHover={{ scale: 1.02, y: -5 }} className="bg-gradient-to-br from-orange-400 to-red-400 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40 group">
+                    <Flame className="absolute top-4 right-4 opacity-30 w-24 h-24 group-hover:scale-110 transition-transform" />
                     <div className="h-full flex flex-col justify-between relative z-10">
                         <span className="text-lg font-bold opacity-90">🔥 Daily Streak</span>
                         <div className="flex items-end gap-2">
-                            <span className="text-6xl font-black drop-shadow-md">{streak}</span>
+                            <AnimatedCounter
+                                value={streak}
+                                className="text-6xl font-black drop-shadow-md"
+                                delay={0.1}
+                            />
                             <span className="text-2xl font-bold opacity-80 mb-2">days</span>
                         </div>
                         <span className="text-white/80 text-xs">
@@ -199,16 +208,20 @@ export const Dashboard = () => {
                 </motion.div>
 
                 {/* Achievements */}
-                <motion.div whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-yellow-400 to-amber-400 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40">
-                    <Award className="absolute top-4 right-4 opacity-30 w-24 h-24" />
+                <motion.div whileHover={{ scale: 1.02, y: -5 }} className="bg-gradient-to-br from-yellow-400 to-amber-400 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden border-4 border-white/40 group">
+                    <Award className="absolute top-4 right-4 opacity-30 w-24 h-24 group-hover:scale-110 transition-transform" />
                     <div className="h-full flex flex-col justify-between relative z-10">
                         <span className="text-lg font-bold opacity-90">🏆 Achievements</span>
                         <div className="flex items-end gap-2">
-                            <span className="text-6xl font-black drop-shadow-md">{achievements.unlocked}</span>
+                            <AnimatedCounter
+                                value={achievements.unlocked}
+                                className="text-6xl font-black drop-shadow-md"
+                                delay={0.2}
+                            />
                             <span className="text-2xl font-bold opacity-80 mb-2">/ {achievements.total}</span>
                         </div>
                         <span className="text-white/80 text-xs">
-                            {achievements.percentage}% unlocked
+                            <AnimatedCounter value={achievements.percentage || 0} suffix="%" delay={0.3} /> unlocked
                         </span>
                     </div>
                 </motion.div>

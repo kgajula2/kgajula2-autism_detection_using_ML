@@ -18,7 +18,6 @@ import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
 import { useGameSession } from '../../hooks/useGameSession';
-import { useGameLoop } from '../../hooks/useGameLoop';
 import { getUserProfile } from '../../services/db';
 import { ATTENTION_CALL_CONFIG, MASCOT } from '../../config/gameConfig';
 import { Button } from '../../components/ui/Button';
@@ -272,53 +271,73 @@ export default function AttentionCallGame() {
         }
     };
 
-    // Game loop to check face detection (EXACTLY like EmotionMirrorGame)
-    useGameLoop((deltaTime) => {
-        if (gameState !== 'PLAYING') return;
-        if (!detectionActiveRef.current) return;
-        if (responseTriggeredRef.current) return;
+    // Direct requestAnimationFrame loop for face detection (NOT using useGameLoop which checks wrong gameStore)
+    useEffect(() => {
+        let animationId;
+        let isRunning = true;
 
-        // DEBUG: Log when game loop is checking
-        console.log('[GameLoop] Checking detection:', {
-            faceDetectedRef: faceDetectedRef.current,
-            detectionActive: detectionActiveRef.current,
-            responseTriggered: responseTriggeredRef.current,
-            currentCall: currentCallRef.current
-        });
+        const checkDetection = () => {
+            if (!isRunning) return;
 
-        // Use either ML detection ref (immediate value)
-        if (faceDetectedRef.current) {
-            console.log('[GameLoop] EYE CONTACT DETECTED - TRIGGERING RESPONSE!');
-            responseTriggeredRef.current = true;
-            detectionActiveRef.current = false;
+            // Only check when game is active and detection is enabled
+            if (gameStateRef.current === 'PLAYING' &&
+                detectionActiveRef.current &&
+                !responseTriggeredRef.current) {
 
-            // Clear timeout
-            if (responseTimeoutRef.current) {
-                clearTimeout(responseTimeoutRef.current);
+                // Check if face/eye contact detected
+                if (faceDetectedRef.current) {
+                    console.log('[Detection Loop] EYE CONTACT DETECTED - TRIGGERING RESPONSE!');
+                    responseTriggeredRef.current = true;
+                    detectionActiveRef.current = false;
+
+                    // Clear timeout
+                    if (responseTimeoutRef.current) {
+                        clearTimeout(responseTimeoutRef.current);
+                    }
+
+                    // Record response
+                    const callData = {
+                        callNumber: currentCallRef.current,
+                        callTimestamp: callTimeRef.current,
+                        responseDetected: true,
+                        responseType: 'eye_contact',
+                        responseTime: Date.now() - callTimeRef.current,
+                        nameUsed: childNameRef.current || FALLBACK_GREETING,
+                    };
+
+                    callsRef.current = [...callsRef.current, callData];
+                    setCalls(callsRef.current);
+                    setWaitingForResponse(false);
+                    setShowConfetti(true);
+                    setIsWaving(true);
+
+                    // Finish game after celebration
+                    setTimeout(() => {
+                        if (finishGameRef.current) {
+                            finishGameRef.current(callsRef.current, 'eye_contact');
+                        }
+                    }, 1500);
+
+                    return; // Stop the loop after detecting
+                }
             }
 
-            // Record response
-            const callData = {
-                callNumber: currentCallRef.current,
-                callTimestamp: callTimeRef.current,
-                responseDetected: true,
-                responseType: 'face_detected',
-                responseTime: Date.now() - callTimeRef.current,
-                nameUsed: childNameRef.current || FALLBACK_GREETING,
-            };
+            // Continue checking
+            animationId = requestAnimationFrame(checkDetection);
+        };
 
-            callsRef.current = [...callsRef.current, callData];
-            setCalls(callsRef.current);
-            setWaitingForResponse(false);
-            setShowConfetti(true);
-            setIsWaving(true);
-
-            // Finish game after celebration
-            setTimeout(() => {
-                finishGameRef.current(callsRef.current, 'face_detected');
-            }, 1500);
+        // Start the detection loop when camera is active
+        if (cameraActive) {
+            animationId = requestAnimationFrame(checkDetection);
         }
-    }, [gameState, faceDetected, cameraActive]);
+
+        return () => {
+            isRunning = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+        };
+    }, [cameraActive]);
 
     // Keep refs in sync
     useEffect(() => {

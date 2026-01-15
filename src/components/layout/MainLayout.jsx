@@ -37,6 +37,11 @@ export const MainLayout = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100 font-sans overflow-x-hidden transition-colors">
+            {/* Skip Link for Accessibility */}
+            <a href="#main-content" className="skip-link">
+                Skip to main content
+            </a>
+
             <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/20 dark:border-slate-700/50 px-6 py-3 flex justify-between items-center bg-white/60 dark:bg-slate-900/80 backdrop-blur-md shadow-sm">
                 <div className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 tracking-tighter cursor-pointer" onClick={() => navigate(user ? '/home' : '/')}>
                     NeuroStep
@@ -72,7 +77,7 @@ export const MainLayout = () => {
                 </div>
             </nav>
 
-            <main className="pt-24 px-4 pb-12 w-full max-w-7xl mx-auto min-h-[calc(100vh-6rem)]">
+            <main id="main-content" className="pt-24 px-4 pb-12 w-full max-w-7xl mx-auto min-h-[calc(100vh-6rem)]">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={location.pathname}
