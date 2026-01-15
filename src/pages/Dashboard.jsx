@@ -431,8 +431,102 @@ export const Dashboard = () => {
                                             <tr>
                                                 <td colSpan="6" className="bg-slate-50 p-4">
                                                     <div className="space-y-3">
-                                                        {/* Free Toy Tap specific metrics */}
-                                                        {session.gameId === 'free-toy-tap' && session.stats ? (
+                                                        {/* Attention Call specific metrics */}
+                                                        {session.gameId === 'attention-call' && session.stats ? (
+                                                            <div className="space-y-4">
+                                                                <h4 className="font-bold text-slate-700 flex items-center gap-2">
+                                                                    <span className="text-2xl">🔔</span>
+                                                                    Name Response Analysis
+                                                                </h4>
+
+                                                                {/* Main response info */}
+                                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                                    <div className="bg-rose-50 p-4 rounded-xl text-center border border-rose-100">
+                                                                        <div className="text-3xl font-black text-rose-600">
+                                                                            {session.stats.firstResponseCall ? `Call #${session.stats.firstResponseCall}` : 'No Response'}
+                                                                        </div>
+                                                                        <div className="text-xs text-rose-700 font-bold uppercase tracking-wide mt-1">
+                                                                            {session.stats.firstResponseCall ? 'Responded At' : 'No Response Detected'}
+                                                                        </div>
+                                                                        <div className="text-xs text-gray-500 mt-1">
+                                                                            Out of {session.stats.totalCalls || 5} calls
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="bg-purple-50 p-4 rounded-xl text-center border border-purple-100">
+                                                                        <div className="text-2xl font-black text-purple-600 capitalize">
+                                                                            {session.stats.responseType?.replace('_', ' ') || 'N/A'}
+                                                                        </div>
+                                                                        <div className="text-xs text-purple-700 font-bold uppercase tracking-wide mt-1">Response Type</div>
+                                                                        <div className="text-xs text-gray-500 mt-1">
+                                                                            {session.stats.responseType === 'eye_contact' ? '👁️ Looked at camera' :
+                                                                                session.stats.responseType === 'face_detected' ? '👤 Face detected' :
+                                                                                    session.stats.responseType === 'none' ? '❌ No response' : ''}
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="bg-blue-50 p-4 rounded-xl text-center border border-blue-100">
+                                                                        <div className="text-2xl font-black text-blue-600">
+                                                                            {session.stats.avgResponseTime ? `${(session.stats.avgResponseTime / 1000).toFixed(1)}s` : '-'}
+                                                                        </div>
+                                                                        <div className="text-xs text-blue-700 font-bold uppercase tracking-wide mt-1">Response Time</div>
+                                                                        <div className="text-xs text-gray-500 mt-1">After name was called</div>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Call by Call breakdown */}
+                                                                {session.stats.callDetails && session.stats.callDetails.length > 0 && (
+                                                                    <div className="mt-4">
+                                                                        <h5 className="font-bold text-slate-600 text-sm mb-3 flex items-center gap-2">
+                                                                            📞 Call by Call Breakdown
+                                                                        </h5>
+                                                                        <div className="flex gap-2 flex-wrap">
+                                                                            {session.stats.callDetails.map((call, cIdx) => (
+                                                                                <div
+                                                                                    key={cIdx}
+                                                                                    className={`p-3 rounded-xl text-center min-w-[80px] ${call.response !== 'none'
+                                                                                            ? 'bg-green-100 border-2 border-green-400'
+                                                                                            : 'bg-gray-100 border border-gray-200'
+                                                                                        }`}
+                                                                                >
+                                                                                    <div className="text-2xl mb-1">
+                                                                                        {call.response !== 'none' ? '✅' : '⏳'}
+                                                                                    </div>
+                                                                                    <div className={`text-lg font-bold ${call.response !== 'none' ? 'text-green-700' : 'text-gray-500'
+                                                                                        }`}>
+                                                                                        Call {call.call}
+                                                                                    </div>
+                                                                                    {call.time && (
+                                                                                        <div className="text-xs text-gray-600">
+                                                                                            {(call.time / 1000).toFixed(1)}s
+                                                                                        </div>
+                                                                                    )}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                        <p className="text-xs text-gray-400 mt-2">
+                                                                            ✅ = Responded, ⏳ = No response within window
+                                                                        </p>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Summary stats */}
+                                                                <div className="grid grid-cols-2 gap-3 mt-2">
+                                                                    <div className="bg-slate-100 p-3 rounded-xl text-center">
+                                                                        <div className="text-xl font-bold text-slate-700">
+                                                                            {session.stats.totalResponses || 0} / {session.stats.totalCalls || 5}
+                                                                        </div>
+                                                                        <div className="text-xs text-slate-600">Total Responses</div>
+                                                                    </div>
+                                                                    <div className="bg-slate-100 p-3 rounded-xl text-center">
+                                                                        <div className="text-xl font-bold text-slate-700">
+                                                                            {session.stats.duration ? `${session.stats.duration.toFixed(1)}s` : '-'}
+                                                                        </div>
+                                                                        <div className="text-xs text-slate-600">Total Duration</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ) : session.gameId === 'free-toy-tap' && session.stats ? (
                                                             <div className="space-y-4">
                                                                 <h4 className="font-bold text-slate-700 flex items-center gap-2">
                                                                     <span className="text-2xl">🧸</span>
