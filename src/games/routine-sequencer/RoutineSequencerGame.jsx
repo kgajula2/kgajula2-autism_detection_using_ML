@@ -289,7 +289,7 @@ export default function RoutineSequencerGame() {
                                                     className={clsx("w-full h-full flex items-center justify-center gap-4 font-bold text-gray-700 shadow-sm rounded-xl", slot.color)}
                                                 >
                                                     {slot.image ? (
-                                                        <img src={slot.image} alt={slot.label || slot.emoji} className="h-20 w-20 object-contain drop-shadow-md" />
+                                                        <img src={slot.image} alt={slot.label || slot.emoji} className="h-16 w-16 object-contain drop-shadow-md" />
                                                     ) : (
                                                         <span className="text-5xl drop-shadow-md">{slot.emoji}</span>
                                                     )}
@@ -317,7 +317,7 @@ export default function RoutineSequencerGame() {
                                             )}
                                         >
                                             {step.image ? (
-                                                <img src={step.image} alt={step.label || step.emoji} className="h-20 w-20 object-contain drop-shadow-md" />
+                                                <img src={step.image} alt={step.label || step.emoji} className="h-28 w-28 object-contain drop-shadow-md" />
                                             ) : (
                                                 <span className="text-6xl drop-shadow-md">{step.emoji}</span>
                                             )}

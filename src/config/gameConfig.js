@@ -101,40 +101,10 @@ export const ROUTINES = [
         emoji: '🎒',
         steps: [
             { id: 'r4-s1', emoji: '👕', image: '/images/routines/school_dress.png', label: 'Get Dressed', color: 'bg-orange-300', iconName: 'Shirt' },
-            { id: 'r4-s2', emoji: '🎒', label: 'Grab Backpack', color: 'bg-orange-400', iconName: 'Backpack' },
-            { id: 'r4-s3', emoji: '🚌', label: 'Catch Bus', color: 'bg-orange-500', iconName: 'Bus' },
+            { id: 'r4-s2', emoji: '🎒', image: '/images/routines/school_backpack.png', label: 'Grab Backpack', color: 'bg-orange-400', iconName: 'Backpack' },
+            { id: 'r4-s3', emoji: '🚌', image: '/images/routines/school_bus.png', label: 'Catch Bus', color: 'bg-orange-500', iconName: 'Bus' },
         ]
     },
-    {
-        id: 'handwash',
-        title: '🧴 Washing Hands',
-        emoji: '🧴',
-        steps: [
-            { id: 'r5-s1', emoji: '💧', label: 'Wet Hands', color: 'bg-cyan-200', iconName: 'Droplets' },
-            { id: 'r5-s2', emoji: '🧼', label: 'Apply Soap', color: 'bg-cyan-300', iconName: 'Sparkles' },
-            { id: 'r5-s3', emoji: '👏', label: 'Dry Hands', color: 'bg-cyan-400', iconName: 'Hand' },
-        ]
-    },
-    {
-        id: 'playtime',
-        title: '🎮 Playtime',
-        emoji: '🎮',
-        steps: [
-            { id: 'r6-s1', emoji: '🧸', label: 'Play', color: 'bg-pink-300', iconName: 'Smile' },
-            { id: 'r6-s2', emoji: '🎨', label: 'Create', color: 'bg-pink-400', iconName: 'Sparkles' },
-            { id: 'r6-s3', emoji: '🧹', label: 'Clean Up', color: 'bg-pink-500', iconName: 'Hand' },
-        ]
-    },
-    {
-        id: 'snacktime',
-        title: '🍎 Snack Time',
-        emoji: '🍎',
-        steps: [
-            { id: 'r7-s1', emoji: '🧼', label: 'Wash Hands', color: 'bg-red-200', iconName: 'Droplets' },
-            { id: 'r7-s2', emoji: '🍎', label: 'Eat Snack', color: 'bg-red-300', iconName: 'Utensils' },
-            { id: 'r7-s3', emoji: '✨', label: 'Clean Up', color: 'bg-red-500', iconName: 'Sparkles' },
-        ]
-    }
 ];
 
 // Icon resolver (since we can't store JSX in config)
