@@ -204,8 +204,8 @@ export const SHAPE_SWITCH_SHAPES = [
 ];
 
 export const SHAPE_SWITCH_CONFIG = {
-    TAPS_BEFORE_SWITCH: 5, // Successful taps before rule changes
-    TOTAL_SWITCHES: 3, // Number of rule changes
+    TAPS_BEFORE_SWITCH: 3, // Successful taps before rule changes (reduced from 5)
+    TOTAL_SWITCHES: 2, // Number of rule changes (reduced from 3, makes 3 rounds total)
     GLOW_PULSE_SPEED: 1000, // ms for glow animation
     REWARD_DURATION: 500, // ms for sparkle effect
 };
