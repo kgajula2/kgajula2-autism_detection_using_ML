@@ -229,7 +229,11 @@ export default function RoutineSequencerGame() {
                                         {/* Step preview with GIFs */}
                                         <div className="flex gap-1 justify-center flex-wrap">
                                             {r.steps.slice(0, 4).map((s, idx) => (
-                                                <span key={idx} className="text-xl">{s.emoji}</span>
+                                                s.image ? (
+                                                    <img key={idx} src={s.image} alt={s.label || s.emoji} className="w-10 h-10 object-contain rounded" />
+                                                ) : (
+                                                    <span key={idx} className="text-xl">{s.emoji}</span>
+                                                )
                                             ))}
                                         </div>
                                     </Card>
@@ -284,7 +288,11 @@ export default function RoutineSequencerGame() {
                                                     layoutId={slot.id}
                                                     className={clsx("w-full h-full flex items-center justify-center gap-4 font-bold text-gray-700 shadow-sm rounded-xl", slot.color)}
                                                 >
-                                                    <span className="text-5xl drop-shadow-md">{slot.emoji}</span>
+                                                    {slot.image ? (
+                                                        <img src={slot.image} alt={slot.label || slot.emoji} className="h-20 w-20 object-contain drop-shadow-md" />
+                                                    ) : (
+                                                        <span className="text-5xl drop-shadow-md">{slot.emoji}</span>
+                                                    )}
                                                 </motion.div>
                                             )}
                                         </div>
@@ -308,7 +316,12 @@ export default function RoutineSequencerGame() {
                                                 step.color
                                             )}
                                         >
-                                            <span className="text-6xl drop-shadow-md">{step.emoji}</span>
+                                            {step.image ? (
+                                                <img src={step.image} alt={step.label || step.emoji} className="h-20 w-20 object-contain drop-shadow-md" />
+                                            ) : (
+                                                <span className="text-6xl drop-shadow-md">{step.emoji}</span>
+                                            )}
+                                            {step.label && <span className="text-xs font-semibold text-slate-700">{step.label}</span>}
                                         </motion.div>
                                     ))}
                                 </div>
