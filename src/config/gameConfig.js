@@ -186,14 +186,15 @@ export const SHAPE_SWITCH_CONFIG = {
 export const ATTENTION_CALL_CONFIG = {
     MAX_CALLS: 5,                    // Maximum name calls before ending
     INITIAL_DELAY: 2000,             // 2 seconds before first call
-    BETWEEN_CALLS_DELAY: 2000,       // 2 seconds between calls
-    RESPONSE_WINDOW: 3000,           // 3 seconds to detect response after call
-    FALLBACK_GREETING: "Hey there",  // If name not available
-    SPEECH_PITCH: 1.3,               // Higher pitch for child-friendly tone
-    SPEECH_RATE: 0.85,               // Slightly slower for clarity
-    GAZE_THRESHOLD: 0.3,             // Iris offset threshold - more lenient (was 0.15)
+    BETWEEN_CALLS_DELAY: 2500,       // 2.5 seconds between calls (gentle pacing)
+    RESPONSE_WINDOW: 3500,           // 3.5 seconds to detect response (patient)
+    FALLBACK_GREETING: "friend",     // Warm, simple fallback
+    SPEECH_PITCH: 1.5,               // Cheerful but gentle, not startling
+    SPEECH_RATE: 0.75,               // Slow, clear pronunciation for ages 3-8
+    SPEECH_VOLUME: 0.85,             // Slightly softer, non-overstimulating
+    GAZE_THRESHOLD: 0.3,             // Iris offset threshold - more lenient
     MOVEMENT_THRESHOLD: 0.03,        // Head position change threshold
-    GREETING_PREFIX: "Hey, hi",      // Prefix before name
+    GREETING_PREFIX: "Hi",           // Simple, warm greeting (under 10 words total)
 };
 
 // ============================================================================

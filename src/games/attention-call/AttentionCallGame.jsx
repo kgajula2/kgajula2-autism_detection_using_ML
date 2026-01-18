@@ -35,6 +35,7 @@ const {
     FALLBACK_GREETING,
     SPEECH_PITCH,
     SPEECH_RATE,
+    SPEECH_VOLUME,
     GAZE_THRESHOLD,
     MOVEMENT_THRESHOLD,
     GREETING_PREFIX
@@ -203,34 +204,24 @@ export default function AttentionCallGame() {
         return avgVertical / horizontal;
     };
 
-    // Nose tip landmark for face orientation check
-    const NOSE_TIP = 4;
-
-    // Check if looking at camera (eyes open + iris centered + face oriented toward camera)
+    // Check if looking at camera (eyes open + iris centered)
     const checkEyeContact = (landmarks) => {
         // Calculate EAR for both eyes
         const leftEAR = calculateEAR(landmarks, LEFT_EYE);
         const rightEAR = calculateEAR(landmarks, RIGHT_EYE);
         const avgEAR = (leftEAR + rightEAR) / 2;
 
-        // Eyes open if EAR > 0.20 (stricter threshold for clearly open eyes)
-        const eyesOpen = avgEAR > 0.20;
+        // Eyes open if EAR > 0.15 (threshold for open eyes)
+        const eyesOpen = avgEAR > 0.15;
 
-        // Calculate iris X positions (relative to eye corners)
+        // Calculate iris X positions
         const leftIrisX = LEFT_IRIS.reduce((sum, i) => sum + landmarks[i].x, 0) / LEFT_IRIS.length;
         const rightIrisX = RIGHT_IRIS.reduce((sum, i) => sum + landmarks[i].x, 0) / RIGHT_IRIS.length;
 
-        // Iris must be centered (0.40-0.60 for stricter tolerance) - BOTH eyes must be centered
-        const leftCentered = leftIrisX > 0.40 && leftIrisX < 0.60;
-        const rightCentered = rightIrisX > 0.40 && rightIrisX < 0.60;
-        const iriseCentered = leftCentered && rightCentered;  // BOTH eyes must be looking at camera
-
-        // Check face orientation - nose should be roughly centered (0.40-0.60)
-        const noseX = landmarks[NOSE_TIP].x;
-        const facingCamera = noseX > 0.40 && noseX < 0.60;
-
-        // Full eye contact = eyes open + iris centered + face facing camera
-        const lookingAtCamera = iriseCentered && facingCamera;
+        // Iris centered (0.30-0.70 for more tolerance) - EITHER eye looking at camera counts
+        const leftCentered = leftIrisX > 0.30 && leftIrisX < 0.70;
+        const rightCentered = rightIrisX > 0.30 && rightIrisX < 0.70;
+        const lookingAtCamera = leftCentered || rightCentered;  // EITHER eye counts
 
         return {
             eyesOpen,
@@ -238,13 +229,11 @@ export default function AttentionCallGame() {
             eyeContact: eyesOpen && lookingAtCamera,
             avgEAR: avgEAR.toFixed(2),
             leftIrisX: leftIrisX.toFixed(2),
-            rightIrisX: rightIrisX.toFixed(2),
-            noseX: noseX.toFixed(2),
-            facingCamera
+            rightIrisX: rightIrisX.toFixed(2)
         };
     };
 
-    // onResults handler with EAR + IRIS + Face orientation detection
+    // onResults handler with EAR + IRIS detection
     const onResults = (results) => {
         if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
             setFaceDetected(false);
@@ -270,18 +259,13 @@ export default function AttentionCallGame() {
             setFaceDetected(false);
             faceDetectedRef.current = false;  // IMMEDIATE update
             setDetectionStatus(`😴 Eyes closed (EAR:${result.avgEAR})`);
-        } else if (!result.facingCamera) {
-            // Not facing camera directly
-            setFaceDetected(false);
-            faceDetectedRef.current = false;  // IMMEDIATE update
-            setDetectionStatus(`👤 Face the camera directly (Nose:${result.noseX})`);
         } else if (!result.lookingAtCamera) {
             // Eyes open but not looking at camera
             setFaceDetected(false);
             faceDetectedRef.current = false;  // IMMEDIATE update
             setDetectionStatus(`👀 Look at camera (L:${result.leftIrisX} R:${result.rightIrisX})`);
         } else {
-            // Eyes open AND looking at camera AND facing camera = SUCCESS
+            // Eyes open AND looking at camera = SUCCESS
             setFaceDetected(true);
             faceDetectedRef.current = true;  // IMMEDIATE update - game loop sees this instantly
             setDetectionStatus(`✅ Eye contact! (EAR:${result.avgEAR})`);
@@ -405,27 +389,39 @@ export default function AttentionCallGame() {
         fetchName();
     }, [user]);
 
-    // Text-to-speech function with high tone
+    // Text-to-speech: Gentle, warm, child-safe cartoon narrator voice
+    // - High-pitched but not startling
+    // - Slow, clear pronunciation
+    // - Soft volume, non-overstimulating
     const speakName = useCallback((name) => {
         return new Promise((resolve) => {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
 
-                // Create greeting: "Hey, hi [NAME]!"
+                // Simple, warm greeting under 10 words: "Hi [NAME]!"
                 const greeting = `${GREETING_PREFIX} ${name}!`;
                 const utterance = new SpeechSynthesisUtterance(greeting);
-                utterance.rate = SPEECH_RATE;
-                utterance.pitch = SPEECH_PITCH;
-                utterance.volume = 1;
 
-                // Try to get a friendly, higher-pitched voice
+                // Gentle voice settings
+                utterance.rate = SPEECH_RATE;      // 0.75 - slow, clear for ages 3-8
+                utterance.pitch = SPEECH_PITCH;    // 1.5 - cheerful but calm
+                utterance.volume = SPEECH_VOLUME;  // 0.85 - soft, non-startling
+
+                // Find a warm, gentle, child-friendly voice
                 const voices = window.speechSynthesis.getVoices();
+                // Priority: Warm female voices known for gentle, friendly tone
                 const preferredVoice = voices.find(v =>
-                    v.name.includes('Female') ||
-                    v.name.includes('Samantha') ||
+                    v.name.includes('Microsoft Jenny') ||    // Warm, friendly
+                    v.name.includes('Microsoft Aria') ||     // Young, warm
                     v.name.includes('Google UK English Female') ||
-                    v.name.includes('Microsoft Zira')
+                    v.name.includes('Samantha') ||           // macOS friendly voice  
+                    v.name.includes('Karen') ||              // Gentle Australian
+                    v.name.includes('Moira') ||              // Warm Irish
+                    v.name.includes('Victoria') ||
+                    v.name.includes('Microsoft Zira') ||
+                    (v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
                 );
+
                 if (preferredVoice) {
                     utterance.voice = preferredVoice;
                 }
