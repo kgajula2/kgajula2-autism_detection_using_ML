@@ -5,8 +5,6 @@ let faceMesh = null;
 let camera = null;
 
 export const initializeFaceMesh = async (videoElement, onResults) => {
-    console.log('[Vision] Starting FaceMesh initialization...');
-
     if (!videoElement) {
         console.error('[Vision] No video element provided');
         return null;
@@ -25,17 +23,12 @@ export const initializeFaceMesh = async (videoElement, onResults) => {
         return null;
     }
 
-    console.log('[Vision] MediaPipe libraries loaded');
-
     try {
         faceMesh = new FaceMesh({
             locateFile: (file) => {
-                console.log(`[Vision] Loading file: ${file}`);
                 return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
             }
         });
-
-        console.log('[Vision] FaceMesh instance created');
 
         faceMesh.setOptions({
             maxNumFaces: 1,
@@ -44,17 +37,11 @@ export const initializeFaceMesh = async (videoElement, onResults) => {
             minTrackingConfidence: 0.5
         });
 
-        console.log('[Vision] FaceMesh options set');
-
-        // Wrap onResults with logging
         faceMesh.onResults((results) => {
-            console.log('[Vision] onResults called, faces:', results.multiFaceLandmarks?.length || 0);
             if (onResults) {
                 onResults(results);
             }
         });
-
-        console.log('[Vision] onResults callback registered');
 
         if (videoElement) {
             camera = new Camera(videoElement, {
@@ -67,9 +54,7 @@ export const initializeFaceMesh = async (videoElement, onResults) => {
                 height: 480
             });
 
-            console.log('[Vision] Camera instance created, starting...');
             await camera.start();
-            console.log('[Vision] Camera started successfully');
         }
 
         return { faceMesh, camera };

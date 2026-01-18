@@ -24,9 +24,6 @@ export default function Contact() {
 
         setIsSubmitting(false);
         setIsSubmitted(true);
-
-        // In production, you would send this to your backend/email service
-        console.log('Form submitted:', formData);
     };
 
     const handleChange = (e) => {

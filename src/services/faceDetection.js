@@ -29,7 +29,6 @@ export const loadModels = async () => {
         ]);
 
         modelsLoaded = true;
-        console.log('Face-api.js models loaded successfully');
         return true;
     } catch (error) {
         console.error('Failed to load face-api.js models:', error);
@@ -135,8 +134,6 @@ const detectFace = async () => {
  * @param {Function} onResults - Callback function with detection results
  */
 export const initializeFaceDetection = async (video, onResults) => {
-    console.log('[FaceDetection] Starting initialization...');
-
     if (!video) {
         console.error('[FaceDetection] Video element is required');
         return false;
@@ -145,23 +142,17 @@ export const initializeFaceDetection = async (video, onResults) => {
     videoElement = video;
     onResultsCallback = onResults;
 
-    // STEP 1: Get camera stream FIRST (before loading models)
-    console.log('[FaceDetection] Requesting camera access...');
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
             video: { width: 640, height: 480, facingMode: 'user' }
         });
-        console.log('[FaceDetection] Camera stream obtained');
 
         video.srcObject = stream;
 
-        // Wait for video to be ready
         await new Promise((resolve, reject) => {
             video.onloadedmetadata = () => {
-                console.log('[FaceDetection] Video metadata loaded');
                 video.play()
                     .then(() => {
-                        console.log('[FaceDetection] Video playing');
                         resolve();
                     })
                     .catch(reject);
@@ -177,20 +168,14 @@ export const initializeFaceDetection = async (video, onResults) => {
         return false;
     }
 
-    // STEP 2: Load models in background (don't block camera)
-    console.log('[FaceDetection] Loading models in background...');
     isRunning = true;
 
-    // Check if models are already loaded
     if (modelsLoaded) {
-        console.log('[FaceDetection] Models already loaded, starting detection');
         detectFace();
         return true;
     }
 
-    // Try loading from official repo
     const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
-    console.log(`[FaceDetection] Fetching models from ${MODEL_URL}...`);
 
     try {
         await Promise.all([
@@ -199,7 +184,6 @@ export const initializeFaceDetection = async (video, onResults) => {
         ]);
 
         modelsLoaded = true;
-        console.log('[FaceDetection] Models loaded successfully!');
         detectFace();
     } catch (error) {
         console.error('[FaceDetection] Model loading failed:', error);

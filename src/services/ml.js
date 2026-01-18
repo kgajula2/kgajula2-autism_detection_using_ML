@@ -26,7 +26,6 @@ export const loadModel = async () => {
             throw new Error(`HTTP ${response.status}: Failed to fetch model`);
         }
         modelData = await response.json();
-        console.log("✅ ML Model loaded successfully", modelData.global_metrics);
         return true;
     } catch (err) {
         console.error("❌ Failed to load ML model:", err);
@@ -69,8 +68,6 @@ export const predictRisk = async (gameRisks, demographics = {}) => {
         }
     });
 
-    console.log("📊 ML Features:", features);
-
     // Apply StandardScaler transformation
     const scaledFeatures = features.map((val, i) => {
         const mean = scaler_mean[i] || 0;
@@ -78,16 +75,11 @@ export const predictRisk = async (gameRisks, demographics = {}) => {
         return (val - mean) / scale;
     });
 
-    console.log("📊 Scaled Features:", scaledFeatures);
-
     // Linear combination: z = X * coefficients + intercept
     const z = scaledFeatures.reduce((sum, x, i) => sum + x * coefficients[i], intercept);
 
-    console.log("📊 Z-score:", z);
-
     // Apply sigmoid for probability
     const probability = sigmoid(z);
-    console.log("📊 Risk Probability:", probability);
 
     return probability;
 };
@@ -306,7 +298,6 @@ export const calculateGameRisks = (gamesData) => {
         gameRisks.attention_call = Math.max(0.05, Math.min(0.95, risk));
     }
 
-    console.log("📊 Game Risks Calculated:", gameRisks);
     return { gameRisks, insights };
 };
 

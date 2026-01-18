@@ -9,15 +9,15 @@ import { getStorage } from "firebase/storage";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// Uses environment variables for security (with fallbacks for development)
+// IMPORTANT: Set these in .env file (VITE_FIREBASE_API_KEY, etc.)
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCQ9rOOuiDTqqiq2n_7nPPSStVvs3HNin4",
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "autism-games-a26da.firebaseapp.com",
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "autism-games-a26da",
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "autism-games-a26da.firebasestorage.app",
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "1019155981310",
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:1019155981310:web:6fc887541f414a7703d6af",
-    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-QQV0V1KMHM"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase

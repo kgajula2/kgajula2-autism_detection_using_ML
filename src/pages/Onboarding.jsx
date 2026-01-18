@@ -25,8 +25,6 @@ export default function Onboarding() {
         // Fallback to direct auth if store is empty
         const currentUser = user || getAuth().currentUser;
 
-        console.log("Onboarding Submit: CurrentUser:", currentUser);
-
         if (!currentUser) {
             alert("Error: No authenticated user found. Please reload.");
             return;
@@ -34,14 +32,12 @@ export default function Onboarding() {
         setLoading(true);
 
         try {
-            console.log("Saving profile for:", currentUser.uid, formData);
             await createUserProfile(currentUser.uid, {
                 ...formData,
                 parentName: currentUser.displayName || 'Parent',
                 email: currentUser.email,
                 onboardingCompleted: true
             });
-            console.log("Profile saved. Redirecting...");
             // Force reload or redirect
             window.location.href = '/home'; // using href to force full state refresh
         } catch (error) {

@@ -17,7 +17,6 @@ export default function FeedbackButton() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Feedback:', { type, message });
         setIsSubmitted(true);
         setTimeout(() => {
             setIsOpen(false);
@@ -96,8 +95,8 @@ export default function FeedbackButton() {
                                                         type="button"
                                                         onClick={() => setType(ft.id)}
                                                         className={`p-3 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${type === ft.id
-                                                                ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/30'
-                                                                : 'border-slate-200 dark:border-slate-700 hover:border-purple-300'
+                                                            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/30'
+                                                            : 'border-slate-200 dark:border-slate-700 hover:border-purple-300'
                                                             }`}
                                                     >
                                                         <ft.icon size={20} className={ft.color} />

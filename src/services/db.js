@@ -64,7 +64,6 @@ export const syncOfflineQueue = async () => {
     const queue = getOfflineQueue();
     if (queue.length === 0) return;
 
-    console.log(`📤 Syncing ${queue.length} offline items...`);
     const errors = [];
 
     for (const item of queue) {
@@ -84,7 +83,6 @@ export const syncOfflineQueue = async () => {
 
     if (errors.length === 0) {
         clearOfflineQueue();
-        console.log("✅ Offline sync complete");
     } else {
         console.error("⚠️ Some items failed to sync", errors);
     }
@@ -143,7 +141,6 @@ export const createGameSession = async (userId, gameId, gameConfig) => {
             localId
         });
 
-        console.log("📴 Session queued for offline sync");
         return localId;
     }
 };

@@ -34,11 +34,6 @@ const {
     BETWEEN_CALLS_DELAY,
     RESPONSE_WINDOW,
     FALLBACK_GREETING,
-    SPEECH_PITCH,
-    SPEECH_RATE,
-    SPEECH_VOLUME,
-    GAZE_THRESHOLD,
-    MOVEMENT_THRESHOLD,
     GREETING_PREFIX
 } = ATTENTION_CALL_CONFIG;
 
@@ -288,7 +283,6 @@ export default function AttentionCallGame() {
 
                 // Check if face/eye contact detected
                 if (faceDetectedRef.current) {
-                    console.log('[Detection Loop] EYE CONTACT DETECTED - TRIGGERING RESPONSE!');
                     responseTriggeredRef.current = true;
                     detectionActiveRef.current = false;
 
