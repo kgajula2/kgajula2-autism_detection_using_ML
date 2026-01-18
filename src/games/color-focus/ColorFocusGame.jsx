@@ -20,12 +20,11 @@ const { GAME_DURATION, SPAWN_RATE, BUBBLE_SIZE_MIN, BUBBLE_SIZE_MAX, BUBBLE_SPEE
 export default function ColorFocusGame() {
     const {
         gameState, score, round,
-        setGameState, incrementScore, nextRound, resetGame
+        setGameState, incrementScore, resetGame
     } = useGameStore();
 
     const [bubbles, setBubbles] = useState([]);
     const [targetColor, setTargetColor] = useState(COLORS[0]);
-    const [spawnRate, setSpawnRate] = useState(SPAWN_RATE);
     const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
     const [mistakes, setMistakes] = useState(0);
     const [sessionId, setSessionId] = useState(null);
@@ -65,7 +64,7 @@ export default function ColorFocusGame() {
         const now = performance.now();
 
         // Spawn Bubbles
-        if (now - lastSpawnRef.current > spawnRate) {
+        if (now - lastSpawnRef.current > SPAWN_RATE) {
             spawnBubble();
             lastSpawnRef.current = now;
         }
@@ -75,7 +74,7 @@ export default function ColorFocusGame() {
             ...b,
             y: b.y - (b.speed * deltaTime * 60)
         })).filter(b => b.y > -50));
-    }, [targetColor, spawnRate, gameState]);
+    }, [targetColor, gameState]);
 
     const spawnBubble = () => {
         if (!containerRef.current) return;

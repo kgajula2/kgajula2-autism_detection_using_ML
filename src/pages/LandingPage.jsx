@@ -29,11 +29,11 @@ export const LandingPage = () => {
 
     const letter = {
         hidden: { y: 30, opacity: 0, rotateX: -90 },
-        show: { 
-            y: 0, 
-            opacity: 1, 
+        show: {
+            y: 0,
+            opacity: 1,
             rotateX: 0,
-            transition: { type: "spring", stiffness: 100, damping: 12 } 
+            transition: { type: "spring", stiffness: 100, damping: 12 }
         },
     };
 
@@ -51,43 +51,43 @@ export const LandingPage = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-            
+
             {/* Floating 3D Orbs - Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 {/* Large purple orb */}
-                <motion.div 
+                <motion.div
                     className="absolute top-1/4 -left-20 w-96 h-96 rounded-full bg-gradient-to-br from-purple-400/40 to-violet-600/30 blur-3xl"
-                    animate={{ 
-                        y: [0, -40, 0], 
+                    animate={{
+                        y: [0, -40, 0],
                         x: [0, 20, 0],
                         scale: [1, 1.1, 1]
                     }}
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                 />
                 {/* Blue orb */}
-                <motion.div 
+                <motion.div
                     className="absolute top-1/3 right-10 w-72 h-72 rounded-full bg-gradient-to-br from-blue-400/40 to-cyan-500/30 blur-3xl"
-                    animate={{ 
-                        y: [0, 30, 0], 
+                    animate={{
+                        y: [0, 30, 0],
                         x: [0, -15, 0],
                         rotate: [0, 10, 0]
                     }}
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 />
                 {/* Pink orb */}
-                <motion.div 
+                <motion.div
                     className="absolute bottom-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-pink-400/30 to-rose-500/20 blur-3xl"
-                    animate={{ 
-                        y: [0, -30, 0], 
+                    animate={{
+                        y: [0, -30, 0],
                         x: [0, 25, 0]
                     }}
                     transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                 />
                 {/* Teal orb */}
-                <motion.div 
+                <motion.div
                     className="absolute bottom-10 right-1/4 w-56 h-56 rounded-full bg-gradient-to-br from-teal-400/30 to-emerald-500/20 blur-3xl"
-                    animate={{ 
-                        y: [0, 25, 0], 
+                    animate={{
+                        y: [0, 25, 0],
                         scale: [1, 0.95, 1]
                     }}
                     transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
@@ -96,7 +96,7 @@ export const LandingPage = () => {
 
             {/* Main Content */}
             <div className="z-10 text-center px-4 max-w-5xl mx-auto">
-                
+
                 {/* Animated Mascot */}
                 <motion.div
                     initial={{ scale: 0, rotate: -180 }}
@@ -125,8 +125,8 @@ export const LandingPage = () => {
                             key={index}
                             variants={letter}
                             className={`text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black bg-clip-text text-transparent bg-gradient-to-b drop-shadow-lg
-                                ${index < 5 
-                                    ? "from-blue-500 via-blue-600 to-indigo-700" 
+                                ${index < 5
+                                    ? "from-blue-500 via-blue-600 to-indigo-700"
                                     : "from-purple-500 via-pink-500 to-rose-500"
                                 }`}
                             style={{ textShadow: '0 4px 30px rgba(0,0,0,0.1)' }}

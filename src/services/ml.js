@@ -110,14 +110,15 @@ export const calculateGameRisks = (gamesData) => {
 
     // --- Color Focus ---
     if (gamesData['color-focus']) {
-        const { score, errors, duration } = gamesData['color-focus'];
-        const config = ML_FEATURE_MAPPING['color-focus'].thresholds;
+        const { score, errors } = gamesData['color-focus'];
+
+        const colorConfig = ML_FEATURE_MAPPING['color-focus'].thresholds;
 
         // Calculate risk as continuous value based on performance
         // Higher score = lower risk, more errors = higher risk
         let risk = 0.3; // baseline
 
-        if (score < config.lowScore) {
+        if (score < colorConfig.lowScore) {
             risk += 0.3; // Low score increases risk
             insights.push("🎯 Color Focus: Attention patterns show room for improvement.");
         } else if (score > 80) {
@@ -125,7 +126,7 @@ export const calculateGameRisks = (gamesData) => {
             insights.push("🌟 Color Focus: Excellent attention span demonstrated!");
         }
 
-        if (errors > config.highErrors) {
+        if (errors > colorConfig.highErrors) {
             risk += 0.2; // Many errors increase risk
             insights.push("⚡ Color Focus: Quick reactions noted - working on precision.");
         } else if (errors < 2) {
@@ -138,12 +139,12 @@ export const calculateGameRisks = (gamesData) => {
 
     // --- Routine Sequencer ---
     if (gamesData['routine-sequencer']) {
-        const { mistakes, completed, score } = gamesData['routine-sequencer'];
-        const config = ML_FEATURE_MAPPING['routine-sequencer'].thresholds;
+        const { mistakes, completed } = gamesData['routine-sequencer'];
+        const routineConfig = ML_FEATURE_MAPPING['routine-sequencer'].thresholds;
 
         let risk = 0.3;
 
-        if (mistakes > config.highMistakes) {
+        if (mistakes > routineConfig.highMistakes) {
             risk += 0.35;
             insights.push("🧩 Routine Sequencer: Sequential ordering is being developed.");
         } else if (mistakes === 0 && completed) {
@@ -160,7 +161,6 @@ export const calculateGameRisks = (gamesData) => {
     // --- Emotion Mirror ---
     if (gamesData['emotion-mirror']) {
         const { score, attempts } = gamesData['emotion-mirror'];
-        const config = ML_FEATURE_MAPPING['emotion-mirror'].thresholds;
 
         let risk = 0.3;
 
@@ -182,8 +182,7 @@ export const calculateGameRisks = (gamesData) => {
 
     // --- Object ID (Hunt) ---
     if (gamesData['object-id']) {
-        const { correct, wrong, score } = gamesData['object-id'];
-        const config = ML_FEATURE_MAPPING['object-id'].thresholds;
+        const { correct, wrong } = gamesData['object-id'];
         const total = correct + wrong;
 
         let risk = 0.3;

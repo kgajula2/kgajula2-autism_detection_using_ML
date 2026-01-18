@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { useGameLoop } from '../../hooks/useGameLoop';
 import { initializeFaceMesh, stopVision } from '../../services/vision';
@@ -40,55 +40,8 @@ export default function EmotionMirrorGame() {
         startTime: 0,
     });
 
-    useEffect(() => {
-        if (gameState === 'ACTIVE') {
-            const startCamera = async () => {
-                try {
-                    await initializeFaceMesh(videoRef.current, onResults);
-                    setStreamActive(true);
-                } catch (err) {
-                    console.error("Camera init failed", err);
-                }
-            };
-            startCamera();
-        }
-
-        return () => {
-            stopVision();
-        };
-    }, [gameState]);
-
-    // Game loop for hold detection
-    useGameLoop((deltaTime) => {
-        if (gameState !== 'ACTIVE') return;
-
-        if (detection === stateRef.current.target.id) {
-            stateRef.current.holdTime += deltaTime * 1000;
-            const progress = Math.min((stateRef.current.holdTime / stateRef.current.requiredTime) * 100, 100);
-            setHoldProgress(progress);
-
-            if (stateRef.current.holdTime >= stateRef.current.requiredTime) {
-                handleSuccess();
-            }
-        } else {
-            stateRef.current.holdTime = Math.max(0, stateRef.current.holdTime - deltaTime * 500);
-            setHoldProgress((stateRef.current.holdTime / stateRef.current.requiredTime) * 100);
-        }
-    }, [detection, gameState]);
-
-    const onResults = (results) => {
-        if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
-            setDetection('none');
-            return;
-        }
-
-        const landmarks = results.multiFaceLandmarks[0];
-        const { expression, debug } = classifyExpression(landmarks);
-        setDetection(expression);
-        setDebugInfo(debug);
-    };
-
-    const classifyExpression = (landmarks) => {
+    // --- MOVED: classifyExpression helper must be defined before onResults ---
+    const classifyExpression = useCallback((landmarks) => {
         const top = landmarks[10];
         const bottom = landmarks[152];
         const height = Math.abs(top.y - bottom.y);
@@ -139,7 +92,58 @@ export default function EmotionMirrorGame() {
             confidence,
             debug: { mouthOpen, mouthWidth, smileCurve, browLift, cheekWidth }
         };
-    };
+    }, []);
+
+    // --- MOVED: onResults must be defined BEFORE the useEffect that uses it ---
+    const onResults = useCallback((results) => {
+        if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
+            setDetection('none');
+            return;
+        }
+
+        const landmarks = results.multiFaceLandmarks[0];
+        const { expression, debug } = classifyExpression(landmarks);
+        setDetection(expression);
+        setDebugInfo(debug);
+    }, [classifyExpression]);
+
+    // --- useEffect now references onResults which is already defined ---
+    useEffect(() => {
+        if (gameState === 'ACTIVE') {
+            const startCamera = async () => {
+                try {
+                    await initializeFaceMesh(videoRef.current, onResults);
+                    setStreamActive(true);
+                } catch (err) {
+                    console.error("Camera init failed", err);
+                }
+            };
+            startCamera();
+        }
+
+        return () => {
+            stopVision();
+        };
+    }, [gameState, onResults]);
+
+    // Game loop for hold detection (restored)
+    useGameLoop((deltaTime) => {
+        if (gameState !== 'ACTIVE') return;
+
+        if (detection === stateRef.current.target.id) {
+            stateRef.current.holdTime += deltaTime * 1000;
+            const progress = Math.min((stateRef.current.holdTime / stateRef.current.requiredTime) * 100, 100);
+            setHoldProgress(progress);
+
+            if (stateRef.current.holdTime >= stateRef.current.requiredTime) {
+                handleSuccess();
+            }
+        } else {
+            stateRef.current.holdTime = Math.max(0, stateRef.current.holdTime - deltaTime * 500);
+            setHoldProgress((stateRef.current.holdTime / stateRef.current.requiredTime) * 100);
+        }
+    }, [detection, gameState]);
+
 
     const handleSuccess = () => {
         incrementScore(15);
