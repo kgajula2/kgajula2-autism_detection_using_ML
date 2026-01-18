@@ -25,6 +25,7 @@ import { ArrowLeft, Camera, Eye } from 'lucide-react';
 import { analyzeUserPerformance } from '../../services/ml';
 import { fetchUserGameStats } from '../../services/db';
 import { initializeFaceMesh, stopVision } from '../../services/vision';
+import { speakCartoon, stopSpeech, VOICE_PRESETS } from '../../services/voice';
 import GameTutorial from '../../components/game/GameTutorial';
 
 const {
@@ -389,51 +390,11 @@ export default function AttentionCallGame() {
         fetchName();
     }, [user]);
 
-    // Text-to-speech: Gentle, warm, child-safe cartoon narrator voice
-    // - High-pitched but not startling
-    // - Slow, clear pronunciation
-    // - Soft volume, non-overstimulating
+    // 📢 Cartoon Voice - FREE, NO-API, REVIEW-SAFE
+    // Uses ATTENTION preset: pitch 1.7, rate 0.8 (gentle but attention-grabbing)
     const speakName = useCallback((name) => {
-        return new Promise((resolve) => {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-
-                // Simple, warm greeting under 10 words: "Hi [NAME]!"
-                const greeting = `${GREETING_PREFIX} ${name}!`;
-                const utterance = new SpeechSynthesisUtterance(greeting);
-
-                // Gentle voice settings
-                utterance.rate = SPEECH_RATE;      // 0.75 - slow, clear for ages 3-8
-                utterance.pitch = SPEECH_PITCH;    // 1.5 - cheerful but calm
-                utterance.volume = SPEECH_VOLUME;  // 0.85 - soft, non-startling
-
-                // Find a warm, gentle, child-friendly voice
-                const voices = window.speechSynthesis.getVoices();
-                // Priority: Warm female voices known for gentle, friendly tone
-                const preferredVoice = voices.find(v =>
-                    v.name.includes('Microsoft Jenny') ||    // Warm, friendly
-                    v.name.includes('Microsoft Aria') ||     // Young, warm
-                    v.name.includes('Google UK English Female') ||
-                    v.name.includes('Samantha') ||           // macOS friendly voice  
-                    v.name.includes('Karen') ||              // Gentle Australian
-                    v.name.includes('Moira') ||              // Warm Irish
-                    v.name.includes('Victoria') ||
-                    v.name.includes('Microsoft Zira') ||
-                    (v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
-                );
-
-                if (preferredVoice) {
-                    utterance.voice = preferredVoice;
-                }
-
-                utterance.onend = resolve;
-                utterance.onerror = resolve;
-
-                window.speechSynthesis.speak(utterance);
-            } else {
-                resolve();
-            }
-        });
+        const greeting = `${GREETING_PREFIX} ${name}!`;
+        return speakCartoon(greeting, VOICE_PRESETS.ATTENTION);
     }, []);
     // handleResponseDetected - using function declaration for hoisting
 
@@ -623,9 +584,7 @@ export default function AttentionCallGame() {
             if (responseTimeoutRef.current) {
                 clearTimeout(responseTimeoutRef.current);
             }
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
+            stopSpeech();
             stopVision();
         };
     }, []);
