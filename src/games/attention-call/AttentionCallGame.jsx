@@ -203,24 +203,34 @@ export default function AttentionCallGame() {
         return avgVertical / horizontal;
     };
 
-    // Check if looking at camera (eyes open + iris centered)
+    // Nose tip landmark for face orientation check
+    const NOSE_TIP = 4;
+
+    // Check if looking at camera (eyes open + iris centered + face oriented toward camera)
     const checkEyeContact = (landmarks) => {
         // Calculate EAR for both eyes
         const leftEAR = calculateEAR(landmarks, LEFT_EYE);
         const rightEAR = calculateEAR(landmarks, RIGHT_EYE);
         const avgEAR = (leftEAR + rightEAR) / 2;
 
-        // Eyes open if EAR > 0.15 (threshold for open eyes)
-        const eyesOpen = avgEAR > 0.15;
+        // Eyes open if EAR > 0.20 (stricter threshold for clearly open eyes)
+        const eyesOpen = avgEAR > 0.20;
 
-        // Calculate iris X positions
+        // Calculate iris X positions (relative to eye corners)
         const leftIrisX = LEFT_IRIS.reduce((sum, i) => sum + landmarks[i].x, 0) / LEFT_IRIS.length;
         const rightIrisX = RIGHT_IRIS.reduce((sum, i) => sum + landmarks[i].x, 0) / RIGHT_IRIS.length;
 
-        // Iris centered (0.30-0.70 for more tolerance) - EITHER eye looking at camera counts
-        const leftCentered = leftIrisX > 0.30 && leftIrisX < 0.70;
-        const rightCentered = rightIrisX > 0.30 && rightIrisX < 0.70;
-        const lookingAtCamera = leftCentered || rightCentered;  // EITHER eye counts
+        // Iris must be centered (0.40-0.60 for stricter tolerance) - BOTH eyes must be centered
+        const leftCentered = leftIrisX > 0.40 && leftIrisX < 0.60;
+        const rightCentered = rightIrisX > 0.40 && rightIrisX < 0.60;
+        const iriseCentered = leftCentered && rightCentered;  // BOTH eyes must be looking at camera
+
+        // Check face orientation - nose should be roughly centered (0.40-0.60)
+        const noseX = landmarks[NOSE_TIP].x;
+        const facingCamera = noseX > 0.40 && noseX < 0.60;
+
+        // Full eye contact = eyes open + iris centered + face facing camera
+        const lookingAtCamera = iriseCentered && facingCamera;
 
         return {
             eyesOpen,
@@ -228,11 +238,13 @@ export default function AttentionCallGame() {
             eyeContact: eyesOpen && lookingAtCamera,
             avgEAR: avgEAR.toFixed(2),
             leftIrisX: leftIrisX.toFixed(2),
-            rightIrisX: rightIrisX.toFixed(2)
+            rightIrisX: rightIrisX.toFixed(2),
+            noseX: noseX.toFixed(2),
+            facingCamera
         };
     };
 
-    // onResults handler with EAR + IRIS detection
+    // onResults handler with EAR + IRIS + Face orientation detection
     const onResults = (results) => {
         if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
             setFaceDetected(false);
@@ -258,13 +270,18 @@ export default function AttentionCallGame() {
             setFaceDetected(false);
             faceDetectedRef.current = false;  // IMMEDIATE update
             setDetectionStatus(`😴 Eyes closed (EAR:${result.avgEAR})`);
+        } else if (!result.facingCamera) {
+            // Not facing camera directly
+            setFaceDetected(false);
+            faceDetectedRef.current = false;  // IMMEDIATE update
+            setDetectionStatus(`👤 Face the camera directly (Nose:${result.noseX})`);
         } else if (!result.lookingAtCamera) {
             // Eyes open but not looking at camera
             setFaceDetected(false);
             faceDetectedRef.current = false;  // IMMEDIATE update
             setDetectionStatus(`👀 Look at camera (L:${result.leftIrisX} R:${result.rightIrisX})`);
         } else {
-            // Eyes open AND looking at camera = SUCCESS
+            // Eyes open AND looking at camera AND facing camera = SUCCESS
             setFaceDetected(true);
             faceDetectedRef.current = true;  // IMMEDIATE update - game loop sees this instantly
             setDetectionStatus(`✅ Eye contact! (EAR:${result.avgEAR})`);
