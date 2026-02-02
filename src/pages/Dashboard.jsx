@@ -821,7 +821,7 @@ export const Dashboard = () => {
                                         value={resetConfirmText}
                                         onChange={(e) => setResetConfirmText(e.target.value)}
                                         placeholder="Type RESET here..."
-                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none text-center font-mono text-lg uppercase tracking-widest"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none text-center font-mono text-lg uppercase tracking-widest text-gray-900 bg-white"
                                         autoFocus
                                     />
                                 </div>
@@ -837,8 +837,8 @@ export const Dashboard = () => {
                                         onClick={handleResetHistory}
                                         disabled={resetConfirmText !== 'RESET' || isResetting}
                                         className={`flex-1 flex items-center justify-center gap-2 ${resetConfirmText === 'RESET'
-                                                ? 'bg-red-500 hover:bg-red-600 text-white'
-                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                            ? 'bg-red-500 hover:bg-red-600 text-white'
+                                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                             }`}
                                     >
                                         {isResetting ? (

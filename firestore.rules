@@ -20,16 +20,13 @@ service cloud.firestore {
 
     // Game Sessions
     // Users can only create sessions for themselves
-    // Users can only read/update their own sessions
+    // Users can only read/update/delete their own sessions
     match /game_sessions/{sessionId} {
       // Allow create if authenticated and the userId field matches the auth uid
       allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
       
-      // Allow read and update only for the session owner
-      allow read, update: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      
-      // Disallow delete to preserve data integrity
-      allow delete: if false;
+      // Allow read, update, and delete only for the session owner
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
     }
 
     // Round Metrics
