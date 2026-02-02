@@ -1,13 +1,4 @@
-/**
- * Free Toy Tap Game - Exploration Game (No Goals)
- * 
- * This game captures behavioral signals without explicit objectives.
- * Child freely taps colorful moving toys while we measure:
- * - Object fixation entropy (how evenly distributed are taps)
- * - Repetition rate (consecutive taps on same toy)
- * - Switch frequency (how often child switches toys)
- * - Total engagement time
- */
+ 
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,8 +21,8 @@ export default function FreeToyTapGame() {
     const navigate = useNavigate();
     const { user } = useUserStore();
 
-    // Game states
-    const [gameState, setGameState] = useState('TUTORIAL'); // TUTORIAL, PLAYING, FINISHED
+     
+    const [gameState, setGameState] = useState('TUTORIAL');  
     const [toys, setToys] = useState([]);
     const [tapLog, setTapLog] = useState([]);
     const [sparkles, setSparkles] = useState([]);
@@ -41,14 +32,14 @@ export default function FreeToyTapGame() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [timeRemaining, setTimeRemaining] = useState(Math.floor(GAME_DURATION / 1000));
 
-    // Refs
+     
     const gameAreaRef = useRef(null);
     const startTimeRef = useRef(null);
     const animationRef = useRef(null);
     const lastTapRef = useRef(null);
     const timerIntervalRef = useRef(null);
 
-    // Initialize toys with random positions
+     
     const initializeToys = useCallback(() => {
         const shuffled = [...FREE_TOY_TAP_TOYS].sort(() => Math.random() - 0.5);
         const selectedToys = shuffled.slice(0, TOY_COUNT);
@@ -62,12 +53,12 @@ export default function FreeToyTapGame() {
             velocityY: (Math.random() - 0.5) * MOVEMENT_SPEED * 2,
             bounceOffset: Math.random() * Math.PI * 2,
             tapCount: 0,
-            isFalling: false, // Track if toy is in falling animation
-            originalY: null, // Store original Y before fall
+            isFalling: false,  
+            originalY: null,  
         }));
     }, []);
 
-    // Start the game
+     
     const handleStartGame = useCallback(async () => {
         const newToys = initializeToys();
         setToys(newToys);
@@ -77,7 +68,7 @@ export default function FreeToyTapGame() {
         startTimeRef.current = Date.now();
         lastTapRef.current = null;
 
-        // Start Firebase session
+         
         if (user?.uid) {
             const sid = await createGameSession(user.uid, 'free-toy-tap', {
                 toyCount: TOY_COUNT,
@@ -86,7 +77,7 @@ export default function FreeToyTapGame() {
             setSessionId(sid);
         }
 
-        // Start countdown timer
+         
         timerIntervalRef.current = setInterval(() => {
             setTimeRemaining(prev => {
                 if (prev <= 1) {
@@ -100,7 +91,7 @@ export default function FreeToyTapGame() {
         setGameState('PLAYING');
     }, [initializeToys, user]);
 
-    // Handle back navigation
+     
     const handleBack = useCallback(() => {
         if (animationRef.current) {
             cancelAnimationFrame(animationRef.current);
@@ -111,7 +102,7 @@ export default function FreeToyTapGame() {
         navigate('/home');
     }, [navigate]);
 
-    // Calculate ML signals from tap log
+     
     const calculateMLSignals = useCallback(() => {
         if (tapLog.length === 0) {
             return {
@@ -124,33 +115,33 @@ export default function FreeToyTapGame() {
             };
         }
 
-        // Count taps per toy
+         
         const tapCounts = {};
         tapLog.forEach(tap => {
             tapCounts[tap.toyId] = (tapCounts[tap.toyId] || 0) + 1;
         });
 
-        // Calculate entropy (higher = more evenly distributed)
+         
         const totalTaps = tapLog.length;
         const probabilities = Object.values(tapCounts).map(c => c / totalTaps);
         const entropy = -probabilities.reduce((sum, p) => {
             return sum + (p > 0 ? p * Math.log2(p) : 0);
         }, 0);
 
-        // Calculate repetition rate
+         
         const consecutiveSame = tapLog.filter(t => t.consecutiveSame).length;
         const repetitionRate = totalTaps > 1 ? consecutiveSame / (totalTaps - 1) : 0;
 
-        // Calculate switch frequency
+         
         const switches = tapLog.filter((t, i) => i > 0 && t.toyId !== tapLog[i - 1].toyId).length;
         const switchFrequency = totalTaps > 1 ? switches / (totalTaps - 1) : 0;
 
-        // Calculate engagement time (time between first and last tap excluding long pauses)
+         
         let engagementTime = 0;
         let pauseCount = 0;
         for (let i = 1; i < tapLog.length; i++) {
             const gap = tapLog[i].timestamp - tapLog[i - 1].timestamp;
-            if (gap < 5000) { // Less than 5 seconds = engaged
+            if (gap < 5000) {  
                 engagementTime += gap;
             } else {
                 pauseCount++;
@@ -161,14 +152,14 @@ export default function FreeToyTapGame() {
             objectFixationEntropy: Math.round(entropy * 100) / 100,
             repetitionRate: Math.round(repetitionRate * 100) / 100,
             switchFrequency: Math.round(switchFrequency * 100) / 100,
-            engagementTime: Math.round(engagementTime / 1000), // in seconds
+            engagementTime: Math.round(engagementTime / 1000),  
             totalTaps,
             pauseCount,
-            toyTapBreakdown: tapCounts, // Per-toy tap counts (e.g., { bear: 5, car: 3 })
+            toyTapBreakdown: tapCounts,  
         };
     }, [tapLog]);
 
-    // Finish the game - MUST be defined before useEffect that references it
+     
     const finishGame = useCallback(async () => {
         setGameState('FINISHED');
 
@@ -180,35 +171,35 @@ export default function FreeToyTapGame() {
         }
 
         const durationMs = Date.now() - startTimeRef.current;
-        const durationSec = durationMs / 1000; // Convert to seconds
+        const durationSec = durationMs / 1000;  
         const signals = calculateMLSignals();
         const finalScore = signals.totalTaps;
 
-        // End Firebase session with enhanced metrics
+         
         if (sessionId) {
             await endGameSession(sessionId, finalScore, {
-                duration: durationSec, // Duration in seconds
-                // Store enhanced metrics for dashboard display
+                duration: durationSec,  
+                 
                 objectFixationEntropy: signals.objectFixationEntropy,
                 repetitionRate: signals.repetitionRate,
                 switchFrequency: signals.switchFrequency,
                 engagementTime: signals.engagementTime,
                 totalTaps: signals.totalTaps,
                 pauseCount: signals.pauseCount,
-                toyTapBreakdown: signals.toyTapBreakdown, // Per-toy tap counts
+                toyTapBreakdown: signals.toyTapBreakdown,  
                 score: finalScore,
-                tapLog: tapLog.slice(0, 100), // Store first 100 taps
+                tapLog: tapLog.slice(0, 100),  
             });
         }
 
-        // Show result and run ML analysis
+         
         setShowResultModal(true);
         setIsAnalyzing(true);
 
         try {
             if (user?.uid) {
                 const { aggregated } = await fetchUserGameStats(user.uid);
-                // Add current game data
+                 
                 aggregated['free-toy-tap'] = {
                     ...signals,
                     score: signals.totalTaps,
@@ -227,14 +218,14 @@ export default function FreeToyTapGame() {
         }
     }, [calculateMLSignals, sessionId, tapLog, user]);
 
-    // Animation loop for toy movement
+     
     useEffect(() => {
         if (gameState !== 'PLAYING') return;
 
         const animate = () => {
             const elapsed = Date.now() - startTimeRef.current;
 
-            // Check if game should end
+             
             if (elapsed >= GAME_DURATION) {
                 finishGame();
                 return;
@@ -248,7 +239,7 @@ export default function FreeToyTapGame() {
                 const maxY = bounds.height - 100;
 
                 return prevToys.map(toy => {
-                    // Skip movement if toy is falling
+                     
                     if (toy.isFalling) {
                         return toy;
                     }
@@ -258,7 +249,7 @@ export default function FreeToyTapGame() {
                     let newVelocityX = toy.velocityX;
                     let newVelocityY = toy.velocityY;
 
-                    // Bounce off edges
+                     
                     if (newX < 20 || newX > maxX) {
                         newVelocityX = -newVelocityX;
                         newX = Math.max(20, Math.min(maxX, newX));
@@ -268,7 +259,7 @@ export default function FreeToyTapGame() {
                         newY = Math.max(20, Math.min(maxY, newY));
                     }
 
-                    // Add gentle bounce effect
+                     
                     const bounceY = Math.sin((elapsed / 1000) * 2 + toy.bounceOffset) * BOUNCE_AMPLITUDE;
 
                     return {
@@ -294,7 +285,7 @@ export default function FreeToyTapGame() {
         };
     }, [gameState, finishGame]);
 
-    // Cleanup timer on unmount
+     
     useEffect(() => {
         return () => {
             if (timerIntervalRef.current) {
@@ -303,14 +294,14 @@ export default function FreeToyTapGame() {
         };
     }, []);
 
-    // Handle toy tap with fall animation
+     
     const handleToyTap = useCallback((toy, event) => {
         if (gameState !== 'PLAYING' || toy.isFalling) return;
 
         const now = Date.now();
         const rect = event.target.getBoundingClientRect();
 
-        // Log the tap
+         
         const tapEntry = {
             toyId: toy.id,
             timestamp: now - startTimeRef.current,
@@ -322,14 +313,14 @@ export default function FreeToyTapGame() {
         setTapLog(prev => [...prev, tapEntry]);
         lastTapRef.current = toy.id;
 
-        // Update tap count and set falling state
+         
         setToys(prev => prev.map(t =>
             t.id === toy.id
                 ? { ...t, tapCount: t.tapCount + 1, isFalling: true, originalY: t.y }
                 : t
         ));
 
-        // Create sparkle effect
+         
         const sparkleId = `sparkle-${now}`;
         setSparkles(prev => [...prev, {
             id: sparkleId,
@@ -338,15 +329,15 @@ export default function FreeToyTapGame() {
             emoji: CELEBRATION_EMOJIS[Math.floor(Math.random() * CELEBRATION_EMOJIS.length)]
         }]);
 
-        // Play tap sound
+         
         soundService.pop();
 
-        // Remove sparkle after animation
+         
         setTimeout(() => {
             setSparkles(prev => prev.filter(s => s.id !== sparkleId));
         }, 800);
 
-        // Reset toy position after fall animation (1.2 seconds)
+         
         setTimeout(() => {
             setToys(prev => prev.map(t =>
                 t.id === toy.id
@@ -355,7 +346,7 @@ export default function FreeToyTapGame() {
                         isFalling: false,
                         y: t.originalY,
                         displayY: t.originalY,
-                        // Give it new random velocity to make it interesting
+                         
                         velocityX: (Math.random() - 0.5) * MOVEMENT_SPEED * 2,
                         velocityY: (Math.random() - 0.5) * MOVEMENT_SPEED * 2,
                     }
@@ -364,17 +355,17 @@ export default function FreeToyTapGame() {
         }, 1200);
     }, [gameState]);
 
-    // Get computed signals for display
+     
     const signals = calculateMLSignals();
 
-    // Format time as MM:SS
+     
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    // Result Modal
+     
     const ResultModal = () => {
         if (!showResultModal) return null;
 
@@ -447,7 +438,7 @@ export default function FreeToyTapGame() {
 
     return (
         <div className="min-h-[80vh] flex flex-col">
-            {/* Tutorial */}
+            { }
             {gameState === 'TUTORIAL' && (
                 <GameTutorial
                     type="tap"
@@ -464,10 +455,10 @@ export default function FreeToyTapGame() {
                 />
             )}
 
-            {/* Game Area */}
+            { }
             {gameState === 'PLAYING' && (
                 <div className="flex flex-col flex-1">
-                    {/* Header with Back Button and Timer */}
+                    { }
                     <div className="flex justify-between items-center mb-4 px-4">
                         <Button
                             onClick={handleBack}
@@ -484,12 +475,12 @@ export default function FreeToyTapGame() {
                         </div>
                     </div>
 
-                    {/* Game Play Area */}
+                    { }
                     <div
                         ref={gameAreaRef}
                         className="relative flex-1 min-h-[500px] bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 rounded-3xl overflow-hidden mx-4"
                     >
-                        {/* Floating toys */}
+                        { }
                         <AnimatePresence>
                             {toys.map(toy => (
                                 <motion.button
@@ -501,7 +492,7 @@ export default function FreeToyTapGame() {
                                         y: toy.y,
                                     }}
                                     animate={toy.isFalling ? {
-                                        // Fall animation: drop down with spin
+                                         
                                         y: (gameAreaRef.current?.getBoundingClientRect().height || 500) + 100,
                                         opacity: 0,
                                         rotate: 720,
@@ -536,7 +527,7 @@ export default function FreeToyTapGame() {
                             ))}
                         </AnimatePresence>
 
-                        {/* Sparkle effects */}
+                        { }
                         <AnimatePresence>
                             {sparkles.map(sparkle => (
                                 <motion.div
@@ -553,7 +544,7 @@ export default function FreeToyTapGame() {
                             ))}
                         </AnimatePresence>
 
-                        {/* Progress bar at bottom */}
+                        { }
                         <div className="absolute bottom-0 left-0 right-0 h-2 bg-white/30">
                             <motion.div
                                 className="h-full bg-gradient-to-r from-indigo-400 to-purple-400"
@@ -566,7 +557,7 @@ export default function FreeToyTapGame() {
                 </div>
             )}
 
-            {/* Result Modal */}
+            { }
             <ResultModal />
         </div>
     );

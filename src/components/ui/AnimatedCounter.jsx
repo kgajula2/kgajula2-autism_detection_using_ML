@@ -2,17 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import clsx from "clsx";
 
-/**
- * AnimatedCounter Component
- * Smooth count-up animation for dashboard statistics
- * Uses pure React state to avoid framer-motion hook issues with React 19
- */
+ 
 
 export const AnimatedCounter = ({
     value,
     duration = 1.5,
     delay = 0,
-    format = "number", // "number" | "percentage" | "currency" | "decimal"
+    format = "number",  
     decimals = 0,
     prefix = "",
     suffix = "",
@@ -25,7 +21,7 @@ export const AnimatedCounter = ({
     const startTimeRef = useRef(null);
     const animationRef = useRef(null);
 
-    // Format the display value
+     
     const formatValue = (num) => {
         const numValue = Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
         switch (format) {
@@ -40,10 +36,10 @@ export const AnimatedCounter = ({
         }
     };
 
-    // Easing function for smooth animation
+     
     const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
 
-    // Animation loop using requestAnimationFrame
+     
     const animate = (timestamp) => {
         if (!startTimeRef.current) {
             startTimeRef.current = timestamp;
@@ -63,7 +59,7 @@ export const AnimatedCounter = ({
         }
     };
 
-    // Intersection observer for triggering animation when visible
+     
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -89,7 +85,7 @@ export const AnimatedCounter = ({
         };
     }, [value, hasStarted, delay]);
 
-    // Update when value changes after initial animation
+     
     useEffect(() => {
         if (hasStarted) {
             setDisplayValue(value);
@@ -106,10 +102,7 @@ export const AnimatedCounter = ({
     );
 };
 
-/**
- * StatCard with AnimatedCounter
- * Ready-to-use dashboard stat card
- */
+ 
 export const AnimatedStatCard = ({
     label,
     value,
@@ -144,12 +137,12 @@ export const AnimatedStatCard = ({
                 colors[color]
             )}
         >
-            {/* Background Icon */}
+            { }
             {Icon && (
                 <Icon className="absolute top-4 right-4 w-20 h-20 opacity-20" />
             )}
 
-            {/* Content */}
+            { }
             <div className="relative z-10">
                 <p className="text-white/80 text-sm font-medium mb-2">{label}</p>
                 <div className="flex items-end gap-2">
@@ -167,15 +160,13 @@ export const AnimatedStatCard = ({
                 </div>
             </div>
 
-            {/* Decorative gradient overlay */}
+            { }
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
         </motion.div>
     );
 };
 
-/**
- * Compact Counter for inline use
- */
+ 
 export const CompactCounter = ({ value, label, className }) => {
     return (
         <div className={clsx("flex items-center gap-2", className)}>

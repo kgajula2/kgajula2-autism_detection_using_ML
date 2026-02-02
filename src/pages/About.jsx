@@ -13,7 +13,7 @@ export default function About() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 to-purple-100 dark:from-slate-900 dark:to-purple-900">
-            {/* Hero */}
+            { }
             <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 text-white py-20 px-6 text-center relative overflow-hidden">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -25,14 +25,14 @@ export default function About() {
                         Empowering families with AI-powered insights through play
                     </p>
                 </motion.div>
-                {/* Decorative Elements */}
+                { }
                 <div className="absolute top-0 left-0 w-full h-full opacity-10">
                     <div className="absolute top-10 left-10 text-9xl">🧠</div>
                     <div className="absolute bottom-10 right-10 text-9xl">🎮</div>
                 </div>
             </div>
 
-            {/* Mission */}
+            { }
             <div className="max-w-4xl mx-auto px-6 py-16">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

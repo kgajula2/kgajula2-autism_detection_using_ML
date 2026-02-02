@@ -11,7 +11,7 @@ export default function NotFound() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center max-w-md"
             >
-                {/* 404 Animation */}
+                { }
                 <motion.div
                     animate={{
                         rotate: [0, -5, 5, -5, 0],
@@ -27,7 +27,7 @@ export default function NotFound() {
                     404
                 </motion.div>
 
-                {/* Lost Mascot */}
+                { }
                 <motion.div
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
@@ -44,7 +44,7 @@ export default function NotFound() {
                     Looks like Neuro got a bit lost! The page you're looking for doesn't exist or has been moved.
                 </p>
 
-                {/* Action Buttons */}
+                { }
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link to="/">
                         <Button className="gap-2 w-full sm:w-auto">
@@ -62,7 +62,7 @@ export default function NotFound() {
                     </Button>
                 </div>
 
-                {/* Fun Suggestions */}
+                { }
                 <div className="mt-12 p-6 bg-white/50 dark:bg-slate-800/50 rounded-2xl backdrop-blur">
                     <h3 className="font-bold text-slate-700 dark:text-white mb-4 flex items-center justify-center gap-2">
                         <Search size={18} />

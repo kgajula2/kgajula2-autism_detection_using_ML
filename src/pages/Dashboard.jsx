@@ -38,14 +38,14 @@ export const Dashboard = () => {
         const loadRealData = async () => {
             if (!user) return;
             try {
-                // 1. Get Child Profile Name
+                 
                 const profile = await getUserProfile(user.uid);
                 if (profile?.childName) setChildName(profile.childName);
 
-                // 2. Fetch Sessions
+                 
                 const { sessions, aggregated } = await fetchUserGameStats(user.uid);
 
-                // 3. Process Stats
+                 
                 let totalMistakes = 0;
                 sessions.forEach(s => {
                     if (s.stats?.mistakes) totalMistakes += s.stats.mistakes;
@@ -55,16 +55,16 @@ export const Dashboard = () => {
 
                 setStats({
                     totalGames: sessions.length,
-                    wins: sessions.length, // Treating every completed session as a 'Win' for engagement
+                    wins: sessions.length,  
                     misses: totalMistakes,
-                    gameBreakdown: sessions.slice(0, 10) // Recent 10
+                    gameBreakdown: sessions.slice(0, 10)  
                 });
 
-                // 4. Calculate Streak
+                 
                 const currentStreak = calculateStreak(sessions);
                 setStreak(currentStreak);
 
-                // 5. Calculate Achievements
+                 
                 const achStats = {
                     totalGames: sessions.length,
                     hasPerfectGame: sessions.some(s => (s.stats?.mistakes || 0) === 0 && s.score > 0),
@@ -77,7 +77,7 @@ export const Dashboard = () => {
                 const achProgress = getAchievementProgress(achStats);
                 setAchievements(achProgress);
 
-                // 6. Build Progress Over Time Data (last 7 days)
+                 
                 const last7Days = [];
                 for (let i = 6; i >= 0; i--) {
                     const date = new Date();
@@ -103,7 +103,7 @@ export const Dashboard = () => {
                 }
                 setProgressData(last7Days);
 
-                // 7. Run Analysis
+                 
                 try {
                     const result = await analyzeUserPerformance(aggregated);
                     setAnalysis(result);
@@ -123,7 +123,7 @@ export const Dashboard = () => {
     }, [user]);
 
     const pieData = [
-        { name: 'Completed Plays', value: stats.wins || 1, color: '#8b5cf6' }, // fallback val to show empty circle if 0
+        { name: 'Completed Plays', value: stats.wins || 1, color: '#8b5cf6' },  
         { name: 'Challenges', value: stats.misses, color: '#fca5a5' }
     ];
 
@@ -132,7 +132,7 @@ export const Dashboard = () => {
         return (analysis.riskScore * 100).toFixed(1);
     };
 
-    // Format round timings for display
+     
     const formatRoundTimings = (roundTimings) => {
         if (!roundTimings || roundTimings.length === 0) return null;
         return roundTimings.map((r, idx) => ({
@@ -687,7 +687,7 @@ export const Dashboard = () => {
                 </div>
             </Card>
 
-            {/* AI Modal */}
+            { }
             <AnimatePresence>
                 {showMLModal && (
                     <motion.div

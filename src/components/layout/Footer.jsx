@@ -7,9 +7,9 @@ export default function Footer() {
     return (
         <footer className="bg-slate-900 dark:bg-slate-950 text-white mt-auto">
             <div className="max-w-7xl mx-auto px-6 py-12">
-                {/* Main Footer Content */}
+                { }
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                    {/* Brand */}
+                    { }
                     <div className="col-span-1 md:col-span-2">
                         <h3 className="text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
                             NeuroStep
@@ -24,7 +24,7 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Quick Links */}
+                    { }
                     <div>
                         <h4 className="font-bold text-white mb-4">Quick Links</h4>
                         <ul className="space-y-2">
@@ -51,7 +51,7 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Legal */}
+                    { }
                     <div>
                         <h4 className="font-bold text-white mb-4">Legal</h4>
                         <ul className="space-y-2">
@@ -79,7 +79,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Disclaimer */}
+                { }
                 <div className="border-t border-slate-800 pt-6 mb-6">
                     <p className="text-slate-500 text-xs leading-relaxed">
                         <strong className="text-slate-400">⚠️ Medical Disclaimer:</strong> NeuroStep is a screening tool and does NOT provide medical diagnosis.
@@ -88,7 +88,7 @@ export default function Footer() {
                     </p>
                 </div>
 
-                {/* Copyright */}
+                { }
                 <div className="border-t border-slate-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-slate-500 text-sm">
                         © {currentYear} NeuroStep. All rights reserved.

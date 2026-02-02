@@ -1,10 +1,7 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
 
-/**
- * Accessible Button Component
- * Includes ARIA support, focus indicators, keyboard navigation, and premium variants
- */
+ 
 export const Button = ({
     children,
     onClick,
@@ -26,7 +23,7 @@ export const Button = ({
         glass: "glass-card text-blue-900 dark:text-white border border-white/50 hover:bg-white/40 focus:ring-blue-200",
         neumorph: "neumorph text-gray-700 active:shadow-inner focus:ring-gray-300",
 
-        // New premium variants
+         
         glow: "bg-gradient-to-r from-purple-600 to-blue-600 text-white border-none shadow-lg glow-pulse hover:shadow-2xl focus:ring-purple-300",
         gradient: "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-none shadow-xl hover:shadow-2xl hover:saturate-150 focus:ring-purple-300",
         "gradient-success": "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-none shadow-lg hover:shadow-xl focus:ring-emerald-300",
@@ -63,7 +60,7 @@ export const Button = ({
             tabIndex={disabled ? -1 : 0}
             {...props}
         >
-            {/* Loading spinner */}
+            { }
             {loading && (
                 <motion.div
                     className="absolute inset-0 flex items-center justify-center bg-inherit"
@@ -74,12 +71,12 @@ export const Button = ({
                 </motion.div>
             )}
 
-            {/* Button content */}
+            { }
             <span className={clsx(loading && "opacity-0")}>
                 {children}
             </span>
 
-            {/* Shimmer effect for gradient variants */}
+            { }
             {(variant === 'gradient' || variant === 'glow') && !disabled && (
                 <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"

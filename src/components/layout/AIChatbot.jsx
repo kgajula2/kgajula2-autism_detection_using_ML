@@ -3,12 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, Bot, User, Sparkles } from 'lucide-react';
 import { Button } from '../ui/Button';
 
-/**
- * AI Chatbot with predefined FAQ answers
- * Provides instant help for common questions about the app
- */
+ 
 
-// Predefined Q&A database
+ 
 const FAQ_DATABASE = [
     {
         keywords: ['what', 'neurostep', 'app', 'about'],
@@ -72,7 +69,7 @@ const FAQ_DATABASE = [
     },
 ];
 
-// Find best matching answer
+ 
 function findAnswer(query) {
     const lowerQuery = query.toLowerCase();
     const words = lowerQuery.split(/\s+/);
@@ -97,11 +94,11 @@ function findAnswer(query) {
         return bestMatch.answer;
     }
 
-    // Default response
+     
     return "I'm not sure about that! 🤔 Try asking about:\n\n• How to play games\n• What is NeuroStep\n• Privacy & safety\n• Creating an account\n• Viewing results\n\nOr tap a suggested question below!";
 }
 
-// Suggested quick questions
+ 
 const QUICK_QUESTIONS = [
     "What is NeuroStep?",
     "How do I play?",
@@ -130,7 +127,7 @@ export default function AIChatbot() {
     const handleSend = (text = input) => {
         if (!text.trim()) return;
 
-        // Add user message
+         
         setMessages(prev => [...prev, {
             type: 'user',
             text: text.trim(),
@@ -140,7 +137,7 @@ export default function AIChatbot() {
         setInput('');
         setIsTyping(true);
 
-        // Simulate AI thinking
+         
         setTimeout(() => {
             const answer = findAnswer(text);
             setMessages(prev => [...prev, {
@@ -161,7 +158,7 @@ export default function AIChatbot() {
 
     return (
         <>
-            {/* Chat Toggle Button */}
+            { }
             <AnimatePresence>
                 {!isOpen && (
                     <motion.button
@@ -175,13 +172,13 @@ export default function AIChatbot() {
                         aria-label="Open chat assistant"
                     >
                         <MessageCircle size={28} />
-                        {/* Pulse indicator */}
+                        { }
                         <span className="absolute top-0 right-0 w-4 h-4 bg-green-400 rounded-full animate-pulse" />
                     </motion.button>
                 )}
             </AnimatePresence>
 
-            {/* Chat Window */}
+            { }
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -190,7 +187,7 @@ export default function AIChatbot() {
                         exit={{ opacity: 0, y: 100, scale: 0.8 }}
                         className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-6rem)] bg-white dark:bg-slate-800 rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-slate-700"
                     >
-                        {/* Header */}
+                        { }
                         <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-4 flex items-center justify-between text-white">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
@@ -210,7 +207,7 @@ export default function AIChatbot() {
                             </button>
                         </div>
 
-                        {/* Messages */}
+                        { }
                         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-slate-900">
                             {messages.map((msg, i) => (
                                 <motion.div
@@ -228,7 +225,7 @@ export default function AIChatbot() {
                                 </motion.div>
                             ))}
 
-                            {/* Typing indicator */}
+                            { }
                             {isTyping && (
                                 <div className="flex justify-start">
                                     <div className="bg-white dark:bg-slate-700 p-3 rounded-2xl rounded-bl-sm shadow-sm">
@@ -248,7 +245,7 @@ export default function AIChatbot() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Quick Questions */}
+                        { }
                         <div className="px-4 py-2 border-t border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800">
                             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                                 {QUICK_QUESTIONS.map((q, i) => (
@@ -263,7 +260,7 @@ export default function AIChatbot() {
                             </div>
                         </div>
 
-                        {/* Input */}
+                        { }
                         <div className="p-4 border-t border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800">
                             <div className="flex gap-2">
                                 <input

@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-// Mock Firebase modules
+ 
 vi.mock('../services/firebase', () => ({
     app: {},
     analytics: {},
@@ -14,7 +14,7 @@ vi.mock('../services/firebase', () => ({
     }))
 }));
 
-// Mock Firebase Auth
+ 
 vi.mock('firebase/auth', () => ({
     getAuth: vi.fn(() => ({
         currentUser: { uid: 'test-user-123', displayName: 'Test User' }
@@ -27,11 +27,11 @@ vi.mock('firebase/auth', () => ({
     })
 }));
 
-// Mock MediaPipe
+ 
 global.FaceMesh = vi.fn();
 global.Camera = vi.fn();
 
-// Mock window.matchMedia
+ 
 Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation(query => ({

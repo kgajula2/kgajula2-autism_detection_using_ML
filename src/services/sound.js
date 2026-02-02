@@ -1,4 +1,4 @@
-// Sound effects service
+ 
 
 class SoundService {
     constructor() {
@@ -6,7 +6,7 @@ class SoundService {
         this.sounds = {};
         this.audioContext = null;
 
-        // Load settings
+         
         try {
             const settings = JSON.parse(localStorage.getItem('neurostep_settings') || '{}');
             this.enabled = settings.soundEnabled !== false;
@@ -15,7 +15,7 @@ class SoundService {
         }
     }
 
-    // Generate sound using Web Audio API (no external files needed)
+     
     generateBeep(frequency = 440, duration = 0.1, type = 'sine', volume = 0.3) {
         if (!this.enabled) return;
 
@@ -43,7 +43,7 @@ class SoundService {
         }
     }
 
-    // Pre-defined sounds
+     
     pop() {
         this.generateBeep(800, 0.05, 'sine', 0.2);
     }
@@ -63,7 +63,7 @@ class SoundService {
     }
 
     levelUp() {
-        const notes = [523, 587, 659, 698, 784]; // C D E F G
+        const notes = [523, 587, 659, 698, 784];  
         notes.forEach((freq, i) => {
             setTimeout(() => this.generateBeep(freq, 0.1, 'sine', 0.2), i * 80);
         });
@@ -76,7 +76,7 @@ class SoundService {
     }
 
     achievement() {
-        const notes = [523, 659, 784, 1047]; // Fanfare
+        const notes = [523, 659, 784, 1047];  
         notes.forEach((freq, i) => {
             setTimeout(() => this.generateBeep(freq, 0.15, 'sine', 0.25), i * 100);
         });
@@ -87,10 +87,10 @@ class SoundService {
     }
 }
 
-// Singleton instance
+ 
 export const soundService = new SoundService();
 
-// React hook for sounds
+ 
 export function useSound() {
     return soundService;
 }

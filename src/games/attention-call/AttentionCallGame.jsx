@@ -1,16 +1,4 @@
-/**
- * Attention Call Game - Name Response Test with Camera Detection
- * 
- * This game measures social orienting reflex by calling the child's name
- * and detecting their response via webcam (eye contact / head movement).
- * 
- * ML Signals Captured:
- * - response_detected: Did child react?
- * - response_time: Time from call to response
- * - response_type: 'eye_contact' | 'head_movement' | 'face_appeared' | 'none'
- * - first_response_call: Which call number got response
- * - call_details: Per-call breakdown
- */
+ 
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -37,7 +25,7 @@ const {
     GREETING_PREFIX
 } = ATTENTION_CALL_CONFIG;
 
-// Animated character component
+ 
 const AnimatedCharacter = ({ isWaving, isIdle, isCalling }) => {
     return (
         <motion.div
@@ -87,7 +75,7 @@ const AnimatedCharacter = ({ isWaving, isIdle, isCalling }) => {
     );
 };
 
-// Confetti burst component
+ 
 const ConfettiBurst = ({ show }) => {
     if (!show) return null;
 
@@ -127,8 +115,8 @@ export default function AttentionCallGame() {
     const { user } = useUserStore();
     const { startSession, endSession } = useGameSession('attention-call');
 
-    // Game states
-    const [gameState, setGameState] = useState('TUTORIAL'); // TUTORIAL, PLAYING, FINISHED
+     
+    const [gameState, setGameState] = useState('TUTORIAL');  
     const [childName, setChildName] = useState('');
     const [currentCall, setCurrentCall] = useState(0);
     const [isCalling, setIsCalling] = useState(false);
@@ -143,9 +131,9 @@ export default function AttentionCallGame() {
     const [cameraActive, setCameraActive] = useState(false);
     const [detectionStatus, setDetectionStatus] = useState('');
     const [gameStartTime, setGameStartTime] = useState(null);
-    const [faceDetected, setFaceDetected] = useState(false);  // STATE for face detection
+    const [faceDetected, setFaceDetected] = useState(false);   
 
-    // Refs
+     
     const videoRef = useRef(null);
     const callTimeRef = useRef(null);
     const responseTimeoutRef = useRef(null);
@@ -154,35 +142,35 @@ export default function AttentionCallGame() {
     const faceWasAbsentRef = useRef(true);
     const gameStateRef = useRef('TUTORIAL');
     const responseTriggeredRef = useRef(false);
-    const faceDetectedRef = useRef(false);  // REF for immediate access in game loop
-    // Additional refs for callbacks - MUST be defined before useGameLoop
+    const faceDetectedRef = useRef(false);   
+     
     const currentCallRef = useRef(currentCall);
     const childNameRef = useRef(childName);
     const callsRef = useRef(calls);
     const finishGameRef = useRef(null);
 
-    // Keep gameStateRef in sync
+     
     useEffect(() => {
         gameStateRef.current = gameState;
     }, [gameState]);
 
-    // Keep faceDetectedRef in sync with state
+     
     useEffect(() => {
         faceDetectedRef.current = faceDetected;
     }, [faceDetected]);
 
-    // Eye landmarks for EAR (Eye Aspect Ratio) calculation
-    // MediaPipe FaceMesh uses these landmark indices:
+     
+     
     const LEFT_EYE = { upper: [159, 158, 157], lower: [145, 144, 153], inner: 133, outer: 33 };
     const RIGHT_EYE = { upper: [386, 385, 384], lower: [374, 373, 380], inner: 362, outer: 263 };
 
-    // Iris landmarks
+     
     const LEFT_IRIS = [474, 475, 476, 477];
     const RIGHT_IRIS = [469, 470, 471, 472];
 
-    // Calculate Eye Aspect Ratio (EAR) - higher = more open
+     
     const calculateEAR = (landmarks, eye) => {
-        // Vertical distances (upper lid to lower lid)
+         
         let verticalSum = 0;
         for (let i = 0; i < eye.upper.length; i++) {
             const upper = landmarks[eye.upper[i]];
@@ -191,33 +179,33 @@ export default function AttentionCallGame() {
         }
         const avgVertical = verticalSum / eye.upper.length;
 
-        // Horizontal distance (inner to outer corner)
+         
         const inner = landmarks[eye.inner];
         const outer = landmarks[eye.outer];
         const horizontal = Math.abs(inner.x - outer.x);
 
-        // EAR = vertical / horizontal
+         
         return avgVertical / horizontal;
     };
 
-    // Check if looking at camera (eyes open + iris centered)
+     
     const checkEyeContact = (landmarks) => {
-        // Calculate EAR for both eyes
+         
         const leftEAR = calculateEAR(landmarks, LEFT_EYE);
         const rightEAR = calculateEAR(landmarks, RIGHT_EYE);
         const avgEAR = (leftEAR + rightEAR) / 2;
 
-        // Eyes open if EAR > 0.15 (threshold for open eyes)
+         
         const eyesOpen = avgEAR > 0.15;
 
-        // Calculate iris X positions
+         
         const leftIrisX = LEFT_IRIS.reduce((sum, i) => sum + landmarks[i].x, 0) / LEFT_IRIS.length;
         const rightIrisX = RIGHT_IRIS.reduce((sum, i) => sum + landmarks[i].x, 0) / RIGHT_IRIS.length;
 
-        // Iris centered (0.30-0.70 for more tolerance) - EITHER eye looking at camera counts
+         
         const leftCentered = leftIrisX > 0.30 && leftIrisX < 0.70;
         const rightCentered = rightIrisX > 0.30 && rightIrisX < 0.70;
-        const lookingAtCamera = leftCentered || rightCentered;  // EITHER eye counts
+        const lookingAtCamera = leftCentered || rightCentered;   
 
         return {
             eyesOpen,
@@ -229,21 +217,21 @@ export default function AttentionCallGame() {
         };
     };
 
-    // onResults handler with EAR + IRIS detection
+     
     const onResults = (results) => {
         if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
             setFaceDetected(false);
-            faceDetectedRef.current = false;  // IMMEDIATE update
+            faceDetectedRef.current = false;   
             setDetectionStatus('❌ No face - look at camera');
             return;
         }
 
         const landmarks = results.multiFaceLandmarks[0];
 
-        // Check if enough landmarks for iris detection
+         
         if (landmarks.length < 478) {
             setFaceDetected(false);
-            faceDetectedRef.current = false;  // IMMEDIATE update
+            faceDetectedRef.current = false;   
             setDetectionStatus('⚠️ Face found but iris not detected');
             return;
         }
@@ -251,24 +239,24 @@ export default function AttentionCallGame() {
         const result = checkEyeContact(landmarks);
 
         if (!result.eyesOpen) {
-            // Eyes closed
+             
             setFaceDetected(false);
-            faceDetectedRef.current = false;  // IMMEDIATE update
+            faceDetectedRef.current = false;   
             setDetectionStatus(`😴 Eyes closed (EAR:${result.avgEAR})`);
         } else if (!result.lookingAtCamera) {
-            // Eyes open but not looking at camera
+             
             setFaceDetected(false);
-            faceDetectedRef.current = false;  // IMMEDIATE update
+            faceDetectedRef.current = false;   
             setDetectionStatus(`👀 Look at camera (L:${result.leftIrisX} R:${result.rightIrisX})`);
         } else {
-            // Eyes open AND looking at camera = SUCCESS
+             
             setFaceDetected(true);
-            faceDetectedRef.current = true;  // IMMEDIATE update - game loop sees this instantly
+            faceDetectedRef.current = true;   
             setDetectionStatus(`✅ Eye contact! (EAR:${result.avgEAR})`);
         }
     };
 
-    // Direct requestAnimationFrame loop for face detection (NOT using useGameLoop which checks wrong gameStore)
+     
     useEffect(() => {
         let animationId;
         let isRunning = true;
@@ -276,22 +264,22 @@ export default function AttentionCallGame() {
         const checkDetection = () => {
             if (!isRunning) return;
 
-            // Only check when game is active and detection is enabled
+             
             if (gameStateRef.current === 'PLAYING' &&
                 detectionActiveRef.current &&
                 !responseTriggeredRef.current) {
 
-                // Check if face/eye contact detected
+                 
                 if (faceDetectedRef.current) {
                     responseTriggeredRef.current = true;
                     detectionActiveRef.current = false;
 
-                    // Clear timeout
+                     
                     if (responseTimeoutRef.current) {
                         clearTimeout(responseTimeoutRef.current);
                     }
 
-                    // Record response
+                     
                     const callData = {
                         callNumber: currentCallRef.current,
                         callTimestamp: callTimeRef.current,
@@ -307,22 +295,22 @@ export default function AttentionCallGame() {
                     setShowConfetti(true);
                     setIsWaving(true);
 
-                    // Finish game after celebration
+                     
                     setTimeout(() => {
                         if (finishGameRef.current) {
                             finishGameRef.current(callsRef.current, 'eye_contact');
                         }
                     }, 1500);
 
-                    return; // Stop the loop after detecting
+                    return;  
                 }
             }
 
-            // Continue checking
+             
             animationId = requestAnimationFrame(checkDetection);
         };
 
-        // Start the detection loop when camera is active
+         
         if (cameraActive) {
             animationId = requestAnimationFrame(checkDetection);
         }
@@ -335,7 +323,7 @@ export default function AttentionCallGame() {
         };
     }, [cameraActive]);
 
-    // Keep refs in sync
+     
     useEffect(() => {
         currentCallRef.current = currentCall;
     }, [currentCall]);
@@ -348,7 +336,7 @@ export default function AttentionCallGame() {
         callsRef.current = calls;
     }, [calls]);
 
-    // Initialize camera when game starts using MediaPipe (SAME as EmotionMirrorGame)
+     
     useEffect(() => {
         if (gameState === 'PLAYING') {
             const startCamera = async () => {
@@ -369,7 +357,7 @@ export default function AttentionCallGame() {
         };
     }, [gameState]);
 
-    // Fetch child's name from profile
+     
     useEffect(() => {
         const fetchName = async () => {
             if (user?.uid) {
@@ -384,22 +372,22 @@ export default function AttentionCallGame() {
         fetchName();
     }, [user]);
 
-    // 📢 Cartoon Voice - FREE, NO-API, REVIEW-SAFE
-    // Uses ATTENTION preset: pitch 1.7, rate 0.8 (gentle but attention-grabbing)
+     
+     
     const speakName = useCallback((name) => {
         const greeting = `${GREETING_PREFIX} ${name}!`;
         return speakCartoon(greeting, VOICE_PRESETS.ATTENTION);
     }, []);
-    // handleResponseDetected - using function declaration for hoisting
+     
 
-    // Handle detected response
+     
     const handleResponseDetected = useCallback((responseType) => {
         if (!detectionActiveRef.current) return;
 
-        // Disable further detection
+         
         detectionActiveRef.current = false;
 
-        // Clear timeout
+         
         if (responseTimeoutRef.current) {
             clearTimeout(responseTimeoutRef.current);
         }
@@ -407,7 +395,7 @@ export default function AttentionCallGame() {
         const responseTime = Date.now() - callTimeRef.current;
         const callNumber = currentCall;
 
-        // Record response
+         
         const callData = {
             callNumber,
             callTimestamp: callTimeRef.current,
@@ -420,20 +408,20 @@ export default function AttentionCallGame() {
         setCalls(prev => [...prev, callData]);
         setWaitingForResponse(false);
 
-        // Show celebration
+         
         setIsWaving(true);
         setShowConfetti(true);
 
         setTimeout(() => {
             setIsWaving(false);
             setShowConfetti(false);
-            // Response detected - end game successfully
+             
             callsRef.current = [...callsRef.current, callData];
             finishGameRef.current(callsRef.current, responseType);
         }, 2000);
     }, [currentCall, childName, calls]);
 
-    // Make a name call
+     
     const makeCall = useCallback(async (callNumber) => {
         if (gameStateRef.current !== 'PLAYING') return;
 
@@ -443,21 +431,21 @@ export default function AttentionCallGame() {
         setIsCalling(true);
         callTimeRef.current = Date.now();
 
-        // Speak the name
+         
         await speakName(nameToCall);
         setIsCalling(false);
 
-        // Start listening for response
+         
         setWaitingForResponse(true);
         detectionActiveRef.current = true;
-        responseTriggeredRef.current = false;  // Reset for new detection window
+        responseTriggeredRef.current = false;   
         setDetectionStatus('👀 Looking for face...');
 
-        // After response window, check result
+         
         responseTimeoutRef.current = setTimeout(() => {
-            if (!detectionActiveRef.current) return; // Already responded
+            if (!detectionActiveRef.current) return;  
 
-            // No response detected
+             
             detectionActiveRef.current = false;
 
             const callData = {
@@ -472,19 +460,19 @@ export default function AttentionCallGame() {
             setCalls(prev => [...prev, callData]);
             setWaitingForResponse(false);
 
-            // Check if more calls remaining
+             
             if (callNumber < MAX_CALLS) {
-                // Wait and make next call
+                 
                 setTimeout(() => makeCall(callNumber + 1), BETWEEN_CALLS_DELAY);
             } else {
-                // No response after all calls - end game
+                 
                 callsRef.current = [...callsRef.current, callData];
                 finishGameRef.current(callsRef.current, 'none');
             }
         }, RESPONSE_WINDOW);
     }, [childName, speakName, calls]);
 
-    // Start game
+     
     const handleStartGame = useCallback(async () => {
         setCalls([]);
         setCurrentCall(0);
@@ -500,20 +488,20 @@ export default function AttentionCallGame() {
             setSessionId(sid);
         }
 
-        // Set game state - useEffect will handle camera init
+         
         setGameState('PLAYING');
 
-        // Start first call after initial delay (give camera time to init)
+         
         setTimeout(() => makeCall(1), INITIAL_DELAY + 1000);
     }, [startSession, user, childName, makeCall]);
 
-    // Finish game
+     
     const finishGame = useCallback(async (finalCalls, finalResponseType) => {
         setGameState('FINISHED');
         stopVision();
         setCameraActive(false);
 
-        // Calculate stats
+         
         const responses = finalCalls.filter(c => c.responseDetected);
         const firstResponseCall = responses.length > 0 ? responses[0].callNumber : null;
         const responseRate = finalCalls.length > 0 ? responses.length / finalCalls.length : 0;
@@ -538,7 +526,7 @@ export default function AttentionCallGame() {
             duration,
         };
 
-        // End session
+         
         if (sessionId) {
             await endSession(responses.length, stats);
         }
@@ -567,12 +555,12 @@ export default function AttentionCallGame() {
         }
     }, [sessionId, endSession, user, gameStartTime]);
 
-    // Keep finishGameRef in sync
+     
     useEffect(() => {
         finishGameRef.current = finishGame;
     }, [finishGame]);
 
-    // Cleanup
+     
     useEffect(() => {
         return () => {
             if (responseTimeoutRef.current) {
@@ -583,7 +571,7 @@ export default function AttentionCallGame() {
         };
     }, []);
 
-    // Result Modal
+     
     const ResultModal = () => {
         if (!showResultModal) return null;
 
@@ -638,7 +626,7 @@ export default function AttentionCallGame() {
                         )}
                     </div>
 
-                    {/* Call breakdown */}
+                    { }
                     <div className="mb-6">
                         <p className="text-sm font-medium text-gray-500 mb-2">Call by Call:</p>
                         <div className="flex gap-2 flex-wrap">
@@ -694,7 +682,7 @@ export default function AttentionCallGame() {
     return (
         <div className="min-h-[80vh] flex flex-col">
 
-            {/* Tutorial */}
+            { }
             {gameState === 'TUTORIAL' && (
                 <GameTutorial
                     type="camera"
@@ -713,10 +701,10 @@ export default function AttentionCallGame() {
                 />
             )}
 
-            {/* Game Area */}
+            { }
             {gameState === 'PLAYING' && (
                 <div className="flex flex-col flex-1">
-                    {/* Header */}
+                    { }
                     <div className="flex justify-between items-center mb-4 px-4">
                         <Button
                             onClick={() => {
@@ -742,10 +730,10 @@ export default function AttentionCallGame() {
                         </div>
                     </div>
 
-                    {/* Game Play Area - Camera Only */}
+                    { }
                     <div className="relative flex-1 min-h-[500px] bg-gradient-to-br from-rose-100 via-pink-50 to-orange-100 rounded-3xl overflow-hidden flex flex-col items-center justify-center mx-4 p-6">
 
-                        {/* Large Camera View - Centered */}
+                        { }
                         <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white w-full max-w-2xl aspect-video bg-gray-900">
                             <video
                                 ref={videoRef}
@@ -754,18 +742,18 @@ export default function AttentionCallGame() {
                                 playsInline
                                 muted
                             />
-                            {/* Live indicator */}
+                            { }
                             <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/50 px-4 py-2 rounded-full">
                                 <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
                                 <span className="text-sm font-medium text-white">LIVE</span>
                             </div>
 
-                            {/* Call counter */}
+                            { }
                             <div className="absolute top-4 right-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white px-4 py-2 rounded-full">
                                 <span className="font-bold">Call {currentCall} / {MAX_CALLS}</span>
                             </div>
 
-                            {/* Calling indicator - shows name being called */}
+                            { }
                             {isCalling && (
                                 <motion.div
                                     initial={{ scale: 0, y: -20 }}
@@ -778,7 +766,7 @@ export default function AttentionCallGame() {
                                 </motion.div>
                             )}
 
-                            {/* Detection status - bottom center */}
+                            { }
                             <div className="absolute bottom-4 left-4 right-4 bg-black/70 px-6 py-3 rounded-xl">
                                 <p className="text-lg font-bold text-white text-center">
                                     {detectionStatus || 'Starting camera...'}
@@ -786,7 +774,7 @@ export default function AttentionCallGame() {
                             </div>
                         </div>
 
-                        {/* Instruction text */}
+                        { }
                         {waitingForResponse && !isCalling && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
@@ -799,10 +787,10 @@ export default function AttentionCallGame() {
                             </motion.div>
                         )}
 
-                        {/* Confetti */}
+                        { }
                         <ConfettiBurst show={showConfetti} />
 
-                        {/* Progress dots */}
+                        { }
                         <div className="absolute bottom-4 left-4 right-4 flex gap-2 justify-center">
                             {Array.from({ length: MAX_CALLS }).map((_, i) => (
                                 <div
@@ -822,7 +810,7 @@ export default function AttentionCallGame() {
                 </div>
             )}
 
-            {/* Result Modal */}
+            { }
             <ResultModal />
         </div>
     );

@@ -30,26 +30,26 @@ export function SkeletonCard() {
 export function SkeletonDashboard() {
     return (
         <div className="space-y-6 animate-pulse">
-            {/* Header */}
+            { }
             <div className="flex justify-between items-center">
                 <Skeleton variant="button" />
                 <Skeleton variant="title" />
             </div>
 
-            {/* Stats Grid */}
+            { }
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {[1, 2, 3, 4].map(i => (
                     <div key={i} className="h-40 rounded-[2.5rem] bg-gray-200 dark:bg-gray-700" />
                 ))}
             </div>
 
-            {/* Charts */}
+            { }
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="h-80 rounded-2xl bg-gray-200 dark:bg-gray-700" />
                 <div className="h-80 rounded-2xl bg-gray-200 dark:bg-gray-700" />
             </div>
 
-            {/* Table */}
+            { }
             <div className="h-64 rounded-2xl bg-gray-200 dark:bg-gray-700" />
         </div>
     );

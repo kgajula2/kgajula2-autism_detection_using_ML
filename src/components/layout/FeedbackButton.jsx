@@ -28,7 +28,7 @@ export default function FeedbackButton() {
 
     return (
         <>
-            {/* Floating Button */}
+            { }
             <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -38,11 +38,11 @@ export default function FeedbackButton() {
                 <MessageCircle size={24} />
             </motion.button>
 
-            {/* Modal */}
+            { }
             <AnimatePresence>
                 {isOpen && (
                     <>
-                        {/* Backdrop */}
+                        { }
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -51,14 +51,14 @@ export default function FeedbackButton() {
                             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
                         />
 
-                        {/* Modal Content */}
+                        { }
                         <motion.div
                             initial={{ opacity: 0, y: 50, scale: 0.9 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 50, scale: 0.9 }}
                             className="fixed bottom-24 right-6 w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden"
                         >
-                            {/* Header */}
+                            { }
                             <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 text-white flex items-center justify-between">
                                 <h3 className="font-bold flex items-center gap-2">
                                     <MessageCircle size={20} />
@@ -69,7 +69,7 @@ export default function FeedbackButton() {
                                 </button>
                             </div>
 
-                            {/* Body */}
+                            { }
                             <div className="p-4">
                                 {isSubmitted ? (
                                     <motion.div
@@ -83,7 +83,7 @@ export default function FeedbackButton() {
                                     </motion.div>
                                 ) : (
                                     <form onSubmit={handleSubmit}>
-                                        {/* Type Selection */}
+                                        { }
                                         <div className="mb-4">
                                             <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
                                                 What type of feedback?
@@ -106,7 +106,7 @@ export default function FeedbackButton() {
                                             </div>
                                         </div>
 
-                                        {/* Message */}
+                                        { }
                                         <div className="mb-4">
                                             <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
                                                 Your message

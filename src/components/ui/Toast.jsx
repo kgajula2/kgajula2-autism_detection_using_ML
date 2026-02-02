@@ -3,15 +3,12 @@ import { useState, useEffect, createContext, useContext, useCallback } from "rea
 import { CheckCircle, AlertCircle, AlertTriangle, Info, X } from "lucide-react";
 import clsx from "clsx";
 
-/**
- * Toast Notification System
- * Premium slide-in notifications with auto-dismiss and progress bar
- */
+ 
 
-// Toast Context for global access
+ 
 const ToastContext = createContext(null);
 
-// Toast variants configuration
+ 
 const variants = {
     success: {
         icon: CheckCircle,
@@ -39,7 +36,7 @@ const variants = {
     }
 };
 
-// Individual Toast Component
+ 
 const ToastItem = ({ id, message, variant = "info", duration = 4000, onDismiss }) => {
     const [progress, setProgress] = useState(100);
     const config = variants[variant] || variants.info;
@@ -80,7 +77,7 @@ const ToastItem = ({ id, message, variant = "info", duration = 4000, onDismiss }
                 <p className="font-medium text-sm leading-snug">{message}</p>
             </div>
 
-            {/* Dismiss button */}
+            { }
             <button
                 onClick={() => onDismiss(id)}
                 className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors"
@@ -89,7 +86,7 @@ const ToastItem = ({ id, message, variant = "info", duration = 4000, onDismiss }
                 <X className="w-4 h-4" />
             </button>
 
-            {/* Progress bar */}
+            { }
             <div className="absolute bottom-0 left-0 right-0 h-1">
                 <motion.div
                     className={clsx("h-full", config.progressColor)}
@@ -102,7 +99,7 @@ const ToastItem = ({ id, message, variant = "info", duration = 4000, onDismiss }
     );
 };
 
-// Toast Container Component
+ 
 export const ToastContainer = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
@@ -127,7 +124,7 @@ export const ToastContainer = ({ children }) => {
         <ToastContext.Provider value={toast}>
             {children}
 
-            {/* Toast Stack */}
+            { }
             <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-none">
                 <AnimatePresence mode="popLayout">
                     {toasts.map(t => (
@@ -147,11 +144,11 @@ export const ToastContainer = ({ children }) => {
     );
 };
 
-// Hook to use toast
+ 
 export const useToast = () => {
     const context = useContext(ToastContext);
     if (!context) {
-        // Return a fallback that logs to console if not wrapped in provider
+         
         return {
             success: (msg) => console.log("Toast (success):", msg),
             error: (msg) => console.error("Toast (error):", msg),

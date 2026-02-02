@@ -1,16 +1,4 @@
-/**
- * Shape Switch Game - Resistance to Change
- * 
- * This game measures cognitive flexibility and adaptation to rule changes.
- * Child taps glowing shapes for rewards. After 5 successful taps,
- * the rule silently changes (different shape glows).
- * 
- * ML Signals Captured:
- * - confusion_duration: Time to first correct tap after switch
- * - wrong_taps_after_switch: Perseveration count
- * - adaptation_speed: Rounds to adapt
- * - distress_indicators: Stopped tapping or rapid frustrated taps
- */
+ 
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,7 +16,7 @@ import GameTutorial from '../../components/game/GameTutorial';
 
 const { TAPS_BEFORE_SWITCH, TOTAL_SWITCHES, GLOW_PULSE_SPEED, REWARD_DURATION } = SHAPE_SWITCH_CONFIG;
 
-// Helper function for sound effects
+ 
 const playSound = (type) => {
     if (type === 'success') {
         soundService.success();
@@ -37,7 +25,7 @@ const playSound = (type) => {
     }
 };
 
-// Shape SVG components
+ 
 const ShapeCircle = ({ color, isGlowing, size = 120 }) => (
     <svg width={size} height={size} viewBox="0 0 100 100">
         <defs>
@@ -118,8 +106,8 @@ export default function ShapeSwitchGame() {
     const { user } = useUserStore();
     const { startSession, endSession } = useGameSession('shape-switch');
 
-    // Game states
-    const [gameState, setGameState] = useState('TUTORIAL'); // TUTORIAL, PLAYING, FINISHED
+     
+    const [gameState, setGameState] = useState('TUTORIAL');  
     const [shapes, setShapes] = useState([]);
     const [targetShapeId, setTargetShapeId] = useState(null);
     const [correctTaps, setCorrectTaps] = useState(0);
@@ -131,7 +119,7 @@ export default function ShapeSwitchGame() {
     const [mlResult, setMlResult] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-    // Tracking refs
+     
     const startTimeRef = useRef(null);
     const switchTimeRef = useRef(null);
     const currentRoundRef = useRef({
@@ -144,12 +132,12 @@ export default function ShapeSwitchGame() {
         firstCorrectAfterSwitch: false,
     });
 
-    // Initialize shapes
+     
     const initializeGame = useCallback(() => {
         const shuffled = [...SHAPE_SWITCH_SHAPES].sort(() => Math.random() - 0.5);
         setShapes(shuffled);
 
-        // Set first target
+         
         const firstTarget = shuffled[0].id;
         setTargetShapeId(firstTarget);
         currentRoundRef.current = {
@@ -165,7 +153,7 @@ export default function ShapeSwitchGame() {
         return shuffled;
     }, []);
 
-    // Start game
+     
     const handleStartGame = useCallback(async () => {
         initializeGame();
         setCorrectTaps(0);
@@ -185,12 +173,12 @@ export default function ShapeSwitchGame() {
         setGameState('PLAYING');
     }, [initializeGame, startSession, user]);
 
-    // Switch to new target
+     
     const switchTarget = useCallback(() => {
         const currentRound = { ...currentRoundRef.current };
         setRounds(prev => [...prev, currentRound]);
 
-        // Find a new target (different from current)
+         
         const currentTarget = targetShapeId;
         const otherShapes = shapes.filter(s => s.id !== currentTarget);
         const newTarget = otherShapes[Math.floor(Math.random() * otherShapes.length)].id;
@@ -200,7 +188,7 @@ export default function ShapeSwitchGame() {
         setCorrectTaps(0);
         switchTimeRef.current = Date.now();
 
-        // Reset round tracking
+         
         currentRoundRef.current = {
             targetShape: newTarget,
             taps: 0,
@@ -212,15 +200,15 @@ export default function ShapeSwitchGame() {
         };
     }, [shapes, targetShapeId]);
 
-    // Finish game - MUST be defined before handleShapeTap that references it
+     
     const finishGame = useCallback(async () => {
-        // Save final round
+         
         const currentRound = { ...currentRoundRef.current };
         const allRounds = [...rounds, currentRound];
 
         setGameState('FINISHED');
 
-        // Calculate stats
+         
         const switchRounds = allRounds.filter(r => r.switchedFrom !== null);
         const avgConfusion = switchRounds.length > 0
             ? switchRounds.reduce((sum, r) => sum + (r.confusionDuration || 0), 0) / switchRounds.length
@@ -236,7 +224,7 @@ export default function ShapeSwitchGame() {
             duration: (Date.now() - startTimeRef.current) / 1000,
         };
 
-        // End session
+         
         if (sessionId) {
             await endSession(correctTaps, stats);
         }
@@ -265,52 +253,52 @@ export default function ShapeSwitchGame() {
         }
     }, [rounds, switchCount, correctTaps, sessionId, endSession, user]);
 
-    // Handle shape tap
+     
     const handleShapeTap = useCallback((shapeId) => {
         if (gameState !== 'PLAYING') return;
 
         const now = Date.now();
         const isCorrect = shapeId === targetShapeId;
 
-        // Update round tracking
+         
         currentRoundRef.current.taps += 1;
 
         if (isCorrect) {
             currentRoundRef.current.correct += 1;
             setCorrectTaps(prev => prev + 1);
 
-            // Check if this is first correct after switch
+             
             if (switchTimeRef.current && !currentRoundRef.current.firstCorrectAfterSwitch) {
                 currentRoundRef.current.confusionDuration = now - switchTimeRef.current;
                 currentRoundRef.current.firstCorrectAfterSwitch = true;
             }
 
-            // Show reward
+             
             setShowReward(true);
             playSound('success');
             setTimeout(() => setShowReward(false), REWARD_DURATION);
 
-            // Check if time to switch
+             
             if (correctTaps + 1 >= TAPS_BEFORE_SWITCH) {
                 if (switchCount < TOTAL_SWITCHES) {
                     setTimeout(() => switchTarget(), 500);
                 } else {
-                    // Game complete
+                     
                     setTimeout(() => finishGame(), 500);
                 }
             }
         } else {
-            // Wrong tap
+             
             playSound('error');
 
-            // Track wrong taps after switch
+             
             if (switchTimeRef.current && !currentRoundRef.current.firstCorrectAfterSwitch) {
                 currentRoundRef.current.wrongTapsAfterSwitch += 1;
             }
         }
     }, [gameState, targetShapeId, correctTaps, switchCount, switchTarget]);
 
-    // Result Modal
+     
     const ResultModal = () => {
         if (!showResultModal) return null;
 
@@ -384,7 +372,7 @@ export default function ShapeSwitchGame() {
 
     return (
         <div className="min-h-[80vh] flex flex-col">
-            {/* Tutorial */}
+            { }
             {gameState === 'TUTORIAL' && (
                 <GameTutorial
                     type="tap"
@@ -401,10 +389,10 @@ export default function ShapeSwitchGame() {
                 />
             )}
 
-            {/* Game Area */}
+            { }
             {gameState === 'PLAYING' && (
                 <div className="flex flex-col flex-1">
-                    {/* Back Button Header */}
+                    { }
                     <div className="flex justify-between items-center mb-4 px-4">
                         <Button
                             onClick={() => navigate('/home')}
@@ -419,10 +407,10 @@ export default function ShapeSwitchGame() {
                         </div>
                     </div>
 
-                    {/* Game Play Area */}
+                    { }
                     <div className="relative flex-1 min-h-[500px] bg-gradient-to-br from-teal-100 via-cyan-50 to-blue-100 rounded-3xl overflow-hidden flex flex-col items-center justify-center gap-8 p-8 mx-4">
 
-                        {/* Progress indicator */}
+                        { }
                         <div className="absolute top-4 left-4 right-4 flex gap-2">
                             {Array.from({ length: TAPS_BEFORE_SWITCH }).map((_, i) => (
                                 <div
@@ -433,7 +421,7 @@ export default function ShapeSwitchGame() {
                             ))}
                         </div>
 
-                        {/* Shapes */}
+                        { }
                         <div className="flex gap-8 flex-wrap justify-center">
                             {shapes.map(shape => {
                                 const ShapeComponent = SHAPE_COMPONENTS[shape.id];
@@ -461,7 +449,7 @@ export default function ShapeSwitchGame() {
                             })}
                         </div>
 
-                        {/* Reward effect */}
+                        { }
                         <AnimatePresence>
                             {showReward && (
                                 <motion.div
@@ -477,7 +465,7 @@ export default function ShapeSwitchGame() {
                             )}
                         </AnimatePresence>
 
-                        {/* Switch counter */}
+                        { }
                         <div className="absolute bottom-4 right-4 bg-white/80 px-4 py-2 rounded-full text-sm font-medium text-gray-600">
                             Round {switchCount + 1} of {TOTAL_SWITCHES + 1}
                         </div>
@@ -485,7 +473,7 @@ export default function ShapeSwitchGame() {
                 </div>
             )}
 
-            {/* Result Modal */}
+            { }
             <ResultModal />
         </div>
     );

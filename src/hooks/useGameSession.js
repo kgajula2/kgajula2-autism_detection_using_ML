@@ -2,26 +2,20 @@ import { useState, useRef, useCallback } from 'react';
 import { createGameSession, endGameSession, logRoundMetrics } from '../services/db';
 import { analyzeUserPerformance } from '../services/ml';
 import useAuth from './useAuth';
+import { useGameStore } from '../store/gameStore';
 
-/**
- * Custom hook for managing game sessions.
- * Centralizes session creation, metrics logging, and analysis.
- * 
- * @param {string} gameType - Type of game (e.g., 'color-focus', 'routine-sequencer')
- * @returns {Object} Session management functions and state
- */
+
+
 export function useGameSession(gameType) {
     const { userId, withAuth } = useAuth();
+    const markGamePlayed = useGameStore(state => state.markGamePlayed);
     const [sessionId, setSessionId] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisResult, setAnalysisResult] = useState(null);
     const startTimeRef = useRef(0);
 
-    /**
-     * Start a new game session
-     * @param {Object} initialData - Initial session metadata
-     * @returns {Promise<string|null>} Session ID or null
-     */
+
+
     const startSession = useCallback(async (initialData = {}) => {
         startTimeRef.current = Date.now();
 
@@ -39,10 +33,7 @@ export function useGameSession(gameType) {
         return sid;
     }, [gameType, withAuth]);
 
-    /**
-     * Log metrics for the current session
-     * @param {Object} metrics - Metrics to log
-     */
+
     const logMetrics = useCallback(async (metrics) => {
         if (!sessionId) {
             console.warn('logMetrics: No active session');
@@ -60,13 +51,7 @@ export function useGameSession(gameType) {
         }
     }, [sessionId, gameType]);
 
-    /**
-     * End the current session and optionally run ML analysis
-     * @param {number} finalScore - Final game score
-     * @param {Object} finalStats - Final session stats
-     * @param {boolean} runAnalysis - Whether to run ML analysis
-     * @returns {Promise<Object|null>} Analysis result or null
-     */
+
     const endSession = useCallback(async (finalScore, finalStats = {}, runAnalysis = true) => {
         const duration = (Date.now() - startTimeRef.current) / 1000;
 
@@ -76,6 +61,8 @@ export function useGameSession(gameType) {
                     ...finalStats,
                     duration,
                 });
+                // Mark this game as played for screening progress
+                markGamePlayed(gameType);
             } catch (err) {
                 console.error('Failed to end session:', err);
             }
@@ -105,9 +92,7 @@ export function useGameSession(gameType) {
         return null;
     }, [sessionId, gameType]);
 
-    /**
-     * Reset session state (for replay)
-     */
+
     const resetSession = useCallback(() => {
         setSessionId(null);
         setAnalysisResult(null);
@@ -115,10 +100,7 @@ export function useGameSession(gameType) {
         startTimeRef.current = 0;
     }, []);
 
-    /**
-     * Get elapsed time in seconds
-     * @returns {number}
-     */
+
     const getElapsedTime = useCallback(() => {
         if (!startTimeRef.current) return 0;
         return (Date.now() - startTimeRef.current) / 1000;

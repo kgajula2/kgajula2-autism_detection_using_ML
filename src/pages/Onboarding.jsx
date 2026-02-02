@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/userStore';
 import { createUserProfile } from '../services/db';
-import { getAuth } from "firebase/auth"; // Import auth
+import { getAuth } from "firebase/auth";  
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Title, SubTitle } from '../components/ui/Typography';
@@ -22,7 +22,7 @@ export default function Onboarding() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Fallback to direct auth if store is empty
+         
         const currentUser = user || getAuth().currentUser;
 
         if (!currentUser) {
@@ -38,8 +38,8 @@ export default function Onboarding() {
                 email: currentUser.email,
                 onboardingCompleted: true
             });
-            // Force reload or redirect
-            window.location.href = '/home'; // using href to force full state refresh
+             
+            window.location.href = '/home';  
         } catch (error) {
             console.error("Onboarding failed:", error);
             alert("Failed to save profile: " + error.message);
@@ -48,7 +48,7 @@ export default function Onboarding() {
         }
     };
 
-    // Common input classes with dark mode support
+     
     const inputClasses = "p-3 rounded-xl border border-gray-200 dark:border-slate-600 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400";
 
     return (

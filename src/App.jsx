@@ -7,12 +7,12 @@ import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import GameErrorBoundary from "./components/game/GameErrorBoundary";
 
-// Lazy load heavy components to reduce initial bundle size
+ 
 const Dashboard = lazy(() => import("./pages/Dashboard").then(m => ({ default: m.Dashboard })));
 const GameSelection = lazy(() => import("./pages/GameSelection").then(m => ({ default: m.GameSelection })));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 
-// Lazy load game components (largest chunks)
+ 
 const ColorFocusGame = lazy(() => import("./games/color-focus/ColorFocusGame"));
 const RoutineSequencerGame = lazy(() => import("./games/routine-sequencer/RoutineSequencerGame"));
 const EmotionMirrorGame = lazy(() => import("./games/emotion-mirror/EmotionMirrorGame"));
@@ -21,7 +21,7 @@ const FreeToyTapGame = lazy(() => import("./games/free-toy-tap/FreeToyTapGame"))
 const ShapeSwitchGame = lazy(() => import("./games/shape-switch/ShapeSwitchGame"));
 const AttentionCallGame = lazy(() => import("./games/attention-call/AttentionCallGame"));
 
-// Lazy load new pages
+ 
 const Profile = lazy(() => import("./pages/Profile"));
 const Help = lazy(() => import("./pages/Help"));
 const About = lazy(() => import("./pages/About"));
@@ -30,7 +30,7 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Loading fallback component
+ 
 function LoadingFallback() {
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
@@ -48,11 +48,11 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<MainLayout />}>
-            {/* Public Routes */}
+            { }
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
 
-            {/* Public Info Pages */}
+            { }
             <Route path="/about" element={
               <Suspense fallback={<LoadingFallback />}>
                 <About />
@@ -79,7 +79,7 @@ export default function App() {
               </Suspense>
             } />
 
-            {/* Protected Routes - Wrapped in Suspense for lazy loading */}
+            { }
             <Route path="/onboarding" element={
               <ProtectedRoute>
                 <Suspense fallback={<LoadingFallback />}>
@@ -112,7 +112,7 @@ export default function App() {
               </ProtectedRoute>
             } />
 
-            {/* Game Routes - Lazy loaded with Error Boundaries */}
+            { }
             <Route path="/game/color-focus" element={
               <ProtectedRoute>
                 <GameErrorBoundary gameName="Color Focus">
@@ -177,7 +177,7 @@ export default function App() {
               </ProtectedRoute>
             } />
 
-            {/* 404 Catch-all */}
+            { }
             <Route path="*" element={
               <Suspense fallback={<LoadingFallback />}>
                 <NotFound />

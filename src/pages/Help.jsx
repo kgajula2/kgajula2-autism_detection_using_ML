@@ -127,7 +127,7 @@ export default function Help() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 to-blue-100 dark:from-slate-900 dark:to-blue-900">
-            {/* Header */}
+            { }
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8 pb-24">
                 <div className="max-w-4xl mx-auto text-center">
                     <HelpCircle className="w-16 h-16 mx-auto mb-4 opacity-80" />
@@ -136,7 +136,7 @@ export default function Help() {
                 </div>
             </div>
 
-            {/* Search */}
+            { }
             <div className="max-w-4xl mx-auto px-6 -mt-8">
                 <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -150,7 +150,7 @@ export default function Help() {
                 </div>
             </div>
 
-            {/* FAQ Categories */}
+            { }
             <div className="max-w-4xl mx-auto px-6 py-12">
                 {filteredFaqs.map((category, idx) => (
                     <motion.div
@@ -182,7 +182,7 @@ export default function Help() {
                     </div>
                 )}
 
-                {/* Contact CTA */}
+                { }
                 <Card className="p-8 text-center bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-xl mt-12">
                     <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-80" />
                     <h3 className="text-2xl font-bold mb-2">Still need help?</h3>

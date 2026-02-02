@@ -19,7 +19,7 @@ export default function Contact() {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Simulate form submission
+         
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         setIsSubmitting(false);
@@ -68,10 +68,10 @@ export default function Contact() {
                 </div>
             </div>
 
-            {/* Content */}
+            { }
             <div className="max-w-4xl mx-auto px-6 -mt-12 pb-12">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Contact Form */}
+                    { }
                     <div className="lg:col-span-2">
                         <Card className="p-8 shadow-xl">
                             <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
@@ -161,7 +161,7 @@ export default function Contact() {
                         </Card>
                     </div>
 
-                    {/* Contact Info */}
+                    { }
                     <div className="space-y-6">
                         <Card className="p-6 shadow-xl">
                             <h3 className="font-bold text-slate-800 dark:text-white mb-4">Quick Contact</h3>

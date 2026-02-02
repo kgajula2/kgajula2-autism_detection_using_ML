@@ -3,30 +3,30 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const SettingsContext = createContext();
 
 const defaultSettings = {
-    // Theme
+     
     darkMode: false,
 
-    // Sound
+     
     soundEnabled: true,
     musicEnabled: false,
 
-    // Accessibility
-    fontSize: 'medium', // small, medium, large
+     
+    fontSize: 'medium',  
     highContrast: false,
     reducedMotion: false,
 
-    // Language
+     
     language: 'en',
 
-    // Game
-    difficulty: 'medium', // easy, medium, hard
+     
+    difficulty: 'medium',  
     showHints: true,
-    toddlerMode: true, // Specific mode for 3-5 year olds (simplified UI, tutorials)
+    toddlerMode: true,  
 
-    // Notifications
+     
     dailyReminder: false,
 
-    // Privacy
+     
     shareData: false,
 };
 
@@ -40,17 +40,17 @@ export function SettingsProvider({ children }) {
         }
     });
 
-    // Persist settings
+     
     useEffect(() => {
         localStorage.setItem('neurostep_settings', JSON.stringify(settings));
     }, [settings]);
 
-    // Apply dark mode to document
+     
     useEffect(() => {
         document.documentElement.classList.toggle('dark', settings.darkMode);
     }, [settings.darkMode]);
 
-    // Apply font size
+     
     useEffect(() => {
         const sizes = { small: '14px', medium: '16px', large: '18px' };
         document.documentElement.style.fontSize = sizes[settings.fontSize] || '16px';

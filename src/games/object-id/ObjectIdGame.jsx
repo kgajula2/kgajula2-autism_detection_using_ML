@@ -29,10 +29,10 @@ export default function ObjectIdGame() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
     const startTimeRef = useRef(0);
-    const roundStartTimeRef = useRef(0);  // Track per-round timing
-    const roundTimingsRef = useRef([]);   // Store all round timings
+    const roundStartTimeRef = useRef(0);   
+    const roundTimingsRef = useRef([]);    
 
-    // Preload Images
+     
     useEffect(() => {
         const preloadImages = async () => {
             const promises = OBJECTS.map(obj => {
@@ -72,7 +72,7 @@ export default function ObjectIdGame() {
         setOptions(roundOptions);
         setRoundCount(prev => prev + 1);
 
-        // Mark round start time
+         
         roundStartTimeRef.current = Date.now();
     };
 
@@ -84,7 +84,7 @@ export default function ObjectIdGame() {
             setAnalysisResult(null);
             setShowTutorial(true);
             startTimeRef.current = Date.now();
-            roundTimingsRef.current = []; // Reset round timings
+            roundTimingsRef.current = [];  
 
             const userId = getAuth().currentUser?.uid;
             if (userId) {
@@ -93,7 +93,7 @@ export default function ObjectIdGame() {
             }
 
             setGameState('ACTIVE');
-            // Delay first round slightly to ensure state is set
+             
             setTimeout(() => startRound(), 100);
         } catch (error) {
             console.error("Failed to start game:", error);
@@ -111,7 +111,7 @@ export default function ObjectIdGame() {
             ...gameStats,
             score,
             duration,
-            roundTimings: roundTimingsRef.current  // Include per-round timings
+            roundTimings: roundTimingsRef.current   
         };
 
         if (sessionId) {
@@ -138,7 +138,7 @@ export default function ObjectIdGame() {
         const roundDuration = selectionTime - roundStartTimeRef.current;
         const isCorrect = item.id === target.id;
 
-        // Store round timing data
+         
         const roundData = {
             round: roundCount,
             target: target.id,
@@ -146,7 +146,7 @@ export default function ObjectIdGame() {
             correct: isCorrect,
             roundStartTime: roundStartTimeRef.current,
             selectionTime: selectionTime,
-            reactionTime: roundDuration, // Time to identify object (ms)
+            reactionTime: roundDuration,  
         };
         roundTimingsRef.current.push(roundData);
 
@@ -155,7 +155,7 @@ export default function ObjectIdGame() {
             incrementScore(10);
             setGameStats(prev => ({ ...prev, correct: prev.correct + 1 }));
 
-            // Log detailed round metrics to Firebase
+             
             if (sessionId) {
                 logRoundMetrics(sessionId, {
                     type: 'object_identification',
@@ -204,7 +204,7 @@ export default function ObjectIdGame() {
             ? ((Date.now() - startTimeRef.current) / 1000).toFixed(1)
             : '0';
 
-        // Calculate average reaction time
+         
         const avgReaction = roundTimingsRef.current.length > 0
             ? Math.round(roundTimingsRef.current.reduce((sum, r) => sum + r.reactionTime, 0) / roundTimingsRef.current.length)
             : 0;
@@ -229,7 +229,7 @@ export default function ObjectIdGame() {
         >
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto p-4 gap-6">
 
-                {/* Tutorial Overlay */}
+                { }
                 <AnimatePresence>
                     {gameState === 'ACTIVE' && showTutorial && (
                         <div className="absolute inset-0 z-50 flex items-center justify-center">
@@ -241,12 +241,12 @@ export default function ObjectIdGame() {
                     )}
                 </AnimatePresence>
 
-                {/* Target Display - Large & Prominent */}
+                { }
                 {gameState === 'ACTIVE' && target && (
                     <div className="flex flex-col items-center gap-4">
                         <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-1 rounded-3xl shadow-xl transform hover:scale-105 transition-all">
                             <div className="bg-white px-10 py-8 rounded-[1.4rem] flex flex-col items-center gap-4">
-                                {/* Visual Cue Only - No "FIND THIS" text */}
+                                { }
                                 <img
                                     src={target.image}
                                     alt={target.label}
@@ -260,7 +260,7 @@ export default function ObjectIdGame() {
                     </div>
                 )}
 
-                {/* Loading State */}
+                { }
                 {isLoading && (
                     <div className="flex flex-col items-center justify-center h-64">
                         <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4" />
@@ -268,7 +268,7 @@ export default function ObjectIdGame() {
                     </div>
                 )}
 
-                {/* Idle State */}
+                { }
                 {!isLoading && gameState === 'IDLE' && (
                     <Card glass className="p-10 text-center max-w-lg mt-10 shadow-xl">
                         <Title>Object ID</Title>
@@ -282,7 +282,7 @@ export default function ObjectIdGame() {
                     </Card>
                 )}
 
-                {/* Active Game */}
+                { }
                 {gameState === 'ACTIVE' && (
                     <motion.div
                         layout

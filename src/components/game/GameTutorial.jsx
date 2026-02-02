@@ -3,11 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/Button';
 import { CheckCircle, Sparkles } from 'lucide-react';
 
-/**
- * GameTutorial - Child-friendly animated tutorial overlay
- * Uses large visuals, bouncing animations, and clear step-by-step demos
- * No reading required - purely visual understanding
- */
+ 
 export default function GameTutorial({
     type = 'tap',
     targetElement,
@@ -17,7 +13,7 @@ export default function GameTutorial({
 }) {
     const [showSuccess, setShowSuccess] = useState(false);
 
-    // Hand cursor animation based on interaction type
+     
     const getHandAnimation = () => {
         switch (type) {
             case 'tap':
@@ -85,7 +81,7 @@ export default function GameTutorial({
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-[9998] flex flex-col items-center justify-center bg-gradient-to-b from-purple-900/80 to-blue-900/80 backdrop-blur-md p-4"
             >
-                {/* Floating Stars Background */}
+                { }
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     {[...Array(8)].map((_, i) => (
                         <motion.div
@@ -111,14 +107,14 @@ export default function GameTutorial({
                     ))}
                 </div>
 
-                {/* Main Tutorial Card */}
+                { }
                 <motion.div
                     initial={{ scale: 0.5, opacity: 0, y: 50 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     transition={{ type: "spring", damping: 15 }}
                     className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 max-w-md w-full shadow-2xl border-4 border-white/30"
                 >
-                    {/* Big Bouncing Title Emoji */}
+                    { }
                     <motion.div
                         className="text-center mb-6"
                         animate={{ y: [0, -15, 0] }}
@@ -127,7 +123,7 @@ export default function GameTutorial({
                         <span className="text-8xl drop-shadow-lg">{title}</span>
                     </motion.div>
 
-                    {/* Simple Instruction Text (very short) */}
+                    { }
                     {subtitle && (
                         <motion.p
                             className="text-center text-2xl font-bold text-gray-700 dark:text-white mb-4"
@@ -139,17 +135,17 @@ export default function GameTutorial({
                         </motion.p>
                     )}
 
-                    {/* Demo Area - Larger and more colorful */}
+                    { }
                     <div className="relative flex items-center justify-center min-h-[220px] bg-gradient-to-br from-yellow-100 via-pink-100 to-purple-100 dark:from-slate-700 dark:to-slate-600 rounded-3xl mb-6 overflow-hidden border-4 border-dashed border-purple-300 dark:border-purple-500">
 
-                        {/* Pulsing Background Effect */}
+                        { }
                         <motion.div
                             className="absolute inset-0 bg-gradient-to-r from-purple-200/50 to-pink-200/50"
                             animate={{ opacity: [0.3, 0.6, 0.3] }}
                             transition={{ duration: 2, repeat: Infinity }}
                         />
 
-                        {/* Target Element - Larger */}
+                        { }
                         <motion.div
                             className="relative z-10"
                             animate={{ scale: [1, 1.05, 1] }}
@@ -160,7 +156,7 @@ export default function GameTutorial({
                             )}
                         </motion.div>
 
-                        {/* Animated Hand Cursor - Bigger */}
+                        { }
                         <motion.div
                             className="absolute z-20 pointer-events-none"
                             style={{ fontSize: '5rem' }}
@@ -169,7 +165,7 @@ export default function GameTutorial({
                             {type === 'copy' ? '🤗' : type === 'drag' ? '✋' : '👆'}
                         </motion.div>
 
-                        {/* Success Burst Effect on tap */}
+                        { }
                         {type === 'tap' && (
                             <motion.div
                                 className="absolute w-32 h-32 rounded-full border-8 border-green-400 z-5"
@@ -185,7 +181,7 @@ export default function GameTutorial({
                             />
                         )}
 
-                        {/* Drag Arrow Trail */}
+                        { }
                         {type === 'drag' && (
                             <motion.div
                                 className="absolute text-5xl z-5"
@@ -203,7 +199,7 @@ export default function GameTutorial({
                             </motion.div>
                         )}
 
-                        {/* Copy face indicator */}
+                        { }
                         {type === 'copy' && (
                             <motion.div
                                 className="absolute bottom-4 text-3xl"
@@ -215,7 +211,7 @@ export default function GameTutorial({
                         )}
                     </div>
 
-                    {/* Big Green "Got It" Button */}
+                    { }
                     <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -246,9 +242,7 @@ export default function GameTutorial({
     );
 }
 
-/**
- * Pre-configured tutorials for each game type - More visual & engaging
- */
+ 
 export const TutorialConfigs = {
     colorFocus: {
         type: 'tap',
@@ -256,7 +250,7 @@ export const TutorialConfigs = {
         subtitle: 'Tap the color!',
         targetElement: (
             <div className="flex flex-col items-center gap-4">
-                {/* Target indicator */}
+                { }
                 <motion.div
                     className="text-4xl mb-2"
                     animate={{ scale: [1, 1.2, 1] }}
@@ -264,7 +258,7 @@ export const TutorialConfigs = {
                 >
                     👇
                 </motion.div>
-                {/* Big target bubble */}
+                { }
                 <motion.div
                     className="w-24 h-24 rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-2xl ring-8 ring-yellow-300 ring-opacity-75"
                     animate={{
@@ -272,7 +266,7 @@ export const TutorialConfigs = {
                     }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                 />
-                {/* Other bubbles */}
+                { }
                 <div className="flex gap-4 mt-3">
                     <div className="w-12 h-12 rounded-full bg-blue-400 opacity-50" />
                     <div className="w-12 h-12 rounded-full bg-green-400 opacity-50" />
@@ -287,7 +281,7 @@ export const TutorialConfigs = {
         subtitle: 'Drag to box!',
         targetElement: (
             <div className="flex items-center gap-6">
-                {/* Source emoji */}
+                { }
                 <motion.div
                     className="text-6xl"
                     animate={{ x: [0, 10, 0] }}
@@ -295,7 +289,7 @@ export const TutorialConfigs = {
                 >
                     🦷
                 </motion.div>
-                {/* Arrow */}
+                { }
                 <motion.span
                     className="text-4xl"
                     animate={{ x: [0, 10, 0] }}
@@ -303,7 +297,7 @@ export const TutorialConfigs = {
                 >
                     ➡️
                 </motion.span>
-                {/* Target box */}
+                { }
                 <motion.div
                     className="w-20 h-20 border-4 border-dashed border-green-400 rounded-2xl flex items-center justify-center bg-green-50"
                     animate={{ borderColor: ['#4ade80', '#a855f7', '#4ade80'] }}
@@ -320,7 +314,7 @@ export const TutorialConfigs = {
         subtitle: 'Copy the face!',
         targetElement: (
             <div className="flex items-center gap-8">
-                {/* Example face to copy */}
+                { }
                 <motion.span
                     className="text-7xl"
                     animate={{ scale: [1, 1.1, 1] }}
@@ -328,9 +322,9 @@ export const TutorialConfigs = {
                 >
                     😊
                 </motion.span>
-                {/* Arrow */}
+                { }
                 <span className="text-4xl">→</span>
-                {/* Your face placeholder */}
+                { }
                 <motion.div
                     className="w-24 h-24 rounded-full bg-gradient-to-b from-amber-200 to-amber-300 flex items-center justify-center shadow-lg border-4 border-amber-400"
                     animate={{ scale: [1, 1.05, 1] }}
@@ -347,7 +341,7 @@ export const TutorialConfigs = {
         subtitle: 'Find the match!',
         targetElement: (
             <div className="flex flex-col items-center gap-4">
-                {/* Item to find */}
+                { }
                 <motion.div
                     className="text-6xl p-3 bg-white rounded-2xl shadow-lg border-4 border-blue-400"
                     animate={{ rotate: [0, 5, -5, 0] }}
@@ -355,7 +349,7 @@ export const TutorialConfigs = {
                 >
                     🍎
                 </motion.div>
-                {/* Options */}
+                { }
                 <div className="flex gap-4">
                     <span className="text-4xl opacity-50 p-2">🍌</span>
                     <motion.span

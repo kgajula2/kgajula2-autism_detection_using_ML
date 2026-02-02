@@ -15,7 +15,7 @@ class ErrorBoundary extends React.Component {
 
     componentDidCatch(error, errorInfo) {
         this.setState({ error, errorInfo });
-        // Log error to console (in production, send to error tracking service)
+         
         console.error('Error caught by boundary:', error, errorInfo);
     }
 
@@ -36,7 +36,7 @@ class ErrorBoundary extends React.Component {
                         animate={{ opacity: 1, scale: 1 }}
                         className="max-w-md text-center"
                     >
-                        {/* Error Icon */}
+                        { }
                         <motion.div
                             animate={{ rotate: [0, -10, 10, -10, 0] }}
                             transition={{ duration: 0.5 }}
@@ -62,7 +62,7 @@ class ErrorBoundary extends React.Component {
                             </div>
                         )}
 
-                        {/* Action Buttons */}
+                        { }
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button onClick={this.handleRefresh} className="gap-2">
                                 <RefreshCw size={18} />
@@ -74,7 +74,7 @@ class ErrorBoundary extends React.Component {
                             </Button>
                         </div>
 
-                        {/* Cute message */}
+                        { }
                         <p className="text-sm text-slate-400 mt-8">
                             🧠 Even AI makes mistakes sometimes!
                         </p>

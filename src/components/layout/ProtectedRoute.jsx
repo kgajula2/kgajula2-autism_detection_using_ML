@@ -4,7 +4,7 @@ import { subscribeToAuthChanges } from "../../services/auth";
 import { getUserProfile } from "../../services/db";
 
 export const ProtectedRoute = ({ children }) => {
-    const [user, setUser] = useState(undefined); // undefined = loading
+    const [user, setUser] = useState(undefined);  
     const [isOnboarded, setIsOnboarded] = useState(undefined);
     const location = useLocation();
 
@@ -13,7 +13,7 @@ export const ProtectedRoute = ({ children }) => {
             setUser(u);
             if (u) {
                 const profile = await getUserProfile(u.uid);
-                // Check if profile exists and has required fields
+                 
                 setIsOnboarded(!!profile && !!profile.childName);
             } else {
                 setIsOnboarded(false);
@@ -30,13 +30,13 @@ export const ProtectedRoute = ({ children }) => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    // If logged in but not onboarded, redirect to /onboarding
-    // But prevent infinite loop if we are already AT /onboarding
+     
+     
     if (!isOnboarded && location.pathname !== '/onboarding') {
         return <Navigate to="/onboarding" replace />;
     }
 
-    // If logged in AND onboarded, but trying to access /onboarding, go home
+     
     if (isOnboarded && location.pathname === '/onboarding') {
         return <Navigate to="/home" replace />;
     }

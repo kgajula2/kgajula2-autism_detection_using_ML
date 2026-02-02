@@ -13,17 +13,15 @@ import {
     setDoc
 } from "firebase/firestore";
 
-// Collection references
+ 
 const USERS_COLLECTION = "users";
 const SESSIONS_COLLECTION = "game_sessions";
 const METRICS_COLLECTION = "round_metrics";
 
-// Local storage key for offline queue
+ 
 const OFFLINE_QUEUE_KEY = 'neurostep_offline_queue';
 
-/**
- * Get any pending offline data
- */
+ 
 const getOfflineQueue = () => {
     try {
         const data = localStorage.getItem(OFFLINE_QUEUE_KEY);
@@ -33,9 +31,7 @@ const getOfflineQueue = () => {
     }
 };
 
-/**
- * Add item to offline queue
- */
+ 
 const addToOfflineQueue = (type, data) => {
     try {
         const queue = getOfflineQueue();
@@ -46,9 +42,7 @@ const addToOfflineQueue = (type, data) => {
     }
 };
 
-/**
- * Clear offline queue
- */
+ 
 const clearOfflineQueue = () => {
     try {
         localStorage.removeItem(OFFLINE_QUEUE_KEY);
@@ -57,9 +51,7 @@ const clearOfflineQueue = () => {
     }
 };
 
-/**
- * Sync offline queue when back online
- */
+ 
 export const syncOfflineQueue = async () => {
     const queue = getOfflineQueue();
     if (queue.length === 0) return;
@@ -88,7 +80,7 @@ export const syncOfflineQueue = async () => {
     }
 };
 
-// Basic Profile Operations
+ 
 export const createUserProfile = async (uid, data) => {
     try {
         await setDoc(doc(db, USERS_COLLECTION, uid), {
@@ -133,7 +125,7 @@ export const createGameSession = async (userId, gameId, gameConfig) => {
     } catch (e) {
         console.error("Failed to create game session:", e);
 
-        // Offline fallback - generate local ID and queue for sync
+         
         const localId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         addToOfflineQueue('session_start', {
             ...sessionData,
@@ -157,7 +149,7 @@ export const logRoundMetrics = async (sessionId, roundData) => {
     } catch (e) {
         console.error("Failed to log round metrics:", e);
 
-        // Offline fallback
+         
         addToOfflineQueue('metrics', {
             ...metricsData,
             timestamp: new Date().toISOString()
@@ -166,7 +158,7 @@ export const logRoundMetrics = async (sessionId, roundData) => {
 };
 
 export const endGameSession = async (sessionId, finalScore, stats) => {
-    // Skip if it's a local session (will be synced later)
+     
     if (sessionId.startsWith('local_')) {
         addToOfflineQueue('session_end', {
             sessionId,
@@ -191,7 +183,7 @@ export const endGameSession = async (sessionId, finalScore, stats) => {
     } catch (e) {
         console.error("Failed to end game session:", e);
 
-        // Offline fallback
+         
         addToOfflineQueue('session_end', {
             sessionId,
             updates: {
@@ -206,7 +198,7 @@ export const endGameSession = async (sessionId, finalScore, stats) => {
 
 export const fetchUserGameStats = async (userId) => {
     try {
-        // Fetch last 50 completed sessions for stats
+         
         const q = query(
             collection(db, SESSIONS_COLLECTION),
             where("userId", "==", userId),
@@ -220,19 +212,19 @@ export const fetchUserGameStats = async (userId) => {
             sessions.push({ id: doc.id, ...doc.data() });
         });
 
-        // Sort in memory to avoid needing a composite index (most recent first)
+         
         sessions.sort((a, b) => {
             const timeA = a.endTime?.seconds || 0;
             const timeB = b.endTime?.seconds || 0;
-            return timeB - timeA; // Descending
+            return timeB - timeA;  
         });
 
-        // Aggregate by game - use LATEST (most recent) session stats for ML analysis
+         
         const aggregated = {};
         sessions.forEach(session => {
             const gameId = session.gameId;
             if (!aggregated[gameId]) {
-                // First occurrence is the MOST RECENT (since we sorted descending)
+                 
                 aggregated[gameId] = {
                     score: session.score || 0,
                     count: 1,
@@ -244,7 +236,7 @@ export const fetchUserGameStats = async (userId) => {
                     attempts: session.stats?.attempts || 0,
                     completed: session.stats?.completed || false,
                     avgLatency: session.stats?.avgLatency || 0,
-                    // Free Toy Tap enhanced metrics
+                     
                     objectFixationEntropy: session.stats?.objectFixationEntropy || 0,
                     repetitionRate: session.stats?.repetitionRate || 0,
                     switchFrequency: session.stats?.switchFrequency || 0,
@@ -253,9 +245,9 @@ export const fetchUserGameStats = async (userId) => {
                     pauseCount: session.stats?.pauseCount || 0,
                 };
             } else {
-                // Accumulate count only
+                 
                 aggregated[gameId].count += 1;
-                // Use best score
+                 
                 if (session.score > aggregated[gameId].score) {
                     aggregated[gameId].score = session.score;
                 }

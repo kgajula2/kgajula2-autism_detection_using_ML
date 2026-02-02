@@ -17,9 +17,9 @@ describe('ML Service', () => {
             };
             const result = aggregateGameResults(gameData);
 
-            // Low score should set A1 flag
+             
             expect(result.features.A1).toBe(1);
-            // High errors should set A7 flag
+             
             expect(result.features.A7).toBe(1);
             expect(result.insights.length).toBeGreaterThan(0);
         });
@@ -74,7 +74,7 @@ describe('ML Service', () => {
             };
             const result = aggregateGameResults(gameData);
 
-            // Good performance across all games
+             
             expect(result.features.A1).toBe(0);
             expect(result.features.A2).toBe(0);
             expect(result.features.A5).toBe(0);

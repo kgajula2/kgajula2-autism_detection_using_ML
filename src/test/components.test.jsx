@@ -5,7 +5,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Title, SubTitle } from '../components/ui/Typography';
 
-// Wrapper component for Router context
+ 
 const TestWrapper = ({ children }) => (
     <BrowserRouter>{children}</BrowserRouter>
 );

@@ -8,7 +8,7 @@ export const useGameLoop = (gameLogicCallback, dependencies = []) => {
 
     const savedCallback = useRef(gameLogicCallback);
 
-    // Update ref when callback changes
+     
     useEffect(() => {
         savedCallback.current = gameLogicCallback;
     }, [gameLogicCallback]);

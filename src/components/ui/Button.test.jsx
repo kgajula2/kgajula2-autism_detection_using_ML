@@ -63,11 +63,11 @@ describe('Card Component', () => {
         expect(card).toBeInTheDocument();
         expect(card).toHaveAttribute('tabIndex', '0');
 
-        // Test Enter key
+         
         fireEvent.keyDown(card, { key: 'Enter' });
         expect(handleClick).toHaveBeenCalledTimes(1);
 
-        // Test Space key
+         
         fireEvent.keyDown(card, { key: ' ' });
         expect(handleClick).toHaveBeenCalledTimes(2);
     });

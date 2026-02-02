@@ -1,24 +1,14 @@
-/**
- * ML Service - Logistic Regression Inference Engine
- * 
- * This module implements a pure JavaScript Logistic Regression model
- * that matches the Python training script's output format.
- * No TensorFlow.js dependency required.
- */
+
 
 import { ML_FEATURE_MAPPING } from '../config/gameConfig';
 import { getGeminiModel } from './firebase';
 
 let modelData = null;
 
-/**
- * Sigmoid activation function
- */
+
 const sigmoid = (z) => 1 / (1 + Math.exp(-z));
 
-/**
- * Load the trained model weights from the JSON file
- */
+
 export const loadModel = async () => {
     try {
         const response = await fetch('/models/model_weights.json');
@@ -33,32 +23,24 @@ export const loadModel = async () => {
     }
 };
 
-/**
- * Predict risk score using Logistic Regression
- * 
- * Formula: P(y=1) = sigmoid(X * coefficients + intercept)
- * 
- * @param {Object} gameRisks - Object with risk scores from each game
- * @param {Object} demographics - { age, gender, jaundice, familyAsd }
- * @returns {number} Risk probability between 0 and 1
- */
+
 export const predictRisk = async (gameRisks, demographics = {}) => {
     if (!modelData) {
         console.warn("Model not loaded, attempting load...");
         const loaded = await loadModel();
-        if (!loaded) return 0.15; // Return a baseline instead of null
+        if (!loaded) return 0.15;
     }
 
     const { coefficients, intercept, scaler_mean, scaler_scale, feature_names } = modelData.level_2_model;
 
-    // Build feature vector in the order expected by the model
+
     const features = feature_names.map(name => {
         if (name.includes('_risk')) {
-            // Game risk feature (e.g., "color_focus_risk")
+
             const gameKey = name.replace('_risk', '');
-            return gameRisks[gameKey] ?? 0.3; // Default to 0.3 (baseline risk) if not played
+            return gameRisks[gameKey] ?? 0.3;
         }
-        // Demographic features
+
         switch (name) {
             case 'age': return demographics.age || 5;
             case 'gender': return demographics.gender === 'm' ? 1 : 0;
@@ -68,68 +50,65 @@ export const predictRisk = async (gameRisks, demographics = {}) => {
         }
     });
 
-    // Apply StandardScaler transformation
+
     const scaledFeatures = features.map((val, i) => {
         const mean = scaler_mean[i] || 0;
         const scale = scaler_scale[i] || 1;
         return (val - mean) / scale;
     });
 
-    // Linear combination: z = X * coefficients + intercept
+
     const z = scaledFeatures.reduce((sum, x, i) => sum + x * coefficients[i], intercept);
 
-    // Apply sigmoid for probability
+
     const probability = sigmoid(z);
 
     return probability;
 };
 
-/**
- * Calculate per-game risk scores based on performance metrics
- * These scores are continuous values from 0.0 (excellent) to 1.0 (concerning)
- */
+
 export const calculateGameRisks = (gamesData) => {
     const gameRisks = {
-        color_focus: 0.3,      // Baseline - will be adjusted based on performance
+        color_focus: 0.3,
         routine_sequencer: 0.3,
         emotion_mirror: 0.3,
         object_hunt: 0.3,
-        free_toy_tap: 0.3,     // NEW: Exploration/Fixation patterns
-        shape_switch: 0.3,     // NEW: Resistance to change
-        attention_call: 0.3,   // NEW: Name response/Social attention
+        free_toy_tap: 0.3,
+        shape_switch: 0.3,
+        attention_call: 0.3,
     };
     const insights = [];
 
-    // --- Color Focus ---
+
     if (gamesData['color-focus']) {
         const { score, errors } = gamesData['color-focus'];
 
         const colorConfig = ML_FEATURE_MAPPING['color-focus'].thresholds;
 
-        // Calculate risk as continuous value based on performance
-        // Higher score = lower risk, more errors = higher risk
-        let risk = 0.3; // baseline
+
+
+        let risk = 0.3;
 
         if (score < colorConfig.lowScore) {
-            risk += 0.3; // Low score increases risk
+            risk += 0.3;
             insights.push("🎯 Color Focus: Attention patterns show room for improvement.");
         } else if (score > 80) {
-            risk -= 0.15; // High score decreases risk
+            risk -= 0.15;
             insights.push("🌟 Color Focus: Excellent attention span demonstrated!");
         }
 
         if (errors > colorConfig.highErrors) {
-            risk += 0.2; // Many errors increase risk
+            risk += 0.2;
             insights.push("⚡ Color Focus: Quick reactions noted - working on precision.");
         } else if (errors < 2) {
             risk -= 0.1;
             insights.push("✨ Color Focus: Great impulse control!");
         }
 
-        gameRisks.color_focus = Math.max(0.05, Math.min(0.95, risk)); // Clamp between 0.05-0.95
+        gameRisks.color_focus = Math.max(0.05, Math.min(0.95, risk));
     }
 
-    // --- Routine Sequencer ---
+
     if (gamesData['routine-sequencer']) {
         const { mistakes, completed } = gamesData['routine-sequencer'];
         const routineConfig = ML_FEATURE_MAPPING['routine-sequencer'].thresholds;
@@ -150,13 +129,13 @@ export const calculateGameRisks = (gamesData) => {
         gameRisks.routine_sequencer = Math.max(0.05, Math.min(0.95, risk));
     }
 
-    // --- Emotion Mirror ---
+
     if (gamesData['emotion-mirror']) {
         const { score, attempts } = gamesData['emotion-mirror'];
 
         let risk = 0.3;
 
-        // Calculate accuracy
+
         const accuracy = attempts > 0 ? (score / (attempts * 15)) * 100 : 0;
 
         if (accuracy < 40) {
@@ -172,7 +151,7 @@ export const calculateGameRisks = (gamesData) => {
         gameRisks.emotion_mirror = Math.max(0.05, Math.min(0.95, risk));
     }
 
-    // --- Object ID (Hunt) ---
+
     if (gamesData['object-id']) {
         const { correct, wrong } = gamesData['object-id'];
         const total = correct + wrong;
@@ -196,14 +175,14 @@ export const calculateGameRisks = (gamesData) => {
         gameRisks.object_hunt = Math.max(0.05, Math.min(0.95, risk));
     }
 
-    // --- Free Toy Tap (Exploration/Fixation) ---
+
     if (gamesData['free-toy-tap']) {
         const { objectFixationEntropy, repetitionRate, switchFrequency, totalTaps } = gamesData['free-toy-tap'];
         const config = ML_FEATURE_MAPPING['free-toy-tap']?.thresholds || { lowEntropy: 1.0, highRepetition: 0.5, lowSwitchFreq: 0.15 };
 
         let risk = 0.3;
 
-        // Low entropy = child fixates on few toys (concerning for ASD)
+
         if (objectFixationEntropy !== undefined && objectFixationEntropy < config.lowEntropy) {
             risk += 0.3;
             insights.push("🧸 Toy Box: Focused play on specific toys observed.");
@@ -212,19 +191,19 @@ export const calculateGameRisks = (gamesData) => {
             insights.push("🌟 Toy Box: Great exploration of multiple toys!");
         }
 
-        // High repetition = repetitive behavior pattern
+
         if (repetitionRate !== undefined && repetitionRate > config.highRepetition) {
             risk += 0.25;
             insights.push("🔄 Toy Box: Repetitive tapping patterns noted.");
         }
 
-        // Low switch frequency = restricted exploration
+
         if (switchFrequency !== undefined && switchFrequency < config.lowSwitchFreq) {
             risk += 0.2;
             insights.push("👆 Toy Box: Focused attention on preferred toys.");
         }
 
-        // Low engagement
+
         if (totalTaps !== undefined && totalTaps < 10) {
             risk += 0.15;
             insights.push("💤 Toy Box: Limited engagement observed.");
@@ -233,14 +212,14 @@ export const calculateGameRisks = (gamesData) => {
         gameRisks.free_toy_tap = Math.max(0.05, Math.min(0.95, risk));
     }
 
-    // --- Shape Switch (Resistance to Change) ---
+
     if (gamesData['shape-switch']) {
         const { avgConfusionDuration, totalWrongAfterSwitch, adaptationSpeed, totalSwitches } = gamesData['shape-switch'];
         const config = ML_FEATURE_MAPPING['shape-switch']?.thresholds || { highConfusion: 5000, highPerseveration: 3 };
 
         let risk = 0.3;
 
-        // Long confusion duration = difficulty adapting to change
+
         if (avgConfusionDuration !== undefined && avgConfusionDuration > config.highConfusion) {
             risk += 0.35;
             insights.push("🔄 Shape Play: Takes time to adapt to rule changes.");
@@ -249,13 +228,13 @@ export const calculateGameRisks = (gamesData) => {
             insights.push("🌟 Shape Play: Quick adaptation to new rules!");
         }
 
-        // High perseveration = stuck on old rule
+
         if (totalWrongAfterSwitch !== undefined && totalWrongAfterSwitch > config.highPerseveration) {
             risk += 0.3;
             insights.push("🔷 Shape Play: Preference for familiar patterns observed.");
         }
 
-        // Good adaptation speed
+
         if (adaptationSpeed !== undefined && totalSwitches && adaptationSpeed >= totalSwitches * 0.7) {
             risk -= 0.15;
             insights.push("✨ Shape Play: Good cognitive flexibility demonstrated!");
@@ -264,14 +243,14 @@ export const calculateGameRisks = (gamesData) => {
         gameRisks.shape_switch = Math.max(0.05, Math.min(0.95, risk));
     }
 
-    // --- Attention Call (Name Response) ---
+
     if (gamesData['attention-call']) {
         const { responseRate, avgResponseTime, totalResponses, totalCalls } = gamesData['attention-call'];
         const config = ML_FEATURE_MAPPING['attention-call']?.thresholds || { lowResponseRate: 0.33, highLatency: 3000 };
 
         let risk = 0.3;
 
-        // Low response rate = potential concern
+
         if (responseRate !== undefined && responseRate < config.lowResponseRate) {
             risk += 0.4;
             insights.push("🔔 Hi There: Limited response to name calls observed.");
@@ -280,7 +259,7 @@ export const calculateGameRisks = (gamesData) => {
             insights.push("🌟 Hi There: Excellent attention to name!");
         }
 
-        // High response latency = slow social orienting
+
         if (avgResponseTime !== undefined && avgResponseTime > config.highLatency) {
             risk += 0.2;
             insights.push("⏱️ Hi There: Delayed response time noted.");
@@ -289,7 +268,7 @@ export const calculateGameRisks = (gamesData) => {
             insights.push("✨ Hi There: Quick response to name calls!");
         }
 
-        // No responses at all = significant concern
+
         if (totalResponses === 0 && totalCalls > 0) {
             risk += 0.3;
             insights.push("👂 Hi There: May benefit from name recognition activities.");
@@ -301,16 +280,43 @@ export const calculateGameRisks = (gamesData) => {
     return { gameRisks, insights };
 };
 
-/**
- * Main analysis function - processes game data and returns risk assessment
- */
+// --- Screening Validation Configuration ---
+export const SCREENING_REQUIREMENTS = {
+    MANDATORY_GAMES: ['free-toy-tap', 'attention-call'],
+    MIN_TOTAL_GAMES: 3,
+};
+
+// --- Helper: Validate Screening Requirements ---
+export const validateScreening = (gamesData) => {
+    const playedGames = Object.keys(gamesData).filter(gameId => {
+        const game = gamesData[gameId];
+        return game?.score > 0 || game?.correct > 0 || game?.attempts > 0 || game?.totalTaps > 0 || game?.totalResponses !== undefined;
+    });
+
+    const { MANDATORY_GAMES, MIN_TOTAL_GAMES } = SCREENING_REQUIREMENTS;
+    const mandatoryPlayed = MANDATORY_GAMES.filter(g => playedGames.includes(g));
+    const hasBothMandatory = mandatoryPlayed.length === MANDATORY_GAMES.length;
+    const hasEnoughGames = playedGames.length >= MIN_TOTAL_GAMES;
+    const isValid = hasBothMandatory && hasEnoughGames;
+
+    return {
+        isValid,
+        playedGames,
+        mandatoryPlayed,
+        missingMandatory: MANDATORY_GAMES.filter(g => !playedGames.includes(g)),
+        totalPlayed: playedGames.length,
+        remainingGames: Math.max(0, MIN_TOTAL_GAMES - playedGames.length),
+    };
+};
+
+// --- Main Analysis Entry Point ---
 export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
-    // Ensure model is loaded
+    // Load model if not loaded
     if (!modelData) {
         await loadModel();
     }
 
-    // Check if player actually played (has any meaningful score or interactions)
+    // Check if user has played any games
     const hasPlayed = Object.values(gamesData).some(game => {
         const score = game?.score || 0;
         const correct = game?.correct || 0;
@@ -318,24 +324,100 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
         return score > 0 || correct > 0 || attempts > 0;
     });
 
-    // If player didn't actually play, return special "not played" result
+    // No games played at all
     if (!hasPlayed) {
         return {
-            riskScore: null,  // null indicates not played
+            riskScore: null,
             notPlayed: true,
+            screeningValid: false,
             insights: [],
             gameRisks: {},
             aiInsights: "No game activity detected. Please play the game to get your analysis!",
         };
     }
 
-    // Step 1: Calculate game-level risks
+    // Validate screening requirements
+    const screeningValidation = validateScreening(gamesData);
+
+    // If screening requirements not met, return partial result
+    if (!screeningValidation.isValid) {
+        const { gameRisks, insights } = calculateGameRisks(gamesData);
+
+        let message = "To get a complete analysis, please:\n";
+        if (screeningValidation.missingMandatory.length > 0) {
+            const gameNames = {
+                'free-toy-tap': 'Toy Box',
+                'attention-call': 'Hi There!',
+            };
+            const missing = screeningValidation.missingMandatory.map(g => gameNames[g] || g).join(' and ');
+            message += `• Play the required game(s): ${missing}\n`;
+        }
+        if (screeningValidation.remainingGames > 0) {
+            message += `• Play at least ${screeningValidation.remainingGames} more game(s) (your choice)`;
+        }
+
+        return {
+            riskScore: null,
+            notPlayed: false,
+            screeningValid: false,
+            insights,
+            gameRisks,
+            aiInsights: message,
+            screeningStatus: screeningValidation,
+        };
+    }
+
+    // --- Valid Screening: Proceed with Full Analysis ---
     const { gameRisks, insights } = calculateGameRisks(gamesData);
 
-    // Step 2: Get global risk score from Level-2 model
-    const riskScore = await predictRisk(gameRisks, demographics);
+    // --- Intelligent Imputation for Unplayed Choice Games ---
+    // Instead of using a hardcoded 0.3 for missing games, use the average
+    // risk of the games that were actually played.
+    const playedGameRisks = Object.entries(gameRisks)
+        .filter(([key]) => {
+            // Map internal key to gameId
+            const gameIdMap = {
+                color_focus: 'color-focus',
+                routine_sequencer: 'routine-sequencer',
+                emotion_mirror: 'emotion-mirror',
+                object_hunt: 'object-id',
+                free_toy_tap: 'free-toy-tap',
+                shape_switch: 'shape-switch',
+                attention_call: 'attention-call',
+            };
+            const gameId = gameIdMap[key];
+            return gamesData[gameId] && Object.keys(gamesData[gameId]).length > 0;
+        })
+        .map(([, risk]) => risk);
 
-    // Step 3: Generate AI insights (optional, may fail gracefully)
+    const averagePlayedRisk = playedGameRisks.length > 0
+        ? playedGameRisks.reduce((a, b) => a + b, 0) / playedGameRisks.length
+        : 0.3;
+
+    // Impute missing games with average risk
+    const imputedGameRisks = { ...gameRisks };
+    const gameIdToKey = {
+        'color-focus': 'color_focus',
+        'routine-sequencer': 'routine_sequencer',
+        'emotion-mirror': 'emotion_mirror',
+        'object-id': 'object_hunt',
+        'free-toy-tap': 'free_toy_tap',
+        'shape-switch': 'shape_switch',
+        'attention-call': 'attention_call',
+    };
+
+    Object.keys(gameIdToKey).forEach(gameId => {
+        const key = gameIdToKey[gameId];
+        if (!gamesData[gameId] || Object.keys(gamesData[gameId] || {}).length === 0) {
+            // This game wasn't played - impute with average risk
+            imputedGameRisks[key] = averagePlayedRisk;
+        }
+    });
+
+    // Predict final risk with imputed values
+    const riskScore = await predictRisk(imputedGameRisks, demographics);
+
+    // Generate AI insights
     let aiInsights = null;
     try {
         aiInsights = await generateGeminiInsights(gamesData, riskScore, insights);
@@ -350,20 +432,20 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
     return {
         riskScore,
         notPlayed: false,
+        screeningValid: true,
         insights,
-        gameRisks,
+        gameRisks: imputedGameRisks,
         aiInsights,
+        screeningStatus: screeningValidation,
     };
 };
 
-/**
- * Generate narrative insights using Gemini AI
- */
+
 export const generateGeminiInsights = async (gamesData, riskScore, ruleBasedInsights = []) => {
     try {
         const model = getGeminiModel();
         if (!model) {
-            // Return rule-based insights if AI not available
+
             return ruleBasedInsights.length > 0
                 ? ruleBasedInsights.join(' ')
                 : "Good effort! Continue playing to track progress over time.";
@@ -395,16 +477,14 @@ export const generateGeminiInsights = async (gamesData, riskScore, ruleBasedInsi
     } catch (error) {
         console.error("Error calling Gemini:", error);
 
-        // Fallback to rule-based insights
+
         return ruleBasedInsights.length > 0
             ? ruleBasedInsights.join(' ')
             : "Great progress today! Regular practice helps develop important skills.";
     }
 };
 
-/**
- * Get model performance metrics for display in dashboard
- */
+
 export const getModelMetrics = () => {
     if (!modelData) return null;
     return {

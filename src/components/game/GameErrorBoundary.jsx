@@ -3,10 +3,7 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { AlertTriangle, RefreshCcw, Home } from 'lucide-react';
 
-/**
- * Error Boundary specifically for game components.
- * Provides a child-friendly error UI with retry and home options.
- */
+ 
 class GameErrorBoundary extends Component {
     constructor(props) {
         super(props);
@@ -20,11 +17,11 @@ class GameErrorBoundary extends Component {
     componentDidCatch(error, errorInfo) {
         this.setState({ errorInfo });
 
-        // Log to console in development
+         
         console.error('Game Error:', error);
         console.error('Error Info:', errorInfo);
 
-        // Log to external service if available
+         
         if (window.errorLogger) {
             window.errorLogger.log({
                 type: 'GAME_ERROR',
@@ -50,7 +47,7 @@ class GameErrorBoundary extends Component {
             return (
                 <div className="min-h-[60vh] flex items-center justify-center p-4">
                     <Card className="max-w-md text-center p-8 bg-white dark:bg-slate-800">
-                        {/* Sad Mascot */}
+                        { }
                         <div className="text-8xl mb-4 animate-bounce">😢</div>
 
                         <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">

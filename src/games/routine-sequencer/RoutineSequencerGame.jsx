@@ -25,8 +25,8 @@ export default function RoutineSequencerGame() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [sessionId, setSessionId] = useState(null);
     const startTimeRef = useRef(0);
-    const stepStartTimeRef = useRef(0);  // Track each step start time
-    const stepTimingsRef = useRef([]);   // Store all step timings
+    const stepStartTimeRef = useRef(0);   
+    const stepTimingsRef = useRef([]);    
     const [showTutorial, setShowTutorial] = useState(true);
 
     const handleReset = () => {
@@ -41,7 +41,7 @@ export default function RoutineSequencerGame() {
     };
 
     const selectRoutine = async (routine) => {
-        // Prepare steps with resolved icons and GIFs
+         
         const stepsWithIcons = routine.steps.map(step => ({
             ...step,
             icon: ROUTINE_ICONS[step.iconName]
@@ -82,7 +82,7 @@ export default function RoutineSequencerGame() {
             const stepTime = Date.now();
             const stepDuration = stepTime - stepStartTimeRef.current;
 
-            // Store step timing data
+             
             stepTimingsRef.current.push({
                 step: firstEmptyIndex + 1,
                 totalSteps: currentRoutine.steps.length,
@@ -92,7 +92,7 @@ export default function RoutineSequencerGame() {
                 timestamp: stepTime
             });
 
-            // Reset timer for next step
+             
             stepStartTimeRef.current = Date.now();
 
             const newSlots = [...filledSlots];
@@ -137,7 +137,7 @@ export default function RoutineSequencerGame() {
                 routine: currentRoutine.id,
                 routineTitle: currentRoutine.title,
                 totalSteps: currentRoutine.steps.length,
-                roundTimings: stepTimingsRef.current  // Include step timings for dashboard
+                roundTimings: stepTimingsRef.current   
             });
         }
 
@@ -178,7 +178,7 @@ export default function RoutineSequencerGame() {
             headerColor="bg-green-600"
         >
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto p-4">
-                {/* Mascot Helper */}
+                { }
                 <div className="flex items-center gap-3 mb-4">
                     <span className="text-5xl animate-bounce">{MASCOT.emoji}</span>
                     <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2 rounded-2xl shadow-sm">
@@ -188,7 +188,7 @@ export default function RoutineSequencerGame() {
                     </div>
                 </div>
 
-                {/* Reset Button */}
+                { }
                 {currentRoutine && gameState === 'ACTIVE' && (
                     <div className="w-full flex justify-end mb-4">
                         <Button variant="neumorph" onClick={handleReset}>
@@ -199,7 +199,7 @@ export default function RoutineSequencerGame() {
 
                 <AnimatePresence mode="wait">
                     {!currentRoutine ? (
-                        /* Selection Screen - Using emoji GIFs */
+                         
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -223,10 +223,10 @@ export default function RoutineSequencerGame() {
                                         className="cursor-pointer hover:scale-105 transition-all border-2 border-transparent hover:border-green-400 flex flex-col items-center p-6 gap-4 min-h-[180px] bg-white dark:bg-slate-800"
                                         onClick={() => selectRoutine(r)}
                                     >
-                                        {/* Large emoji */}
+                                        { }
                                         <span className="text-5xl">{r.emoji}</span>
                                         <h3 className="text-lg font-bold text-center text-slate-800 dark:text-white">{r.title}</h3>
-                                        {/* Step preview with GIFs */}
+                                        { }
                                         <div className="flex gap-1 justify-center flex-wrap">
                                             {r.steps.slice(0, 4).map((s, idx) => (
                                                 s.image ? (
@@ -241,16 +241,16 @@ export default function RoutineSequencerGame() {
                             ))}
                         </motion.div>
                     ) : (
-                        /* Game Screen */
+                         
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             className="w-full grid grid-cols-1 md:grid-cols-2 gap-8"
                             key="game"
                         >
-                            {/* Left: Slots (Timeline) */}
+                            { }
                             <div className="flex flex-col gap-4 items-center">
-                                {/* Tutorial Overlay */}
+                                { }
                                 <AnimatePresence>
                                     {showTutorial && (
                                         <GameTutorial
@@ -265,7 +265,7 @@ export default function RoutineSequencerGame() {
                                     <span className="text-4xl">{currentRoutine.emoji}</span>
                                 </h3>
                                 <div className="w-full max-w-sm bg-white/50 dark:bg-slate-700/50 rounded-2xl p-6 min-h-[400px] flex flex-col gap-4 relative shadow-inner">
-                                    {/* Error Overlay */}
+                                    { }
                                     <AnimatePresence>
                                         {feedback === 'error' && (
                                             <motion.div
@@ -300,7 +300,7 @@ export default function RoutineSequencerGame() {
                                 </div>
                             </div>
 
-                            {/* Right: Options Pool */}
+                            { }
                             <div className="flex flex-col gap-6 justify-center">
                                 <SubTitle className="text-center mb-2">Tap the next step! 👇</SubTitle>
                                 <div className="grid grid-cols-2 gap-4">

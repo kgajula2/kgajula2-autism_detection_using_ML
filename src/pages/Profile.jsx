@@ -24,7 +24,7 @@ export default function Profile() {
     const [isSaving, setIsSaving] = useState(false);
     const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
-    // Achievements data (mock - would come from Firebase)
+     
     const achievements = [
         { id: 'first_game', name: 'First Steps', emoji: '👶', unlocked: true },
         { id: 'five_games', name: 'Getting Started', emoji: '🎮', unlocked: true },
@@ -55,7 +55,7 @@ export default function Profile() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 to-purple-100 dark:from-slate-900 dark:to-purple-900">
-            {/* Header */}
+            { }
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-8 pb-24">
                 <div className="max-w-4xl mx-auto">
                     <h1 className="text-3xl font-black mb-2">Profile & Settings</h1>
@@ -63,9 +63,9 @@ export default function Profile() {
                 </div>
             </div>
 
-            {/* Content */}
+            { }
             <div className="max-w-4xl mx-auto px-6 -mt-16 pb-12">
-                {/* Profile Card */}
+                { }
                 <Card className="p-6 mb-6 shadow-xl">
                     <div className="flex items-center gap-6 mb-6">
                         <div className="relative">
@@ -96,7 +96,7 @@ export default function Profile() {
                         </div>
                     </div>
 
-                    {/* Avatar Picker */}
+                    { }
                     {showAvatarPicker && (
                         <motion.div
                             initial={{ opacity: 0, height: 0 }}
@@ -127,7 +127,7 @@ export default function Profile() {
                     </Button>
                 </Card>
 
-                {/* Achievements */}
+                { }
                 <Card className="p-6 mb-6 shadow-xl">
                     <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-4">
                         <Award className="text-yellow-500" /> Achievements
@@ -151,13 +151,13 @@ export default function Profile() {
                     </div>
                 </Card>
 
-                {/* Settings */}
+                { }
                 <Card className="p-6 mb-6 shadow-xl">
                     <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-4">
                         <Settings className="text-slate-500" /> Settings
                     </h3>
 
-                    {/* Dark Mode */}
+                    { }
                     <div className="flex items-center justify-between py-4 border-b border-slate-100 dark:border-slate-700">
                         <div className="flex items-center gap-3">
                             {settings.darkMode ? <Moon className="text-indigo-500" /> : <Sun className="text-yellow-500" />}
@@ -176,7 +176,7 @@ export default function Profile() {
                         </button>
                     </div>
 
-                    {/* Sound */}
+                    { }
                     <div className="flex items-center justify-between py-4 border-b border-slate-100 dark:border-slate-700">
                         <div className="flex items-center gap-3">
                             {settings.soundEnabled ? <Volume2 className="text-green-500" /> : <VolumeX className="text-slate-400" />}
@@ -195,7 +195,7 @@ export default function Profile() {
                         </button>
                     </div>
 
-                    {/* Daily Reminder */}
+                    { }
                     <div className="flex items-center justify-between py-4 border-b border-slate-100 dark:border-slate-700">
                         <div className="flex items-center gap-3">
                             <Bell className="text-blue-500" />
@@ -214,7 +214,7 @@ export default function Profile() {
                         </button>
                     </div>
 
-                    {/* Difficulty */}
+                    { }
                     <div className="flex items-center justify-between py-4">
                         <div className="flex items-center gap-3">
                             <Flame className="text-orange-500" />
@@ -235,7 +235,7 @@ export default function Profile() {
                     </div>
                 </Card>
 
-                {/* Sign Out */}
+                { }
                 <Card className="p-6 shadow-xl">
                     <button
                         onClick={handleSignOut}

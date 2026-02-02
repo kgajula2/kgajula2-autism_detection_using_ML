@@ -1,11 +1,8 @@
-/**
- * Game Configuration - Centralized constants for all games
- * This file externalizes hardcoded values for easier tuning and maintenance.
- */
+ 
 
-// ============================================================================
-// COLOR FOCUS GAME
-// ============================================================================
+ 
+ 
+ 
 export const COLORS = [
     { name: 'red', bg: 'bg-red-500', hex: '#ef4444' },
     { name: 'blue', bg: 'bg-blue-500', hex: '#3b82f6' },
@@ -15,8 +12,8 @@ export const COLORS = [
 ];
 
 export const COLOR_FOCUS_CONFIG = {
-    GAME_DURATION: 30, // seconds
-    SPAWN_RATE: 1000, // ms between spawns
+    GAME_DURATION: 30,  
+    SPAWN_RATE: 1000,  
     BUBBLE_SIZE_MIN: 90,
     BUBBLE_SIZE_MAX: 140,
     BUBBLE_SPEED_BASE: 0.5,
@@ -24,9 +21,9 @@ export const COLOR_FOCUS_CONFIG = {
     SPEED_INCREASE_PER_ROUND: 0.2,
 };
 
-// ============================================================================
-// EMOTION MIRROR GAME
-// ============================================================================
+ 
+ 
+ 
 import { Smile, Meh, AlertCircle, Sun, Moon, Star, Bath, Bed, Book, Shirt, Backpack, Bus } from 'lucide-react';
 
 export const EMOTION_TARGETS = [
@@ -35,7 +32,7 @@ export const EMOTION_TARGETS = [
     { id: 'neutral', label: 'Stay Neutral', icon: Meh, color: 'text-gray-500' }
 ];
 
-// Child-tuned thresholds for expression detection (relaxed by ~25-30% from adult norms)
+ 
 export const EXPRESSION_THRESHOLDS = {
     surprise: {
         mouthOpen: 0.055,
@@ -55,13 +52,13 @@ export const EXPRESSION_THRESHOLDS = {
 
 export const EMOTION_MIRROR_CONFIG = {
     MAX_ROUNDS: 5,
-    HOLD_TIME_REQUIRED: 2000, // ms to hold expression
+    HOLD_TIME_REQUIRED: 2000,  
 };
 
-// ============================================================================
-// ROUTINE SEQUENCER GAME
-// Uses native emojis (universally supported, no loading required)
-// ============================================================================
+ 
+ 
+ 
+ 
 import { Sparkles, Utensils, Droplets, Smile as SmileIcon, Hand } from 'lucide-react';
 
 export const ROUTINES = [
@@ -107,7 +104,7 @@ export const ROUTINES = [
     },
 ];
 
-// Icon resolver (since we can't store JSX in config)
+ 
 export const ROUTINE_ICONS = {
     Hand: Hand,
     Sparkles: Sparkles,
@@ -125,9 +122,9 @@ export const ROUTINE_ICONS = {
     Star: Star,
 };
 
-// ============================================================================
-// OBJECT ID GAME
-// ============================================================================
+ 
+ 
+ 
 export const OBJECTS = [
     { id: 'apple', label: 'Apple', image: '/images/apple.png' },
     { id: 'banana', label: 'Banana', image: '/images/banana.png' },
@@ -138,12 +135,12 @@ export const OBJECTS = [
 
 export const OBJECT_ID_CONFIG = {
     MAX_ROUNDS: 5,
-    OPTIONS_COUNT: 5, // Total options shown per round (including correct one)
+    OPTIONS_COUNT: 5,  
 };
 
-// ============================================================================
-// FREE TOY TAP GAME (Exploration - No Goals)
-// ============================================================================
+ 
+ 
+ 
 export const FREE_TOY_TAP_TOYS = [
     { id: 'car', emoji: '🚗', color: '#ef4444' },
     { id: 'balloon', emoji: '🎈', color: '#f97316' },
@@ -156,17 +153,17 @@ export const FREE_TOY_TAP_TOYS = [
 ];
 
 export const FREE_TOY_TAP_CONFIG = {
-    GAME_DURATION: 75000, // 75 seconds (hidden from child)
-    TOY_COUNT: 6, // Number of toys on screen
+    GAME_DURATION: 75000,  
+    TOY_COUNT: 6,  
     TOY_SIZE_MIN: 80,
     TOY_SIZE_MAX: 120,
-    MOVEMENT_SPEED: 0.5, // pixels per frame
-    BOUNCE_AMPLITUDE: 20, // vertical bounce pixels
+    MOVEMENT_SPEED: 0.5,  
+    BOUNCE_AMPLITUDE: 20,  
 };
 
-// ============================================================================
-// SHAPE SWITCH GAME (Resistance to Change)
-// ============================================================================
+ 
+ 
+ 
 export const SHAPE_SWITCH_SHAPES = [
     { id: 'circle', name: 'Circle', color: '#ef4444' },
     { id: 'square', name: 'Square', color: '#3b82f6' },
@@ -174,59 +171,59 @@ export const SHAPE_SWITCH_SHAPES = [
 ];
 
 export const SHAPE_SWITCH_CONFIG = {
-    TAPS_BEFORE_SWITCH: 3, // Successful taps before rule changes (reduced from 5)
-    TOTAL_SWITCHES: 2, // Number of rule changes (reduced from 3, makes 3 rounds total)
-    GLOW_PULSE_SPEED: 1000, // ms for glow animation
-    REWARD_DURATION: 500, // ms for sparkle effect
+    TAPS_BEFORE_SWITCH: 3,  
+    TOTAL_SWITCHES: 2,  
+    GLOW_PULSE_SPEED: 1000,  
+    REWARD_DURATION: 500,  
 };
 
-// ============================================================================
-// ATTENTION CALL GAME (Name Response)
-// ============================================================================
+ 
+ 
+ 
 export const ATTENTION_CALL_CONFIG = {
-    MAX_CALLS: 5,                    // Maximum name calls before ending
-    INITIAL_DELAY: 2000,             // 2 seconds before first call
-    BETWEEN_CALLS_DELAY: 2500,       // 2.5 seconds between calls (gentle pacing)
-    RESPONSE_WINDOW: 3500,           // 3.5 seconds to detect response (patient)
-    FALLBACK_GREETING: "friend",     // Warm, simple fallback
-    SPEECH_PITCH: 1.5,               // Cheerful but gentle, not startling
-    SPEECH_RATE: 0.75,               // Slow, clear pronunciation for ages 3-8
-    SPEECH_VOLUME: 0.85,             // Slightly softer, non-overstimulating
-    GAZE_THRESHOLD: 0.3,             // Iris offset threshold - more lenient
-    MOVEMENT_THRESHOLD: 0.03,        // Head position change threshold
-    GREETING_PREFIX: "Hi",           // Simple, warm greeting (under 10 words total)
+    MAX_CALLS: 5,                     
+    INITIAL_DELAY: 2000,              
+    BETWEEN_CALLS_DELAY: 2500,        
+    RESPONSE_WINDOW: 3500,            
+    FALLBACK_GREETING: "friend",      
+    SPEECH_PITCH: 1.5,                
+    SPEECH_RATE: 0.75,                
+    SPEECH_VOLUME: 0.85,              
+    GAZE_THRESHOLD: 0.3,              
+    MOVEMENT_THRESHOLD: 0.03,         
+    GREETING_PREFIX: "Hi",            
 };
 
-// ============================================================================
-// ML FEATURE MAPPING
-// Game metrics -> AQ-10 style behavioral features
-// This mapping is used by ml.js to convert game performance into model inputs
-// ============================================================================
+ 
+ 
+ 
+ 
+ 
 export const ML_FEATURE_MAPPING = {
     'color-focus': {
-        // Attention & Impulse Control
+         
         features: ['A1', 'A7'],
         thresholds: {
-            lowScore: 50,      // Below this -> attention issues (A1)
-            highErrors: 5,     // Above this -> impulse issues (A7)
+            lowScore: 50,       
+            highErrors: 5,      
         },
     },
     'routine-sequencer': {
-        // Planning & Structure
+         
         features: ['A2'],
         thresholds: {
-            highMistakes: 3,   // Above this -> sequencing difficulty (A2)
+            highMistakes: 3,    
         },
     },
     'emotion-mirror': {
-        // Social/Emotional Recognition
+         
         features: ['A5', 'A6'],
         thresholds: {
-            lowScore: 40,      // Below this -> social recognition issues
+            lowScore: 40,       
         },
     },
     'object-id': {
-        // Visual Discrimination
+         
         features: ['A9', 'A10'],
         thresholds: {
             highCorrect: 8,
@@ -235,36 +232,36 @@ export const ML_FEATURE_MAPPING = {
         },
     },
     'free-toy-tap': {
-        // Repetitive Behavior & Restricted Interests
+         
         features: ['A3', 'A4'],
         thresholds: {
-            lowEntropy: 1.0,       // Below = object fixation
-            highRepetition: 0.5,  // Above = repetitive behavior
-            lowSwitchFreq: 0.15,  // Below = restricted exploration
+            lowEntropy: 1.0,        
+            highRepetition: 0.5,   
+            lowSwitchFreq: 0.15,   
         },
     },
     'shape-switch': {
-        // Resistance to Change / Cognitive Flexibility
+         
         features: ['A8'],
         thresholds: {
-            highConfusion: 5000,   // ms to adapt after switch
-            highPerseveration: 3,  // wrong taps after switch
+            highConfusion: 5000,    
+            highPerseveration: 3,   
         },
     },
     'attention-call': {
-        // Social Attention & Name Response
+         
         features: ['A1', 'A5'],
         thresholds: {
-            lowResponseRate: 0.33, // Less than 1/3 responses
-            highLatency: 3000,     // ms to respond
+            lowResponseRate: 0.33,  
+            highLatency: 3000,      
         },
     },
 };
 
-// ============================================================================
-// KID-FRIENDLY MASCOT & UI ELEMENTS
-// Using native emojis for universal compatibility
-// ============================================================================
+ 
+ 
+ 
+ 
 export const MASCOT = {
     name: 'Ellie',
     emoji: '🐘',

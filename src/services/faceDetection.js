@@ -1,9 +1,4 @@
-/**
- * Face Detection Service using face-api.js
- * 
- * This provides reliable face detection with eye state detection
- * using Eye Aspect Ratio (EAR) calculation.
- */
+ 
 
 import * as faceapi from 'face-api.js';
 
@@ -13,14 +8,12 @@ let onResultsCallback = null;
 let animationFrameId = null;
 let isRunning = false;
 
-/**
- * Load face-api.js models from CDN
- */
+ 
 export const loadModels = async () => {
     if (modelsLoaded) return true;
 
     try {
-        // Load from CDN - faster and no need to host files
+         
         const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
 
         await Promise.all([
@@ -36,16 +29,9 @@ export const loadModels = async () => {
     }
 };
 
-/**
- * Calculate Eye Aspect Ratio (EAR) to detect if eyes are open
- * EAR = (|p2-p6| + |p3-p5|) / (2 * |p1-p4|)
- * 
- * Eye landmarks (0-indexed from face-api.js 68-point model):
- * Left eye: 36-41 (36=outer, 37=upper-outer, 38=upper-inner, 39=inner, 40=lower-inner, 41=lower-outer)
- * Right eye: 42-47 (same pattern)
- */
+ 
 const calculateEAR = (eyePoints) => {
-    // Vertical distances
+     
     const v1 = Math.sqrt(
         Math.pow(eyePoints[1].x - eyePoints[5].x, 2) +
         Math.pow(eyePoints[1].y - eyePoints[5].y, 2)
@@ -55,20 +41,18 @@ const calculateEAR = (eyePoints) => {
         Math.pow(eyePoints[2].y - eyePoints[4].y, 2)
     );
 
-    // Horizontal distance
+     
     const h = Math.sqrt(
         Math.pow(eyePoints[0].x - eyePoints[3].x, 2) +
         Math.pow(eyePoints[0].y - eyePoints[3].y, 2)
     );
 
-    // EAR calculation
+     
     const ear = (v1 + v2) / (2 * h);
     return ear;
 };
 
-/**
- * Detect face and eye state
- */
+ 
 const detectFace = async () => {
     if (!videoElement || !isRunning) return;
 
@@ -83,18 +67,18 @@ const detectFace = async () => {
         if (detection) {
             const landmarks = detection.landmarks;
 
-            // Get eye landmarks
+             
             const leftEye = landmarks.getLeftEye();
             const rightEye = landmarks.getRightEye();
 
-            // Calculate EAR for both eyes
+             
             const leftEAR = calculateEAR(leftEye);
             const rightEAR = calculateEAR(rightEye);
             const avgEAR = (leftEAR + rightEAR) / 2;
 
-            // Thresholds: 
-            // EAR < 0.20 = eyes closed
-            // EAR > 0.25 = eyes open (looking at screen)
+             
+             
+             
             const eyesOpen = avgEAR > 0.22;
 
             if (onResultsCallback) {
@@ -122,17 +106,13 @@ const detectFace = async () => {
         console.error('Face detection error:', error);
     }
 
-    // Continue detection loop
+     
     if (isRunning) {
         animationFrameId = requestAnimationFrame(detectFace);
     }
 };
 
-/**
- * Initialize face detection with a video element
- * @param {HTMLVideoElement} video - The video element to detect faces from
- * @param {Function} onResults - Callback function with detection results
- */
+ 
 export const initializeFaceDetection = async (video, onResults) => {
     if (!video) {
         console.error('[FaceDetection] Video element is required');
@@ -159,7 +139,7 @@ export const initializeFaceDetection = async (video, onResults) => {
             };
             video.onerror = reject;
 
-            // Timeout after 5 seconds
+             
             setTimeout(() => reject(new Error('Video load timeout')), 5000);
         });
 
@@ -188,7 +168,7 @@ export const initializeFaceDetection = async (video, onResults) => {
     } catch (error) {
         console.error('[FaceDetection] Model loading failed:', error);
 
-        // Report error but DO NOT fake detection
+         
         if (onResultsCallback) {
             onResultsCallback({
                 faceDetected: false,
@@ -204,9 +184,7 @@ export const initializeFaceDetection = async (video, onResults) => {
     return true;
 };
 
-/**
- * Stop face detection and release resources
- */
+ 
 export const stopFaceDetection = () => {
     isRunning = false;
 

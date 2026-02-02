@@ -1,10 +1,7 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
 
-/**
- * Accessible Card Component
- * Supports both static display and interactive (clickable) cards
- */
+ 
 export const Card = ({
     children,
     className,

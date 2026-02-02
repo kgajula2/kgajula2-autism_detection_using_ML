@@ -1,10 +1,7 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
 
-/**
- * Badge Component
- * Premium status indicators with pulse animation options
- */
+ 
 
 const variants = {
     default: "bg-gray-100 text-gray-700 border-gray-200",
@@ -15,14 +12,14 @@ const variants = {
     purple: "bg-purple-100 text-purple-700 border-purple-200",
     pink: "bg-pink-100 text-pink-700 border-pink-200",
 
-    // Solid variants
+     
     "solid-primary": "bg-blue-500 text-white border-blue-500",
     "solid-success": "bg-emerald-500 text-white border-emerald-500",
     "solid-warning": "bg-amber-500 text-white border-amber-500",
     "solid-error": "bg-red-500 text-white border-red-500",
     "solid-purple": "bg-purple-500 text-white border-purple-500",
 
-    // Gradient variants
+     
     "gradient-primary": "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-none",
     "gradient-purple": "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-none",
     "gradient-success": "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-none",
@@ -75,7 +72,7 @@ export const Badge = ({
     );
 };
 
-// Status Badge with icon
+ 
 export const StatusBadge = ({ status, showDot = true, size = "sm" }) => {
     const statusConfig = {
         online: { variant: "success", label: "Online" },
@@ -103,7 +100,7 @@ export const StatusBadge = ({ status, showDot = true, size = "sm" }) => {
     );
 };
 
-// Count Badge (for notifications, etc.)
+ 
 export const CountBadge = ({ count, max = 99, variant = "solid-error", size = "xs" }) => {
     const displayCount = count > max ? `${max}+` : count;
 

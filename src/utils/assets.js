@@ -1,10 +1,6 @@
-/**
- * Asset Manifest & Utilities
- * 
- * Centralized asset management with validation and preloading.
- */
+ 
 
-// Image assets with metadata for validation
+ 
 export const ASSET_MANIFEST = {
     images: {
         'apple': { path: '/images/apple.png', required: true },
@@ -18,9 +14,7 @@ export const ASSET_MANIFEST = {
     },
 };
 
-/**
- * Get asset path by key with validation
- */
+ 
 export const getAssetPath = (category, key) => {
     const asset = ASSET_MANIFEST[category]?.[key];
     if (!asset) {
@@ -30,10 +24,7 @@ export const getAssetPath = (category, key) => {
     return asset.path;
 };
 
-/**
- * Preload a single image with error handling
- * @returns Promise that resolves with the image or rejects with error
- */
+ 
 export const preloadImage = (src) => {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -43,12 +34,7 @@ export const preloadImage = (src) => {
     });
 };
 
-/**
- * Preload multiple images with progress tracking
- * @param {string[]} sources - Array of image URLs to preload
- * @param {function} onProgress - Callback with { loaded, total, percent }
- * @returns Promise<{ success: string[], failed: string[] }>
- */
+ 
 export const preloadImages = async (sources, onProgress) => {
     const results = {
         success: [],
@@ -78,9 +64,7 @@ export const preloadImages = async (sources, onProgress) => {
     return results;
 };
 
-/**
- * Preload all required assets from manifest
- */
+ 
 export const preloadRequiredAssets = async (onProgress) => {
     const requiredImages = Object.values(ASSET_MANIFEST.images)
         .filter(asset => asset.required)
@@ -89,10 +73,7 @@ export const preloadRequiredAssets = async (onProgress) => {
     return preloadImages(requiredImages, onProgress);
 };
 
-/**
- * Validate that all required assets exist
- * Returns { valid: boolean, missing: string[] }
- */
+ 
 export const validateAssets = async () => {
     const missing = [];
 

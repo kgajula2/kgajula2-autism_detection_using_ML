@@ -10,7 +10,7 @@ import {
 import { fetchUserGameStats } from '../../services/db';
 import { getAuth } from 'firebase/auth';
 
-// Animated data flow visualization
+ 
 const DataFlowAnimation = ({ isPlaying }) => {
     const steps = [
         { id: 1, label: 'Game Data', icon: '🎮', color: 'bg-blue-500' },
@@ -51,7 +51,7 @@ const DataFlowAnimation = ({ isPlaying }) => {
     );
 };
 
-// Expandable section component
+ 
 const ExpandableSection = ({ title, icon: Icon, children, defaultOpen = false }) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -95,7 +95,7 @@ export default function MLExplainer() {
     const [isAnimating, setIsAnimating] = useState(false);
 
     useEffect(() => {
-        // Load static model metrics
+         
         fetch('/models/model_weights.json')
             .then(res => res.json())
             .then(data => {
@@ -107,7 +107,7 @@ export default function MLExplainer() {
             })
             .catch(err => console.error("Failed to load metrics", err));
 
-        // Load dynamic user stats
+         
         const loadUserStats = async () => {
             try {
                 const user = getAuth().currentUser;
@@ -164,13 +164,13 @@ export default function MLExplainer() {
 
     return (
         <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
-            {/* Header */}
+            { }
             <div className="text-center space-y-2">
                 <Title>How AI Analysis Works</Title>
                 <SubTitle className="text-slate-500">Tap each section to learn more</SubTitle>
             </div>
 
-            {/* Interactive Animation Demo */}
+            { }
             <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border-0">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white font-bold flex items-center gap-2">
@@ -192,7 +192,7 @@ export default function MLExplainer() {
                 </p>
             </Card>
 
-            {/* Your Performance - Clean Table */}
+            { }
             {userStats && userStats.totalGames > 0 && (
                 <ExpandableSection title="Your Performance" icon={User} defaultOpen={true}>
                     <div className="space-y-4">
@@ -352,7 +352,7 @@ export default function MLExplainer() {
                 </div>
             </ExpandableSection>
 
-            {/* Why This Approach */}
+            { }
             <ExpandableSection title="Why Hierarchical ML?" icon={Layers}>
                 <div className="grid gap-3">
                     {[

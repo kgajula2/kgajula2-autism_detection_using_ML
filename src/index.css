@@ -1,32 +1,26 @@
 @import "tailwindcss";
 
-/* ========================================
-   NEUROSTEP PREMIUM DESIGN SYSTEM v2.0
-   ======================================== */
 
-/* ========================================
-   TAILWIND THEME EXTENSIONS
-   ======================================== */
+
+
 @theme {
   --color-brand-primary: #8b5cf6;
   --color-brand-secondary: #06b6d4;
   --color-bg-base: #f0f4f8;
 
-  /* Extended palette */
+  
   --color-accent-pink: #ec4899;
   --color-accent-orange: #f97316;
   --color-accent-emerald: #10b981;
   --color-accent-amber: #f59e0b;
 }
 
-/* ========================================
-   CSS CUSTOM PROPERTIES - DESIGN TOKENS
-   ======================================== */
+
 :root {
-  /* Typography */
+  
   --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
 
-  /* Glassmorphism */
+  
   --glass-bg: rgba(255, 255, 255, 0.75);
   --glass-bg-strong: rgba(255, 255, 255, 0.9);
   --glass-bg-subtle: rgba(255, 255, 255, 0.5);
@@ -34,25 +28,25 @@
   --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
   --glass-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 
-  /* Base colors */
+  
   --bg-primary: #f0f4f8;
   --text-primary: #1f2937;
   --text-secondary: #6b7280;
 
-  /* Glow effects */
+  
   --glow-purple: 0 0 40px rgba(139, 92, 246, 0.4);
   --glow-blue: 0 0 40px rgba(59, 130, 246, 0.4);
   --glow-pink: 0 0 40px rgba(236, 72, 153, 0.4);
   --glow-emerald: 0 0 40px rgba(16, 185, 129, 0.4);
 
-  /* Gradients */
+  
   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-sunset: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --gradient-ocean: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   --gradient-forest: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
   --gradient-fire: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
 
-  /* Timing */
+  
   --transition-fast: 150ms;
   --transition-base: 300ms;
   --transition-slow: 500ms;
@@ -60,7 +54,7 @@
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Dark mode tokens */
+
 html.dark {
   --glass-bg: rgba(30, 41, 59, 0.85);
   --glass-bg-strong: rgba(30, 41, 59, 0.95);
@@ -73,9 +67,7 @@ html.dark {
   --text-secondary: #94a3b8;
 }
 
-/* ========================================
-   BASE STYLES
-   ======================================== */
+
 body {
   margin: 0;
   font-family: var(--font-primary);
@@ -94,11 +86,9 @@ html.dark body {
   color: var(--text-primary);
 }
 
-/* ========================================
-   ANIMATION KEYFRAMES
-   ======================================== */
 
-/* Background gradient animation */
+
+
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -113,7 +103,7 @@ html.dark body {
   }
 }
 
-/* Floating effect for 3D elements */
+
 @keyframes float {
 
   0%,
@@ -158,7 +148,7 @@ html.dark body {
   }
 }
 
-/* Pulse glow for CTAs */
+
 @keyframes pulse-glow {
 
   0%,
@@ -183,7 +173,7 @@ html.dark body {
   }
 }
 
-/* Shimmer effect for loading/premium feel */
+
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -194,7 +184,7 @@ html.dark body {
   }
 }
 
-/* Bounce entrance */
+
 @keyframes bounce-in {
   0% {
     transform: scale(0);
@@ -211,7 +201,7 @@ html.dark body {
   }
 }
 
-/* Slide up entrance */
+
 @keyframes slide-up {
   0% {
     transform: translateY(20px);
@@ -224,7 +214,7 @@ html.dark body {
   }
 }
 
-/* Rotate glow border */
+
 @keyframes rotate-border {
   0% {
     transform: rotate(0deg);
@@ -235,7 +225,7 @@ html.dark body {
   }
 }
 
-/* Skeleton pulse */
+
 @keyframes skeleton-pulse {
 
   0%,
@@ -248,7 +238,7 @@ html.dark body {
   }
 }
 
-/* Confetti burst */
+
 @keyframes confetti-fall {
   0% {
     transform: translateY(-100vh) rotate(0deg);
@@ -261,7 +251,7 @@ html.dark body {
   }
 }
 
-/* Number counter tick */
+
 @keyframes counter-tick {
   0% {
     transform: translateY(0);
@@ -276,7 +266,7 @@ html.dark body {
   }
 }
 
-/* Wiggle for attention */
+
 @keyframes wiggle {
 
   0%,
@@ -293,7 +283,7 @@ html.dark body {
   }
 }
 
-/* Heartbeat for important elements */
+
 @keyframes heartbeat {
 
   0%,
@@ -314,9 +304,7 @@ html.dark body {
   }
 }
 
-/* ========================================
-   GLASSMORPHISM UTILITIES
-   ======================================== */
+
 .glass-card {
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
@@ -345,9 +333,7 @@ html.dark body {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* ========================================
-   GLOW UTILITIES
-   ======================================== */
+
 .glow-purple {
   box-shadow: var(--glow-purple);
 }
@@ -384,9 +370,7 @@ html.dark body {
   animation: pulse-glow-blue 2s ease-in-out infinite;
 }
 
-/* ========================================
-   ANIMATION UTILITIES
-   ======================================== */
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -421,9 +405,7 @@ html.dark body {
   animation: heartbeat 1.5s ease-in-out infinite;
 }
 
-/* ========================================
-   GRADIENT TEXT UTILITIES
-   ======================================== */
+
 .title-gradient {
   background: linear-gradient(to right, #ffffff, #e0e7ff);
   -webkit-background-clip: text;
@@ -460,9 +442,7 @@ html.dark body {
   color: transparent;
 }
 
-/* ========================================
-   GRADIENT BACKGROUNDS
-   ======================================== */
+
 .bg-gradient-primary {
   background: var(--gradient-primary);
 }
@@ -483,9 +463,7 @@ html.dark body {
   background: var(--gradient-fire);
 }
 
-/* ========================================
-   SKELETON LOADING
-   ======================================== */
+
 .skeleton {
   animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
@@ -497,9 +475,7 @@ html.dark .skeleton {
   background-size: 200% 100%;
 }
 
-/* ========================================
-   PAGE TRANSITIONS
-   ======================================== */
+
 .page-transition-enter {
   opacity: 0;
   transform: translateY(10px);
@@ -520,9 +496,7 @@ html.dark .skeleton {
   transition: opacity 200ms;
 }
 
-/* ========================================
-   DARK MODE OVERRIDES
-   ======================================== */
+
 html.dark .prose {
   --tw-prose-body: #d1d5db;
   --tw-prose-headings: #f9fafb;
@@ -530,16 +504,14 @@ html.dark .prose {
   --tw-prose-bold: #f9fafb;
 }
 
-/* ========================================
-   FOCUS STYLES - ACCESSIBILITY
-   ======================================== */
+
 *:focus-visible {
   outline: 3px solid #8b5cf6;
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Skip link for accessibility */
+
 .skip-link {
   position: absolute;
   top: -100%;
@@ -558,9 +530,7 @@ html.dark .prose {
   top: 1rem;
 }
 
-/* ========================================
-   REDUCED MOTION - ACCESSIBILITY
-   ======================================== */
+
 @media (prefers-reduced-motion: reduce) {
 
   *,
@@ -577,9 +547,7 @@ html.dark .prose {
   }
 }
 
-/* ========================================
-   SCROLLBAR STYLING
-   ======================================== */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -608,9 +576,7 @@ html.dark ::-webkit-scrollbar-thumb {
   background: rgba(139, 92, 246, 0.4);
 }
 
-/* ========================================
-   SELECTION STYLING
-   ======================================== */
+
 ::selection {
   background: rgba(139, 92, 246, 0.3);
   color: inherit;

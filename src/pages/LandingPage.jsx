@@ -15,7 +15,7 @@ export const LandingPage = () => {
         }
     }, [user, navigate]);
 
-    // Staggered animations
+     
     const container = {
         hidden: { opacity: 0 },
         show: {
@@ -52,9 +52,9 @@ export const LandingPage = () => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
 
-            {/* Floating 3D Orbs - Background */}
+            { }
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {/* Large purple orb */}
+                { }
                 <motion.div
                     className="absolute top-1/4 -left-20 w-96 h-96 rounded-full bg-gradient-to-br from-purple-400/40 to-violet-600/30 blur-3xl"
                     animate={{
@@ -64,7 +64,7 @@ export const LandingPage = () => {
                     }}
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                 />
-                {/* Blue orb */}
+                { }
                 <motion.div
                     className="absolute top-1/3 right-10 w-72 h-72 rounded-full bg-gradient-to-br from-blue-400/40 to-cyan-500/30 blur-3xl"
                     animate={{
@@ -74,7 +74,7 @@ export const LandingPage = () => {
                     }}
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 />
-                {/* Pink orb */}
+                { }
                 <motion.div
                     className="absolute bottom-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-pink-400/30 to-rose-500/20 blur-3xl"
                     animate={{
@@ -83,7 +83,7 @@ export const LandingPage = () => {
                     }}
                     transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                 />
-                {/* Teal orb */}
+                { }
                 <motion.div
                     className="absolute bottom-10 right-1/4 w-56 h-56 rounded-full bg-gradient-to-br from-teal-400/30 to-emerald-500/20 blur-3xl"
                     animate={{
@@ -94,10 +94,10 @@ export const LandingPage = () => {
                 />
             </div>
 
-            {/* Main Content */}
+            { }
             <div className="z-10 text-center px-4 max-w-5xl mx-auto">
 
-                {/* Animated Mascot */}
+                { }
                 <motion.div
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
@@ -113,7 +113,7 @@ export const LandingPage = () => {
                     </motion.div>
                 </motion.div>
 
-                {/* Animated Title - NeuroStep */}
+                { }
                 <motion.div
                     variants={container}
                     initial="hidden"
@@ -136,7 +136,7 @@ export const LandingPage = () => {
                     ))}
                 </motion.div>
 
-                {/* Tagline with sparkle */}
+                { }
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -150,7 +150,7 @@ export const LandingPage = () => {
                     <Sparkles className="w-5 h-5 text-amber-400" />
                 </motion.div>
 
-                {/* CTA Buttons with Glow */}
+                { }
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -173,7 +173,7 @@ export const LandingPage = () => {
                     </Button>
                 </motion.div>
 
-                {/* Feature Cards Grid */}
+                { }
                 <motion.div
                     variants={container}
                     initial="hidden"
@@ -200,7 +200,7 @@ export const LandingPage = () => {
                     ))}
                 </motion.div>
 
-                {/* Trust Indicators */}
+                { }
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -222,7 +222,7 @@ export const LandingPage = () => {
                 </motion.div>
             </div>
 
-            {/* Scroll Indicator */}
+            { }
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -237,7 +237,7 @@ export const LandingPage = () => {
                 </motion.div>
             </motion.div>
 
-            {/* Footer */}
+            { }
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

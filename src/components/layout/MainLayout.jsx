@@ -13,12 +13,12 @@ const variants = {
     exit: { opacity: 0, x: 20 },
 };
 
-import { useUserStore } from "../../store/userStore"; // Import store
+import { useUserStore } from "../../store/userStore";  
 
 export const MainLayout = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { user, setUser } = useUserStore(); // Use global store instead of local state
+    const { user, setUser } = useUserStore();  
 
     useEffect(() => {
         const unsubscribe = subscribeToAuthChanges((currentUser) => {
@@ -32,12 +32,12 @@ export const MainLayout = () => {
         navigate('/');
     };
 
-    // Get custom avatar from localStorage
+     
     const customAvatar = typeof window !== 'undefined' ? localStorage.getItem('neurostep_avatar') : null;
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100 font-sans overflow-x-hidden transition-colors">
-            {/* Skip Link for Accessibility */}
+            { }
             <a href="#main-content" className="skip-link">
                 Skip to main content
             </a>
@@ -93,10 +93,10 @@ export const MainLayout = () => {
                 </AnimatePresence>
             </main>
 
-            {/* Floating Feedback Button */}
+            { }
             <FeedbackButton />
 
-            {/* AI Chatbot */}
+            { }
             <AIChatbot />
         </div>
     );

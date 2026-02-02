@@ -5,7 +5,7 @@ import Footer from '../components/layout/Footer';
 export default function Terms() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 to-green-100 dark:from-slate-900 dark:to-green-900">
-            {/* Header */}
+            { }
             <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white p-8">
                 <div className="max-w-4xl mx-auto flex items-center gap-4">
                     <FileText className="w-12 h-12" />
@@ -16,7 +16,7 @@ export default function Terms() {
                 </div>
             </div>
 
-            {/* Content */}
+            { }
             <div className="max-w-4xl mx-auto px-6 py-12">
                 <Card className="p-8 shadow-xl prose prose-slate dark:prose-invert max-w-none">
                     <h2>1. Acceptance of Terms</h2>

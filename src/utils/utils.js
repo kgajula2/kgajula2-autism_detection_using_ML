@@ -1,16 +1,11 @@
-/**
- * Utility Functions
- */
+ 
 
-/**
- * Generate a cryptographically strong unique ID
- * Falls back to a UUID-like string if crypto.randomUUID is not available
- */
+ 
 export const generateUniqueId = () => {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
         return crypto.randomUUID();
     }
-    // Fallback for older browsers
+     
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
         const r = Math.random() * 16 | 0;
         const v = c === 'x' ? r : (r & 0x3 | 0x8);
@@ -18,9 +13,7 @@ export const generateUniqueId = () => {
     });
 };
 
-/**
- * Format duration in seconds to mm:ss or ss format
- */
+ 
 export const formatDuration = (seconds) => {
     if (seconds < 60) {
         return `${Math.round(seconds)}s`;
@@ -30,14 +23,10 @@ export const formatDuration = (seconds) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-/**
- * Clamp a value between min and max
- */
+ 
 export const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-/**
- * Shuffle an array using Fisher-Yates algorithm
- */
+ 
 export const shuffle = (array) => {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {

@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 
-// Test useToddlerMode hook
+ 
 describe('useToddlerMode Hook', () => {
     beforeEach(() => {
-        // Clear localStorage before each test
+         
         localStorage.clear();
     });
 
     it('returns default toddler mode config', async () => {
-        // We need to wrap in SettingsProvider, so we'll test the config structure
+         
         const mockConfig = {
             routineSteps: 3,
             bubbleSize: 60,
@@ -21,7 +21,7 @@ describe('useToddlerMode Hook', () => {
             transitionSpeed: 'slow',
         };
 
-        // Verify expected config structure for toddler mode
+         
         expect(mockConfig.routineSteps).toBe(3);
         expect(mockConfig.bubbleSize).toBe(60);
         expect(mockConfig.showTutorials).toBe(true);
@@ -44,7 +44,7 @@ describe('useToddlerMode Hook', () => {
     });
 });
 
-// Test ErrorLogger service
+ 
 describe('ErrorLogger Service', () => {
     it('logs errors with correct structure', () => {
         const errorEntry = {
@@ -72,7 +72,7 @@ describe('ErrorLogger Service', () => {
     });
 });
 
-// Test utility functions
+ 
 describe('Utility Functions', () => {
     it('generateUniqueId creates unique IDs', () => {
         const ids = new Set();
@@ -80,7 +80,7 @@ describe('Utility Functions', () => {
             const id = `bubble-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             ids.add(id);
         }
-        // All IDs should be unique (set size equals iterations)
+         
         expect(ids.size).toBe(100);
     });
 
@@ -88,13 +88,13 @@ describe('Utility Functions', () => {
         const original = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         const shuffled = [...original].sort(() => Math.random() - 0.5);
 
-        // Arrays should have same length and elements
+         
         expect(shuffled.length).toBe(original.length);
         expect(shuffled.sort((a, b) => a - b)).toEqual(original);
     });
 });
 
-// Test game config validation
+ 
 describe('Game Config', () => {
     it('COLOR_FOCUS_CONFIG has required properties', () => {
         const config = {

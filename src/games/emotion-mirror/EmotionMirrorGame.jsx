@@ -40,7 +40,7 @@ export default function EmotionMirrorGame() {
         startTime: 0,
     });
 
-    // --- MOVED: classifyExpression helper must be defined before onResults ---
+     
     const classifyExpression = useCallback((landmarks) => {
         const top = landmarks[10];
         const bottom = landmarks[152];
@@ -71,17 +71,17 @@ export default function EmotionMirrorGame() {
 
         const thresholds = EXPRESSION_THRESHOLDS;
 
-        // SURPRISE
+         
         if (mouthOpen > thresholds.surprise.mouthOpen && browLift > thresholds.surprise.browLift) {
             detected = 'surprise';
             confidence = Math.min(1, (mouthOpen / 0.08) * 0.5 + (browLift / 0.05) * 0.5);
         }
-        // SMILE
+         
         else if (smileCurve > thresholds.smile.smileCurve || mouthWidth > thresholds.smile.mouthWidth || cheekWidth > thresholds.smile.cheekWidth) {
             detected = 'smile';
             confidence = Math.min(1, Math.max(smileCurve / 0.02, (mouthWidth - 0.28) / 0.12));
         }
-        // NEUTRAL
+         
         else if (mouthWidth < thresholds.neutral.mouthWidth && mouthOpen < thresholds.neutral.mouthOpen && Math.abs(smileCurve) < thresholds.neutral.smileCurve) {
             detected = 'neutral';
             confidence = 1 - (mouthOpen / 0.04);
@@ -94,7 +94,7 @@ export default function EmotionMirrorGame() {
         };
     }, []);
 
-    // --- MOVED: onResults must be defined BEFORE the useEffect that uses it ---
+     
     const onResults = useCallback((results) => {
         if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
             setDetection('none');
@@ -107,7 +107,7 @@ export default function EmotionMirrorGame() {
         setDebugInfo(debug);
     }, [classifyExpression]);
 
-    // --- useEffect now references onResults which is already defined ---
+     
     useEffect(() => {
         if (gameState === 'ACTIVE') {
             const startCamera = async () => {
@@ -126,7 +126,7 @@ export default function EmotionMirrorGame() {
         };
     }, [gameState, onResults]);
 
-    // Game loop for hold detection (restored)
+     
     useGameLoop((deltaTime) => {
         if (gameState !== 'ACTIVE') return;
 
@@ -248,7 +248,7 @@ export default function EmotionMirrorGame() {
         >
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto p-4 gap-6">
 
-                {/* Tutorial Overlay */}
+                { }
                 <AnimatePresence>
                     {gameState === 'ACTIVE' && showTutorial && (
                         <div className="absolute inset-0 z-50 flex items-center justify-center">
@@ -260,7 +260,7 @@ export default function EmotionMirrorGame() {
                     )}
                 </AnimatePresence>
 
-                {/* Round Counter */}
+                { }
                 {gameState === 'ACTIVE' && (
                     <div className="flex items-center gap-4">
                         <div className="text-xl font-bold text-gray-400">Round {roundCount + 1} / {MAX_ROUNDS}</div>
@@ -290,11 +290,11 @@ export default function EmotionMirrorGame() {
 
                 {gameState === 'ACTIVE' && (
                     <div className="flex flex-col md:flex-row gap-8 items-center w-full">
-                        {/* Video Feed */}
+                        { }
                         <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full max-w-lg aspect-[4/3] bg-black border-4 border-white dark:border-slate-600">
                             <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover transform -scale-x-100" />
 
-                            {/* Progress Bar - Large & Clear */}
+                            { }
                             <div className="absolute bottom-6 left-6 right-6 h-6 bg-gray-700/50 rounded-full backdrop-blur overflow-hidden border-2 border-white/20">
                                 <motion.div
                                     className="h-full bg-gradient-to-r from-green-400 to-green-500"
@@ -304,7 +304,7 @@ export default function EmotionMirrorGame() {
                                 />
                             </div>
 
-                            {/* Detected Status Pill */}
+                            { }
                             <div className="absolute top-6 right-6">
                                 <div className="bg-black/60 text-white px-4 py-2 rounded-full text-lg backdrop-blur font-bold border border-white/10">
                                     {detection === 'none' ? '...' : detection === 'unknown' ? '?' : detection.toUpperCase()}
@@ -312,7 +312,7 @@ export default function EmotionMirrorGame() {
                             </div>
                         </div>
 
-                        {/* Target Display - Massive for Kids */}
+                        { }
                         <div className="flex flex-col items-center justify-center gap-4 min-w-[200px]">
                             <motion.div
                                 key={currentTarget.id}
@@ -321,7 +321,7 @@ export default function EmotionMirrorGame() {
                                 className="bg-white dark:bg-slate-800 rounded-[2rem] p-10 shadow-2xl flex flex-col items-center gap-6 border-4 border-purple-100 dark:border-purple-900/50"
                             >
                                 <currentTarget.icon size={120} className={currentTarget.color} />
-                                {/* Large Emoji or Icon Representation */}
+                                { }
                             </motion.div>
                             <h2 className={`text-4xl font-black tracking-wider ${currentTarget.color}`}>{currentTarget.label}</h2>
                         </div>

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { createUserProfile } from "../services/db";
 import { useUserStore } from "../store/userStore";
 
-// Detect if user is on mobile device
+ 
 const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 };
@@ -21,7 +21,7 @@ export const Login = () => {
     const provider = new GoogleAuthProvider();
     const { user } = useUserStore();
 
-    // Handle redirect result when coming back from Google sign-in
+     
     useEffect(() => {
         const handleRedirectResult = async () => {
             try {
@@ -56,11 +56,11 @@ export const Login = () => {
 
         try {
             if (isMobile()) {
-                // Use redirect for mobile - more reliable
+                 
                 await signInWithRedirect(auth, provider);
-                // Page will redirect, so no need to handle result here
+                 
             } else {
-                // Use popup for desktop
+                 
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
 
@@ -75,7 +75,7 @@ export const Login = () => {
             }
         } catch (err) {
             console.error(err);
-            // Handle specific popup errors with redirect fallback
+             
             if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/popup-blocked') {
                 setError("Popup was blocked. Trying redirect method...");
                 try {

@@ -32,15 +32,15 @@ export default function ColorFocusGame() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
 
-    // Child-friendly constraints
-    const MIN_BUBBLE_SIZE = 60; // Increased from 35/50 for small fingers
+     
+    const MIN_BUBBLE_SIZE = 60;  
 
     const lastSpawnRef = useRef(0);
     const containerRef = useRef(null);
     const latenciesRef = useRef([]);
-    const bubblePopDataRef = useRef([]); // Store all bubble pop details for dashboard
+    const bubblePopDataRef = useRef([]);  
 
-    // Timer Effect
+     
     useEffect(() => {
         let interval;
         if (gameState === 'ACTIVE' && timeLeft > 0) {
@@ -57,19 +57,19 @@ export default function ColorFocusGame() {
         return () => clearInterval(interval);
     }, [gameState, timeLeft]);
 
-    // Game Loop
+     
     useGameLoop((deltaTime) => {
         if (gameState !== 'ACTIVE') return;
 
         const now = performance.now();
 
-        // Spawn Bubbles
+         
         if (now - lastSpawnRef.current > SPAWN_RATE) {
             spawnBubble();
             lastSpawnRef.current = now;
         }
 
-        // Move Bubbles
+         
         setBubbles(prev => prev.map(b => ({
             ...b,
             y: b.y - (b.speed * deltaTime * 60)
@@ -82,7 +82,7 @@ export default function ColorFocusGame() {
 
         const id = generateUniqueId();
         const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-        // Use larger minimum size for child friendliness
+         
         const size = Math.random() * (BUBBLE_SIZE_MAX - MIN_BUBBLE_SIZE) + MIN_BUBBLE_SIZE;
         const x = Math.random() * (width - size);
         const speed = Math.random() * BUBBLE_SPEED_VARIANCE + BUBBLE_SPEED_BASE + (round * SPEED_INCREASE_PER_ROUND);
@@ -94,7 +94,7 @@ export default function ColorFocusGame() {
         if (gameState !== 'ACTIVE') return;
 
         const popTime = Date.now();
-        const lifespan = popTime - spawnTime; // Time from spawn to pop in ms
+        const lifespan = popTime - spawnTime;  
 
         setBubbles(prev => {
             const exists = prev.find(b => b.id === id);
@@ -104,7 +104,7 @@ export default function ColorFocusGame() {
 
         const isCorrect = colorName === targetColor.name;
 
-        // Log detailed bubble lifespan data to Firebase
+         
         if (sessionId) {
             logRoundMetrics(sessionId, {
                 type: 'bubble_interaction',
@@ -114,16 +114,16 @@ export default function ColorFocusGame() {
                 targetColor: targetColor.name,
                 poppedColor: colorName,
                 correct: isCorrect,
-                // Detailed timestamp tracking
-                birthTime: spawnTime,      // When bubble spawned
-                deathTime: popTime,        // When bubble was popped
-                lifespan: lifespan,        // Time alive (ms)
-                reactionTime: lifespan,    // Alias for clarity
+                 
+                birthTime: spawnTime,       
+                deathTime: popTime,         
+                lifespan: lifespan,         
+                reactionTime: lifespan,     
                 timestamp: popTime
             });
         }
 
-        // Store detailed bubble data for dashboard (ALL pops, not just correct)
+         
         bubblePopDataRef.current.push({
             bubbleId: id,
             correct: isCorrect,
@@ -136,18 +136,18 @@ export default function ColorFocusGame() {
         if (isCorrect) {
             incrementScore(10);
             latenciesRef.current.push(lifespan);
-            soundService.pop(); // Play pop sound
+            soundService.pop();  
         } else {
             incrementScore(-5);
             setMistakes(m => m + 1);
-            soundService.error(); // Play error sound
+            soundService.error();  
         }
     };
 
     const startGame = async () => {
         resetGame();
         latenciesRef.current = [];
-        bubblePopDataRef.current = []; // Reset bubble data
+        bubblePopDataRef.current = [];  
         setBubbles([]);
         setTimeLeft(GAME_DURATION);
         setMistakes(0);
@@ -200,7 +200,7 @@ export default function ColorFocusGame() {
                     riskScore: result.riskScore,
                     aiInsights: result.aiInsights,
                     gameRisks: result.gameRisks,
-                    // Include bubble lifespan data for dashboard
+                     
                     roundTimings: bubblePopDataRef.current,
                     bubblesPoppedCorrectly: latenciesRef.current.length,
                     allLatencies: latenciesRef.current
@@ -213,7 +213,7 @@ export default function ColorFocusGame() {
         }
     };
 
-    // Calculate stats for the modal
+     
     const getStats = () => {
         const avgLatency = latenciesRef.current.length > 0
             ? Math.round(latenciesRef.current.reduce((a, b) => a + b, 0) / latenciesRef.current.length)
@@ -242,7 +242,7 @@ export default function ColorFocusGame() {
             headerColor="bg-blue-600"
         >
             <div className="flex flex-col items-center w-full">
-                {/* Pre-game Instructions / Start Screen */}
+                { }
                 {gameState === 'IDLE' && (
                     <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl">
                         {showTutorial ? (
@@ -275,7 +275,7 @@ export default function ColorFocusGame() {
                     </div>
                 )}
 
-                {/* Game Area Header (Active State) */}
+                { }
                 {gameState === 'ACTIVE' && (
                     <div className="flex flex-col items-center gap-2 mb-4 z-20">
                         <span className="text-lg font-bold bg-white/80 dark:bg-slate-800/80 text-gray-800 dark:text-white px-4 py-1 rounded-full shadow-sm backdrop-blur">
@@ -295,7 +295,7 @@ export default function ColorFocusGame() {
                     </div>
                 )}
 
-                {/* Game Container */}
+                { }
                 <div
                     ref={containerRef}
                     className="relative w-full max-w-2xl h-[60vh] border border-gray-200 dark:border-slate-600 rounded-3xl overflow-hidden bg-gradient-to-b from-blue-50 via-purple-50/30 to-white dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 shadow-inner"
@@ -360,7 +360,7 @@ export default function ColorFocusGame() {
                         ))}
                     </AnimatePresence>
 
-                    {/* Floating particles background */}
+                    { }
                     {gameState === 'ACTIVE' && (
                         <div className="absolute inset-0 pointer-events-none overflow-hidden">
                             {[...Array(8)].map((_, i) => (

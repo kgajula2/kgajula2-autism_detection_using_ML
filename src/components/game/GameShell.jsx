@@ -1,15 +1,4 @@
-/**
- * GameShell Component
- * 
- * A wrapper component that provides consistent UI elements across all games:
- * - Navigation (Back button)
- * - Score display
- * - Timer display
- * - Results Modal (via portal)
- * - Auth state monitoring with re-auth prompt
- * 
- * This eliminates duplicate modal code from individual game components.
- */
+ 
 
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
@@ -44,12 +33,12 @@ export function GameShell({
 
     return (
         <div className="relative w-full min-h-[80vh] flex flex-col">
-            {/* Re-Auth Prompt - Shows when session expires mid-game */}
+            { }
             {showReAuthPrompt && <ReAuthPrompt onDismiss={dismissReAuthPrompt} />}
 
-            {/* HUD - Top Bar */}
+            { }
             <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center gap-4">
-                {/* Left: Back Button */}
+                { }
                 <Button
                     variant="ghost"
                     className="!p-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur text-gray-600 dark:text-gray-200 hover:bg-white dark:hover:bg-slate-700"
@@ -59,7 +48,7 @@ export function GameShell({
                     <span className="ml-2 font-bold hidden md:inline">Back</span>
                 </Button>
 
-                {/* Center: Score & Mistakes */}
+                { }
                 <Card className="!p-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur min-w-[120px]">
                     <div className="text-xl font-bold text-blue-600 dark:text-blue-400">Score: {score}</div>
                     {mistakes !== null && (
@@ -67,7 +56,7 @@ export function GameShell({
                     )}
                 </Card>
 
-                {/* Right: Timer (if applicable) */}
+                { }
                 {timeLeft !== null && (
                     <Card
                         className={clsx(
@@ -80,12 +69,12 @@ export function GameShell({
                 )}
             </div>
 
-            {/* Game Content Area */}
+            { }
             <div className="flex-1 pt-20">
                 {children}
             </div>
 
-            {/* Results Modal - Portal to body */}
+            { }
             {gameState === 'COMPLETED' && createPortal(
                 <ResultsModal
                     title={title}
@@ -102,9 +91,7 @@ export function GameShell({
     );
 }
 
-/**
- * Results Modal Component
- */
+ 
 function ResultsModal({
     title,
     score,
@@ -117,14 +104,14 @@ function ResultsModal({
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
             <Card className="w-full max-w-lg bg-white/95 dark:bg-slate-800/95 shadow-2xl overflow-hidden p-0 max-h-[85vh] flex flex-col scale-100">
-                {/* Header */}
+                { }
                 <div className={clsx("p-6 text-white text-center flex-shrink-0", headerColor)}>
                     <Title className="!text-white mb-2">Game Over!</Title>
                     <div className="text-4xl font-black">{score}</div>
                     <div className="text-white/80">Final Score</div>
                 </div>
 
-                {/* Body */}
+                { }
                 <div className="p-6 space-y-6 overflow-y-auto">
                     {isAnalyzing ? (
                         <div className="flex flex-col items-center py-8 space-y-4">
@@ -133,7 +120,7 @@ function ResultsModal({
                         </div>
                     ) : (
                         <>
-                            {/* Stats Grid */}
+                            { }
                             {stats.length > 0 && (
                                 <div className="grid grid-cols-3 gap-4">
                                     {stats.map((stat, i) => (
@@ -152,7 +139,7 @@ function ResultsModal({
                                 </div>
                             )}
 
-                            {/* AI Insights */}
+                            { }
                             {analysisResult?.aiInsights && (
                                 <div className="bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-800 rounded-xl p-4">
                                     <h4 className="font-bold text-purple-800 dark:text-purple-300 mb-2 flex items-center gap-2">
@@ -164,7 +151,7 @@ function ResultsModal({
                                 </div>
                             )}
 
-                            {/* Not Played Warning */}
+                            { }
                             {analysisResult?.notPlayed && (
                                 <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-4 text-center">
                                     <div className="text-4xl mb-2">🎮</div>
@@ -175,7 +162,7 @@ function ResultsModal({
                                 </div>
                             )}
 
-                            {/* Risk Score (only if actually played) */}
+                            { }
                             {!analysisResult?.notPlayed && analysisResult?.riskScore !== undefined && analysisResult?.riskScore !== null && (
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-center gap-4 py-2">
@@ -188,19 +175,19 @@ function ResultsModal({
                                             </div>
                                         </div>
                                     </div>
-                                    {/* Medical Disclaimer */}
+                                    { }
                                     <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3 text-xs text-amber-800 dark:text-amber-200">
                                         <strong>⚠️ Important:</strong> This is NOT a medical diagnosis. Scores are based on gameplay patterns only. Consult a healthcare professional for clinical evaluation.
                                     </div>
                                 </div>
                             )}
 
-                            {/* Play Again Button */}
+                            { }
                             <Button onClick={onPlayAgain} className="w-full gap-2 mt-4">
                                 <RotateCcw size={18} /> Play Again
                             </Button>
 
-                            {/* Back to Menu Button */}
+                            { }
                             <Button
                                 variant="ghost"
                                 onClick={() => window.location.href = '/home'}
