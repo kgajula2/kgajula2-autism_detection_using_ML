@@ -4,10 +4,10 @@ import { Title, SubTitle } from '../components/ui/Typography';
 import { Button } from '../components/ui/Button';
 import { AnimatedCounter } from '../components/ui/AnimatedCounter';
 import { analyzeUserPerformance } from '../services/ml';
-import { fetchUserGameStats, getUserProfile } from '../services/db';
+import { fetchUserGameStats, getUserProfile, deleteAllUserSessions } from '../services/db';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
-import { Activity, Brain, TrendingUp, AlertTriangle, CheckCircle, X, ArrowLeft, Gamepad, Clock, Target, ChevronDown, ChevronUp, Flame, Award } from 'lucide-react';
+import { Activity, Brain, TrendingUp, AlertTriangle, CheckCircle, X, ArrowLeft, Gamepad, Clock, Target, ChevronDown, ChevronUp, Flame, Award, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/userStore';
 import { default as MLExplainer } from '../components/ml/MLExplainer';
@@ -33,19 +33,22 @@ export const Dashboard = () => {
     const [streak, setStreak] = useState(0);
     const [achievements, setAchievements] = useState({ unlocked: 0, total: 13, achievements: [] });
     const [progressData, setProgressData] = useState([]);
+    const [showResetModal, setShowResetModal] = useState(false);
+    const [resetConfirmText, setResetConfirmText] = useState('');
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
         const loadRealData = async () => {
             if (!user) return;
             try {
-                 
+
                 const profile = await getUserProfile(user.uid);
                 if (profile?.childName) setChildName(profile.childName);
 
-                 
+
                 const { sessions, aggregated } = await fetchUserGameStats(user.uid);
 
-                 
+
                 let totalMistakes = 0;
                 sessions.forEach(s => {
                     if (s.stats?.mistakes) totalMistakes += s.stats.mistakes;
@@ -55,16 +58,16 @@ export const Dashboard = () => {
 
                 setStats({
                     totalGames: sessions.length,
-                    wins: sessions.length,  
+                    wins: sessions.length,
                     misses: totalMistakes,
-                    gameBreakdown: sessions.slice(0, 10)  
+                    gameBreakdown: sessions.slice(0, 10)
                 });
 
-                 
+
                 const currentStreak = calculateStreak(sessions);
                 setStreak(currentStreak);
 
-                 
+
                 const achStats = {
                     totalGames: sessions.length,
                     hasPerfectGame: sessions.some(s => (s.stats?.mistakes || 0) === 0 && s.score > 0),
@@ -77,7 +80,7 @@ export const Dashboard = () => {
                 const achProgress = getAchievementProgress(achStats);
                 setAchievements(achProgress);
 
-                 
+
                 const last7Days = [];
                 for (let i = 6; i >= 0; i--) {
                     const date = new Date();
@@ -103,7 +106,7 @@ export const Dashboard = () => {
                 }
                 setProgressData(last7Days);
 
-                 
+
                 try {
                     const result = await analyzeUserPerformance(aggregated);
                     setAnalysis(result);
@@ -123,7 +126,7 @@ export const Dashboard = () => {
     }, [user]);
 
     const pieData = [
-        { name: 'Completed Plays', value: stats.wins || 1, color: '#8b5cf6' },  
+        { name: 'Completed Plays', value: stats.wins || 1, color: '#8b5cf6' },
         { name: 'Challenges', value: stats.misses, color: '#fca5a5' }
     ];
 
@@ -132,7 +135,7 @@ export const Dashboard = () => {
         return (analysis.riskScore * 100).toFixed(1);
     };
 
-     
+
     const formatRoundTimings = (roundTimings) => {
         if (!roundTimings || roundTimings.length === 0) return null;
         return roundTimings.map((r, idx) => ({
@@ -154,6 +157,29 @@ export const Dashboard = () => {
         };
         return emojis[gameId] || '🎮';
     };
+
+    const handleResetHistory = async () => {
+        if (resetConfirmText !== 'RESET') return;
+
+        setIsResetting(true);
+        try {
+            await deleteAllUserSessions(user.uid);
+            // Reset local state
+            setStats({ totalGames: 0, wins: 0, misses: 0, gameBreakdown: [] });
+            setStreak(0);
+            setAchievements({ unlocked: 0, total: 13, achievements: [] });
+            setProgressData([]);
+            setAnalysis(null);
+            setShowResetModal(false);
+            setResetConfirmText('');
+        } catch (err) {
+            console.error("Reset failed:", err);
+            alert("Failed to reset history. Please try again.");
+        } finally {
+            setIsResetting(false);
+        }
+    };
+
 
     return (
         <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto pb-10 px-4 min-h-[80vh]">
@@ -359,11 +385,22 @@ export const Dashboard = () => {
 
             {/* Detailed Game History with Expandable Rows */}
             <Card glass className="shadow-xl flex flex-col">
-                <h3 className="text-xl font-bold mb-4 text-gray-700 flex items-center gap-2">
-                    <Clock size={20} className="text-blue-500" />
-                    Detailed Game History
-                    <span className="text-sm font-normal text-gray-400">(tap a row for timing details)</span>
-                </h3>
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-700 flex items-center gap-2">
+                        <Clock size={20} className="text-blue-500" />
+                        Detailed Game History
+                        <span className="text-sm font-normal text-gray-400">(tap a row for timing details)</span>
+                    </h3>
+                    {stats.totalGames > 0 && (
+                        <Button
+                            onClick={() => setShowResetModal(true)}
+                            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2"
+                        >
+                            <Trash2 size={16} />
+                            Reset History
+                        </Button>
+                    )}
+                </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -719,6 +756,104 @@ export const Dashboard = () => {
 
                             <div className="p-8 max-h-[70vh] overflow-y-auto">
                                 <MLExplainer />
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Reset History Confirmation Modal */}
+            <AnimatePresence>
+                {showResetModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+                        onClick={() => { setShowResetModal(false); setResetConfirmText(''); }}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* Header */}
+                            <div className="bg-gradient-to-r from-red-500 to-red-600 p-6 text-white relative overflow-hidden">
+                                <Trash2 className="absolute -right-4 -top-4 text-white/10 w-32 h-32" />
+                                <div className="relative z-10 flex justify-between items-start">
+                                    <div>
+                                        <h2 className="text-2xl font-black flex items-center gap-2">
+                                            ⚠️ Reset History
+                                        </h2>
+                                        <p className="opacity-90 mt-1 text-sm font-medium">This action cannot be undone!</p>
+                                    </div>
+                                    <button
+                                        onClick={() => { setShowResetModal(false); setResetConfirmText(''); }}
+                                        className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition-colors"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Body */}
+                            <div className="p-6 space-y-4">
+                                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                                    <p className="text-red-800 font-medium text-sm">
+                                        You are about to <strong>permanently delete</strong> all game history for {childName}, including:
+                                    </p>
+                                    <ul className="text-red-700 text-sm mt-2 ml-4 list-disc space-y-1">
+                                        <li>All {stats.totalGames} game sessions</li>
+                                        <li>All scores and statistics</li>
+                                        <li>All AI analysis data</li>
+                                        <li>Your current {streak}-day streak</li>
+                                    </ul>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="block text-gray-700 font-bold text-sm">
+                                        Type <span className="font-mono bg-gray-100 px-2 py-1 rounded text-red-600">RESET</span> to confirm:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={resetConfirmText}
+                                        onChange={(e) => setResetConfirmText(e.target.value)}
+                                        placeholder="Type RESET here..."
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none text-center font-mono text-lg uppercase tracking-widest"
+                                        autoFocus
+                                    />
+                                </div>
+
+                                <div className="flex gap-3 pt-2">
+                                    <Button
+                                        onClick={() => { setShowResetModal(false); setResetConfirmText(''); }}
+                                        className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        onClick={handleResetHistory}
+                                        disabled={resetConfirmText !== 'RESET' || isResetting}
+                                        className={`flex-1 flex items-center justify-center gap-2 ${resetConfirmText === 'RESET'
+                                                ? 'bg-red-500 hover:bg-red-600 text-white'
+                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                            }`}
+                                    >
+                                        {isResetting ? (
+                                            <>
+                                                <span className="animate-spin">⏳</span>
+                                                Resetting...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Trash2 size={18} />
+                                                Delete All
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>

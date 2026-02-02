@@ -10,18 +10,20 @@ import {
     doc,
     serverTimestamp,
     getDoc,
-    setDoc
+    setDoc,
+    deleteDoc
 } from "firebase/firestore";
 
- 
+
+
 const USERS_COLLECTION = "users";
 const SESSIONS_COLLECTION = "game_sessions";
 const METRICS_COLLECTION = "round_metrics";
 
- 
+
 const OFFLINE_QUEUE_KEY = 'neurostep_offline_queue';
 
- 
+
 const getOfflineQueue = () => {
     try {
         const data = localStorage.getItem(OFFLINE_QUEUE_KEY);
@@ -31,7 +33,7 @@ const getOfflineQueue = () => {
     }
 };
 
- 
+
 const addToOfflineQueue = (type, data) => {
     try {
         const queue = getOfflineQueue();
@@ -42,7 +44,7 @@ const addToOfflineQueue = (type, data) => {
     }
 };
 
- 
+
 const clearOfflineQueue = () => {
     try {
         localStorage.removeItem(OFFLINE_QUEUE_KEY);
@@ -51,7 +53,7 @@ const clearOfflineQueue = () => {
     }
 };
 
- 
+
 export const syncOfflineQueue = async () => {
     const queue = getOfflineQueue();
     if (queue.length === 0) return;
@@ -80,7 +82,7 @@ export const syncOfflineQueue = async () => {
     }
 };
 
- 
+
 export const createUserProfile = async (uid, data) => {
     try {
         await setDoc(doc(db, USERS_COLLECTION, uid), {
@@ -125,7 +127,7 @@ export const createGameSession = async (userId, gameId, gameConfig) => {
     } catch (e) {
         console.error("Failed to create game session:", e);
 
-         
+
         const localId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         addToOfflineQueue('session_start', {
             ...sessionData,
@@ -149,7 +151,7 @@ export const logRoundMetrics = async (sessionId, roundData) => {
     } catch (e) {
         console.error("Failed to log round metrics:", e);
 
-         
+
         addToOfflineQueue('metrics', {
             ...metricsData,
             timestamp: new Date().toISOString()
@@ -158,7 +160,7 @@ export const logRoundMetrics = async (sessionId, roundData) => {
 };
 
 export const endGameSession = async (sessionId, finalScore, stats) => {
-     
+
     if (sessionId.startsWith('local_')) {
         addToOfflineQueue('session_end', {
             sessionId,
@@ -183,7 +185,7 @@ export const endGameSession = async (sessionId, finalScore, stats) => {
     } catch (e) {
         console.error("Failed to end game session:", e);
 
-         
+
         addToOfflineQueue('session_end', {
             sessionId,
             updates: {
@@ -198,7 +200,7 @@ export const endGameSession = async (sessionId, finalScore, stats) => {
 
 export const fetchUserGameStats = async (userId) => {
     try {
-         
+
         const q = query(
             collection(db, SESSIONS_COLLECTION),
             where("userId", "==", userId),
@@ -212,19 +214,19 @@ export const fetchUserGameStats = async (userId) => {
             sessions.push({ id: doc.id, ...doc.data() });
         });
 
-         
+
         sessions.sort((a, b) => {
             const timeA = a.endTime?.seconds || 0;
             const timeB = b.endTime?.seconds || 0;
-            return timeB - timeA;  
+            return timeB - timeA;
         });
 
-         
+
         const aggregated = {};
         sessions.forEach(session => {
             const gameId = session.gameId;
             if (!aggregated[gameId]) {
-                 
+
                 aggregated[gameId] = {
                     score: session.score || 0,
                     count: 1,
@@ -236,7 +238,7 @@ export const fetchUserGameStats = async (userId) => {
                     attempts: session.stats?.attempts || 0,
                     completed: session.stats?.completed || false,
                     avgLatency: session.stats?.avgLatency || 0,
-                     
+
                     objectFixationEntropy: session.stats?.objectFixationEntropy || 0,
                     repetitionRate: session.stats?.repetitionRate || 0,
                     switchFrequency: session.stats?.switchFrequency || 0,
@@ -245,9 +247,9 @@ export const fetchUserGameStats = async (userId) => {
                     pauseCount: session.stats?.pauseCount || 0,
                 };
             } else {
-                 
+
                 aggregated[gameId].count += 1;
-                 
+
                 if (session.score > aggregated[gameId].score) {
                     aggregated[gameId].score = session.score;
                 }
@@ -258,5 +260,33 @@ export const fetchUserGameStats = async (userId) => {
     } catch (e) {
         console.error("Failed to fetch user game stats:", e);
         return { sessions: [], aggregated: {} };
+    }
+};
+
+// Delete all game sessions for a user (Reset History)
+export const deleteAllUserSessions = async (userId) => {
+    try {
+        // Query all sessions for this user
+        const q = query(
+            collection(db, SESSIONS_COLLECTION),
+            where("userId", "==", userId)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const deletePromises = [];
+
+        querySnapshot.forEach((docSnapshot) => {
+            deletePromises.push(deleteDoc(doc(db, SESSIONS_COLLECTION, docSnapshot.id)));
+        });
+
+        await Promise.all(deletePromises);
+
+        // Also clear any offline queue
+        clearOfflineQueue();
+
+        return { success: true, deletedCount: deletePromises.length };
+    } catch (e) {
+        console.error("Failed to delete user sessions:", e);
+        throw new Error("Could not delete history. Please try again.");
     }
 };
