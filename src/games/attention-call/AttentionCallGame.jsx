@@ -1,4 +1,4 @@
- 
+
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,7 +25,7 @@ const {
     GREETING_PREFIX
 } = ATTENTION_CALL_CONFIG;
 
- 
+
 const AnimatedCharacter = ({ isWaving, isIdle, isCalling }) => {
     return (
         <motion.div
@@ -75,7 +75,7 @@ const AnimatedCharacter = ({ isWaving, isIdle, isCalling }) => {
     );
 };
 
- 
+
 const ConfettiBurst = ({ show }) => {
     if (!show) return null;
 
@@ -115,8 +115,8 @@ export default function AttentionCallGame() {
     const { user } = useUserStore();
     const { startSession, endSession } = useGameSession('attention-call');
 
-     
-    const [gameState, setGameState] = useState('TUTORIAL');  
+
+    const [gameState, setGameState] = useState('TUTORIAL');
     const [childName, setChildName] = useState('');
     const [currentCall, setCurrentCall] = useState(0);
     const [isCalling, setIsCalling] = useState(false);
@@ -131,9 +131,9 @@ export default function AttentionCallGame() {
     const [cameraActive, setCameraActive] = useState(false);
     const [detectionStatus, setDetectionStatus] = useState('');
     const [gameStartTime, setGameStartTime] = useState(null);
-    const [faceDetected, setFaceDetected] = useState(false);   
+    const [faceDetected, setFaceDetected] = useState(false);
 
-     
+
     const videoRef = useRef(null);
     const callTimeRef = useRef(null);
     const responseTimeoutRef = useRef(null);
@@ -142,35 +142,35 @@ export default function AttentionCallGame() {
     const faceWasAbsentRef = useRef(true);
     const gameStateRef = useRef('TUTORIAL');
     const responseTriggeredRef = useRef(false);
-    const faceDetectedRef = useRef(false);   
-     
+    const faceDetectedRef = useRef(false);
+
     const currentCallRef = useRef(currentCall);
     const childNameRef = useRef(childName);
     const callsRef = useRef(calls);
     const finishGameRef = useRef(null);
 
-     
+
     useEffect(() => {
         gameStateRef.current = gameState;
     }, [gameState]);
 
-     
+
     useEffect(() => {
         faceDetectedRef.current = faceDetected;
     }, [faceDetected]);
 
-     
-     
+
+
     const LEFT_EYE = { upper: [159, 158, 157], lower: [145, 144, 153], inner: 133, outer: 33 };
     const RIGHT_EYE = { upper: [386, 385, 384], lower: [374, 373, 380], inner: 362, outer: 263 };
 
-     
+
     const LEFT_IRIS = [474, 475, 476, 477];
     const RIGHT_IRIS = [469, 470, 471, 472];
 
-     
+
     const calculateEAR = (landmarks, eye) => {
-         
+
         let verticalSum = 0;
         for (let i = 0; i < eye.upper.length; i++) {
             const upper = landmarks[eye.upper[i]];
@@ -179,33 +179,33 @@ export default function AttentionCallGame() {
         }
         const avgVertical = verticalSum / eye.upper.length;
 
-         
+
         const inner = landmarks[eye.inner];
         const outer = landmarks[eye.outer];
         const horizontal = Math.abs(inner.x - outer.x);
 
-         
+
         return avgVertical / horizontal;
     };
 
-     
+
     const checkEyeContact = (landmarks) => {
-         
+
         const leftEAR = calculateEAR(landmarks, LEFT_EYE);
         const rightEAR = calculateEAR(landmarks, RIGHT_EYE);
         const avgEAR = (leftEAR + rightEAR) / 2;
 
-         
+
         const eyesOpen = avgEAR > 0.15;
 
-         
+
         const leftIrisX = LEFT_IRIS.reduce((sum, i) => sum + landmarks[i].x, 0) / LEFT_IRIS.length;
         const rightIrisX = RIGHT_IRIS.reduce((sum, i) => sum + landmarks[i].x, 0) / RIGHT_IRIS.length;
 
-         
+
         const leftCentered = leftIrisX > 0.30 && leftIrisX < 0.70;
         const rightCentered = rightIrisX > 0.30 && rightIrisX < 0.70;
-        const lookingAtCamera = leftCentered || rightCentered;   
+        const lookingAtCamera = leftCentered || rightCentered;
 
         return {
             eyesOpen,
@@ -217,21 +217,21 @@ export default function AttentionCallGame() {
         };
     };
 
-     
+
     const onResults = (results) => {
         if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
             setFaceDetected(false);
-            faceDetectedRef.current = false;   
+            faceDetectedRef.current = false;
             setDetectionStatus('❌ No face - look at camera');
             return;
         }
 
         const landmarks = results.multiFaceLandmarks[0];
 
-         
+
         if (landmarks.length < 478) {
             setFaceDetected(false);
-            faceDetectedRef.current = false;   
+            faceDetectedRef.current = false;
             setDetectionStatus('⚠️ Face found but iris not detected');
             return;
         }
@@ -239,24 +239,24 @@ export default function AttentionCallGame() {
         const result = checkEyeContact(landmarks);
 
         if (!result.eyesOpen) {
-             
+
             setFaceDetected(false);
-            faceDetectedRef.current = false;   
+            faceDetectedRef.current = false;
             setDetectionStatus(`😴 Eyes closed (EAR:${result.avgEAR})`);
         } else if (!result.lookingAtCamera) {
-             
+
             setFaceDetected(false);
-            faceDetectedRef.current = false;   
+            faceDetectedRef.current = false;
             setDetectionStatus(`👀 Look at camera (L:${result.leftIrisX} R:${result.rightIrisX})`);
         } else {
-             
+
             setFaceDetected(true);
-            faceDetectedRef.current = true;   
+            faceDetectedRef.current = true;
             setDetectionStatus(`✅ Eye contact! (EAR:${result.avgEAR})`);
         }
     };
 
-     
+
     useEffect(() => {
         let animationId;
         let isRunning = true;
@@ -264,22 +264,22 @@ export default function AttentionCallGame() {
         const checkDetection = () => {
             if (!isRunning) return;
 
-             
+
             if (gameStateRef.current === 'PLAYING' &&
                 detectionActiveRef.current &&
                 !responseTriggeredRef.current) {
 
-                 
+
                 if (faceDetectedRef.current) {
                     responseTriggeredRef.current = true;
                     detectionActiveRef.current = false;
 
-                     
+
                     if (responseTimeoutRef.current) {
                         clearTimeout(responseTimeoutRef.current);
                     }
 
-                     
+
                     const callData = {
                         callNumber: currentCallRef.current,
                         callTimestamp: callTimeRef.current,
@@ -295,22 +295,22 @@ export default function AttentionCallGame() {
                     setShowConfetti(true);
                     setIsWaving(true);
 
-                     
+
                     setTimeout(() => {
                         if (finishGameRef.current) {
                             finishGameRef.current(callsRef.current, 'eye_contact');
                         }
                     }, 1500);
 
-                    return;  
+                    return;
                 }
             }
 
-             
+
             animationId = requestAnimationFrame(checkDetection);
         };
 
-         
+
         if (cameraActive) {
             animationId = requestAnimationFrame(checkDetection);
         }
@@ -323,7 +323,7 @@ export default function AttentionCallGame() {
         };
     }, [cameraActive]);
 
-     
+
     useEffect(() => {
         currentCallRef.current = currentCall;
     }, [currentCall]);
@@ -336,7 +336,7 @@ export default function AttentionCallGame() {
         callsRef.current = calls;
     }, [calls]);
 
-     
+
     useEffect(() => {
         if (gameState === 'PLAYING') {
             const startCamera = async () => {
@@ -357,7 +357,7 @@ export default function AttentionCallGame() {
         };
     }, [gameState]);
 
-     
+
     useEffect(() => {
         const fetchName = async () => {
             if (user?.uid) {
@@ -372,22 +372,22 @@ export default function AttentionCallGame() {
         fetchName();
     }, [user]);
 
-     
-     
+
+
     const speakName = useCallback((name) => {
         const greeting = `${GREETING_PREFIX} ${name}!`;
         return speakCartoon(greeting, VOICE_PRESETS.ATTENTION);
     }, []);
-     
 
-     
+
+
     const handleResponseDetected = useCallback((responseType) => {
         if (!detectionActiveRef.current) return;
 
-         
+
         detectionActiveRef.current = false;
 
-         
+
         if (responseTimeoutRef.current) {
             clearTimeout(responseTimeoutRef.current);
         }
@@ -395,7 +395,7 @@ export default function AttentionCallGame() {
         const responseTime = Date.now() - callTimeRef.current;
         const callNumber = currentCall;
 
-         
+
         const callData = {
             callNumber,
             callTimestamp: callTimeRef.current,
@@ -408,20 +408,20 @@ export default function AttentionCallGame() {
         setCalls(prev => [...prev, callData]);
         setWaitingForResponse(false);
 
-         
+
         setIsWaving(true);
         setShowConfetti(true);
 
         setTimeout(() => {
             setIsWaving(false);
             setShowConfetti(false);
-             
+
             callsRef.current = [...callsRef.current, callData];
             finishGameRef.current(callsRef.current, responseType);
         }, 2000);
     }, [currentCall, childName, calls]);
 
-     
+
     const makeCall = useCallback(async (callNumber) => {
         if (gameStateRef.current !== 'PLAYING') return;
 
@@ -431,21 +431,21 @@ export default function AttentionCallGame() {
         setIsCalling(true);
         callTimeRef.current = Date.now();
 
-         
+
         await speakName(nameToCall);
         setIsCalling(false);
 
-         
+
         setWaitingForResponse(true);
         detectionActiveRef.current = true;
-        responseTriggeredRef.current = false;   
+        responseTriggeredRef.current = false;
         setDetectionStatus('👀 Looking for face...');
 
-         
-        responseTimeoutRef.current = setTimeout(() => {
-            if (!detectionActiveRef.current) return;  
 
-             
+        responseTimeoutRef.current = setTimeout(() => {
+            if (!detectionActiveRef.current) return;
+
+
             detectionActiveRef.current = false;
 
             const callData = {
@@ -460,19 +460,19 @@ export default function AttentionCallGame() {
             setCalls(prev => [...prev, callData]);
             setWaitingForResponse(false);
 
-             
+
             if (callNumber < MAX_CALLS) {
-                 
+
                 setTimeout(() => makeCall(callNumber + 1), BETWEEN_CALLS_DELAY);
             } else {
-                 
+
                 callsRef.current = [...callsRef.current, callData];
                 finishGameRef.current(callsRef.current, 'none');
             }
         }, RESPONSE_WINDOW);
     }, [childName, speakName, calls]);
 
-     
+
     const handleStartGame = useCallback(async () => {
         setCalls([]);
         setCurrentCall(0);
@@ -488,20 +488,20 @@ export default function AttentionCallGame() {
             setSessionId(sid);
         }
 
-         
+
         setGameState('PLAYING');
 
-         
+
         setTimeout(() => makeCall(1), INITIAL_DELAY + 1000);
     }, [startSession, user, childName, makeCall]);
 
-     
+
     const finishGame = useCallback(async (finalCalls, finalResponseType) => {
         setGameState('FINISHED');
         stopVision();
         setCameraActive(false);
 
-         
+
         const responses = finalCalls.filter(c => c.responseDetected);
         const firstResponseCall = responses.length > 0 ? responses[0].callNumber : null;
         const responseRate = finalCalls.length > 0 ? responses.length / finalCalls.length : 0;
@@ -526,7 +526,7 @@ export default function AttentionCallGame() {
             duration,
         };
 
-         
+
         if (sessionId) {
             await endSession(responses.length, stats);
         }
@@ -537,11 +537,15 @@ export default function AttentionCallGame() {
         try {
             if (user?.uid) {
                 const { aggregated } = await fetchUserGameStats(user.uid);
-                aggregated['attention-call'] = {
-                    ...stats,
-                    score: responses.length > 0 ? MAX_CALLS - firstResponseCall + 1 : 0,
-                    count: (aggregated['attention-call']?.count || 0) + 1,
-                };
+                // The aggregated data from db.js now properly merges all sessions
+                // Just ensure current session score is included if it's better
+                const currentScore = responses.length > 0 ? MAX_CALLS - firstResponseCall + 1 : 0;
+                if (!aggregated['attention-call']) {
+                    aggregated['attention-call'] = stats;
+                }
+                if (currentScore > (aggregated['attention-call'].score || 0)) {
+                    aggregated['attention-call'].score = currentScore;
+                }
 
                 const result = await analyzeUserPerformance(aggregated, {
                     age: user.age || 5,
@@ -555,12 +559,12 @@ export default function AttentionCallGame() {
         }
     }, [sessionId, endSession, user, gameStartTime]);
 
-     
+
     useEffect(() => {
         finishGameRef.current = finishGame;
     }, [finishGame]);
 
-     
+
     useEffect(() => {
         return () => {
             if (responseTimeoutRef.current) {
@@ -571,7 +575,7 @@ export default function AttentionCallGame() {
         };
     }, []);
 
-     
+
     const ResultModal = () => {
         if (!showResultModal) return null;
 

@@ -415,8 +415,12 @@ export const Dashboard = () => {
                         </thead>
                         <tbody className="text-gray-600 text-sm">
                             {stats.gameBreakdown.map((session, idx) => {
-                                // Check if player actually played (score > 0)
-                                const hasPlayed = session.score > 0 || (session.stats?.correct || 0) > 0;
+                                // Check if player actually played - account for attention-call games with score=0 but valid gameplay
+                                const hasPlayed = session.score > 0 ||
+                                    (session.stats?.correct || 0) > 0 ||
+                                    (session.stats?.duration || 0) > 0 ||
+                                    (session.stats?.totalCalls || 0) > 0 ||
+                                    (session.stats?.totalTaps || 0) > 0;
                                 const mistakes = session.stats?.mistakes || session.stats?.errors || session.stats?.wrong || 0;
 
                                 return (

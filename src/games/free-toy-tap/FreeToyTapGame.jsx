@@ -1,4 +1,4 @@
- 
+
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,8 +21,8 @@ export default function FreeToyTapGame() {
     const navigate = useNavigate();
     const { user } = useUserStore();
 
-     
-    const [gameState, setGameState] = useState('TUTORIAL');  
+
+    const [gameState, setGameState] = useState('TUTORIAL');
     const [toys, setToys] = useState([]);
     const [tapLog, setTapLog] = useState([]);
     const [sparkles, setSparkles] = useState([]);
@@ -32,14 +32,14 @@ export default function FreeToyTapGame() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [timeRemaining, setTimeRemaining] = useState(Math.floor(GAME_DURATION / 1000));
 
-     
+
     const gameAreaRef = useRef(null);
     const startTimeRef = useRef(null);
     const animationRef = useRef(null);
     const lastTapRef = useRef(null);
     const timerIntervalRef = useRef(null);
 
-     
+
     const initializeToys = useCallback(() => {
         const shuffled = [...FREE_TOY_TAP_TOYS].sort(() => Math.random() - 0.5);
         const selectedToys = shuffled.slice(0, TOY_COUNT);
@@ -53,12 +53,12 @@ export default function FreeToyTapGame() {
             velocityY: (Math.random() - 0.5) * MOVEMENT_SPEED * 2,
             bounceOffset: Math.random() * Math.PI * 2,
             tapCount: 0,
-            isFalling: false,  
-            originalY: null,  
+            isFalling: false,
+            originalY: null,
         }));
     }, []);
 
-     
+
     const handleStartGame = useCallback(async () => {
         const newToys = initializeToys();
         setToys(newToys);
@@ -68,7 +68,7 @@ export default function FreeToyTapGame() {
         startTimeRef.current = Date.now();
         lastTapRef.current = null;
 
-         
+
         if (user?.uid) {
             const sid = await createGameSession(user.uid, 'free-toy-tap', {
                 toyCount: TOY_COUNT,
@@ -77,7 +77,7 @@ export default function FreeToyTapGame() {
             setSessionId(sid);
         }
 
-         
+
         timerIntervalRef.current = setInterval(() => {
             setTimeRemaining(prev => {
                 if (prev <= 1) {
@@ -91,7 +91,7 @@ export default function FreeToyTapGame() {
         setGameState('PLAYING');
     }, [initializeToys, user]);
 
-     
+
     const handleBack = useCallback(() => {
         if (animationRef.current) {
             cancelAnimationFrame(animationRef.current);
@@ -102,7 +102,7 @@ export default function FreeToyTapGame() {
         navigate('/home');
     }, [navigate]);
 
-     
+
     const calculateMLSignals = useCallback(() => {
         if (tapLog.length === 0) {
             return {
@@ -115,33 +115,33 @@ export default function FreeToyTapGame() {
             };
         }
 
-         
+
         const tapCounts = {};
         tapLog.forEach(tap => {
             tapCounts[tap.toyId] = (tapCounts[tap.toyId] || 0) + 1;
         });
 
-         
+
         const totalTaps = tapLog.length;
         const probabilities = Object.values(tapCounts).map(c => c / totalTaps);
         const entropy = -probabilities.reduce((sum, p) => {
             return sum + (p > 0 ? p * Math.log2(p) : 0);
         }, 0);
 
-         
+
         const consecutiveSame = tapLog.filter(t => t.consecutiveSame).length;
         const repetitionRate = totalTaps > 1 ? consecutiveSame / (totalTaps - 1) : 0;
 
-         
+
         const switches = tapLog.filter((t, i) => i > 0 && t.toyId !== tapLog[i - 1].toyId).length;
         const switchFrequency = totalTaps > 1 ? switches / (totalTaps - 1) : 0;
 
-         
+
         let engagementTime = 0;
         let pauseCount = 0;
         for (let i = 1; i < tapLog.length; i++) {
             const gap = tapLog[i].timestamp - tapLog[i - 1].timestamp;
-            if (gap < 5000) {  
+            if (gap < 5000) {
                 engagementTime += gap;
             } else {
                 pauseCount++;
@@ -152,14 +152,14 @@ export default function FreeToyTapGame() {
             objectFixationEntropy: Math.round(entropy * 100) / 100,
             repetitionRate: Math.round(repetitionRate * 100) / 100,
             switchFrequency: Math.round(switchFrequency * 100) / 100,
-            engagementTime: Math.round(engagementTime / 1000),  
+            engagementTime: Math.round(engagementTime / 1000),
             totalTaps,
             pauseCount,
-            toyTapBreakdown: tapCounts,  
+            toyTapBreakdown: tapCounts,
         };
     }, [tapLog]);
 
-     
+
     const finishGame = useCallback(async () => {
         setGameState('FINISHED');
 
@@ -171,40 +171,43 @@ export default function FreeToyTapGame() {
         }
 
         const durationMs = Date.now() - startTimeRef.current;
-        const durationSec = durationMs / 1000;  
+        const durationSec = durationMs / 1000;
         const signals = calculateMLSignals();
         const finalScore = signals.totalTaps;
 
-         
+
         if (sessionId) {
             await endGameSession(sessionId, finalScore, {
-                duration: durationSec,  
-                 
+                duration: durationSec,
+
                 objectFixationEntropy: signals.objectFixationEntropy,
                 repetitionRate: signals.repetitionRate,
                 switchFrequency: signals.switchFrequency,
                 engagementTime: signals.engagementTime,
                 totalTaps: signals.totalTaps,
                 pauseCount: signals.pauseCount,
-                toyTapBreakdown: signals.toyTapBreakdown,  
+                toyTapBreakdown: signals.toyTapBreakdown,
                 score: finalScore,
-                tapLog: tapLog.slice(0, 100),  
+                tapLog: tapLog.slice(0, 100),
             });
         }
 
-         
+
         setShowResultModal(true);
         setIsAnalyzing(true);
 
         try {
             if (user?.uid) {
                 const { aggregated } = await fetchUserGameStats(user.uid);
-                 
-                aggregated['free-toy-tap'] = {
-                    ...signals,
-                    score: signals.totalTaps,
-                    count: (aggregated['free-toy-tap']?.count || 0) + 1,
-                };
+                // The aggregated data from db.js now properly merges all sessions
+                // Just ensure current session data is included if game wasn't played before
+                if (!aggregated['free-toy-tap']) {
+                    aggregated['free-toy-tap'] = signals;
+                }
+                // Update score if current is better
+                if (signals.totalTaps > (aggregated['free-toy-tap'].score || 0)) {
+                    aggregated['free-toy-tap'].score = signals.totalTaps;
+                }
 
                 const result = await analyzeUserPerformance(aggregated, {
                     age: user.age || 5,
@@ -218,14 +221,14 @@ export default function FreeToyTapGame() {
         }
     }, [calculateMLSignals, sessionId, tapLog, user]);
 
-     
+
     useEffect(() => {
         if (gameState !== 'PLAYING') return;
 
         const animate = () => {
             const elapsed = Date.now() - startTimeRef.current;
 
-             
+
             if (elapsed >= GAME_DURATION) {
                 finishGame();
                 return;
@@ -239,7 +242,7 @@ export default function FreeToyTapGame() {
                 const maxY = bounds.height - 100;
 
                 return prevToys.map(toy => {
-                     
+
                     if (toy.isFalling) {
                         return toy;
                     }
@@ -249,7 +252,7 @@ export default function FreeToyTapGame() {
                     let newVelocityX = toy.velocityX;
                     let newVelocityY = toy.velocityY;
 
-                     
+
                     if (newX < 20 || newX > maxX) {
                         newVelocityX = -newVelocityX;
                         newX = Math.max(20, Math.min(maxX, newX));
@@ -259,7 +262,7 @@ export default function FreeToyTapGame() {
                         newY = Math.max(20, Math.min(maxY, newY));
                     }
 
-                     
+
                     const bounceY = Math.sin((elapsed / 1000) * 2 + toy.bounceOffset) * BOUNCE_AMPLITUDE;
 
                     return {
@@ -285,7 +288,7 @@ export default function FreeToyTapGame() {
         };
     }, [gameState, finishGame]);
 
-     
+
     useEffect(() => {
         return () => {
             if (timerIntervalRef.current) {
@@ -294,14 +297,14 @@ export default function FreeToyTapGame() {
         };
     }, []);
 
-     
+
     const handleToyTap = useCallback((toy, event) => {
         if (gameState !== 'PLAYING' || toy.isFalling) return;
 
         const now = Date.now();
         const rect = event.target.getBoundingClientRect();
 
-         
+
         const tapEntry = {
             toyId: toy.id,
             timestamp: now - startTimeRef.current,
@@ -313,14 +316,14 @@ export default function FreeToyTapGame() {
         setTapLog(prev => [...prev, tapEntry]);
         lastTapRef.current = toy.id;
 
-         
+
         setToys(prev => prev.map(t =>
             t.id === toy.id
                 ? { ...t, tapCount: t.tapCount + 1, isFalling: true, originalY: t.y }
                 : t
         ));
 
-         
+
         const sparkleId = `sparkle-${now}`;
         setSparkles(prev => [...prev, {
             id: sparkleId,
@@ -329,15 +332,15 @@ export default function FreeToyTapGame() {
             emoji: CELEBRATION_EMOJIS[Math.floor(Math.random() * CELEBRATION_EMOJIS.length)]
         }]);
 
-         
+
         soundService.pop();
 
-         
+
         setTimeout(() => {
             setSparkles(prev => prev.filter(s => s.id !== sparkleId));
         }, 800);
 
-         
+
         setTimeout(() => {
             setToys(prev => prev.map(t =>
                 t.id === toy.id
@@ -346,7 +349,7 @@ export default function FreeToyTapGame() {
                         isFalling: false,
                         y: t.originalY,
                         displayY: t.originalY,
-                         
+
                         velocityX: (Math.random() - 0.5) * MOVEMENT_SPEED * 2,
                         velocityY: (Math.random() - 0.5) * MOVEMENT_SPEED * 2,
                     }
@@ -355,17 +358,17 @@ export default function FreeToyTapGame() {
         }, 1200);
     }, [gameState]);
 
-     
+
     const signals = calculateMLSignals();
 
-     
+
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-     
+
     const ResultModal = () => {
         if (!showResultModal) return null;
 
@@ -492,7 +495,7 @@ export default function FreeToyTapGame() {
                                         y: toy.y,
                                     }}
                                     animate={toy.isFalling ? {
-                                         
+
                                         y: (gameAreaRef.current?.getBoundingClientRect().height || 500) + 100,
                                         opacity: 0,
                                         rotate: 720,

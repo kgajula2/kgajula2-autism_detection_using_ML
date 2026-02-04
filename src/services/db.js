@@ -239,19 +239,95 @@ export const fetchUserGameStats = async (userId) => {
                     completed: session.stats?.completed || false,
                     avgLatency: session.stats?.avgLatency || 0,
 
+                    // Free Toy Tap specific metrics
                     objectFixationEntropy: session.stats?.objectFixationEntropy || 0,
                     repetitionRate: session.stats?.repetitionRate || 0,
                     switchFrequency: session.stats?.switchFrequency || 0,
                     engagementTime: session.stats?.engagementTime || 0,
                     totalTaps: session.stats?.totalTaps || 0,
                     pauseCount: session.stats?.pauseCount || 0,
+
+                    // Attention Call specific metrics
+                    responseRate: session.stats?.responseRate || 0,
+                    avgResponseTime: session.stats?.avgResponseTime || 0,
+                    totalResponses: session.stats?.totalResponses || 0,
+                    totalCalls: session.stats?.totalCalls || 0,
+                    firstResponseCall: session.stats?.firstResponseCall || null,
+                    responseType: session.stats?.responseType || null,
                 };
             } else {
-
+                // Increment play count
                 aggregated[gameId].count += 1;
+                const count = aggregated[gameId].count;
 
+                // Update best score
                 if (session.score > aggregated[gameId].score) {
                     aggregated[gameId].score = session.score;
+                }
+
+                // Update total mistakes/errors (cumulative)
+                aggregated[gameId].mistakes += session.stats?.mistakes || 0;
+                aggregated[gameId].errors += session.stats?.errors || 0;
+                aggregated[gameId].wrong += session.stats?.wrong || 0;
+                aggregated[gameId].correct += session.stats?.correct || 0;
+                aggregated[gameId].attempts += session.stats?.attempts || 0;
+
+                // Update duration (average)
+                if (session.stats?.duration) {
+                    aggregated[gameId].duration =
+                        ((aggregated[gameId].duration * (count - 1)) + session.stats.duration) / count;
+                }
+
+                // Free Toy Tap - running averages for behavioral metrics
+                if (session.stats?.objectFixationEntropy !== undefined) {
+                    aggregated[gameId].objectFixationEntropy =
+                        ((aggregated[gameId].objectFixationEntropy * (count - 1)) + session.stats.objectFixationEntropy) / count;
+                }
+                if (session.stats?.repetitionRate !== undefined) {
+                    aggregated[gameId].repetitionRate =
+                        ((aggregated[gameId].repetitionRate * (count - 1)) + session.stats.repetitionRate) / count;
+                }
+                if (session.stats?.switchFrequency !== undefined) {
+                    aggregated[gameId].switchFrequency =
+                        ((aggregated[gameId].switchFrequency * (count - 1)) + session.stats.switchFrequency) / count;
+                }
+                if (session.stats?.engagementTime !== undefined) {
+                    aggregated[gameId].engagementTime += session.stats.engagementTime;
+                }
+                if (session.stats?.totalTaps !== undefined) {
+                    aggregated[gameId].totalTaps += session.stats.totalTaps;
+                }
+                if (session.stats?.pauseCount !== undefined) {
+                    aggregated[gameId].pauseCount += session.stats.pauseCount;
+                }
+
+                // Attention Call - use best response rate, average response time
+                if (session.stats?.responseRate !== undefined) {
+                    aggregated[gameId].responseRate = Math.max(
+                        aggregated[gameId].responseRate,
+                        session.stats.responseRate
+                    );
+                }
+                if (session.stats?.avgResponseTime !== undefined && session.stats.avgResponseTime > 0) {
+                    if (aggregated[gameId].avgResponseTime > 0) {
+                        aggregated[gameId].avgResponseTime =
+                            (aggregated[gameId].avgResponseTime + session.stats.avgResponseTime) / 2;
+                    } else {
+                        aggregated[gameId].avgResponseTime = session.stats.avgResponseTime;
+                    }
+                }
+                if (session.stats?.totalResponses !== undefined) {
+                    aggregated[gameId].totalResponses += session.stats.totalResponses;
+                }
+                if (session.stats?.totalCalls !== undefined) {
+                    aggregated[gameId].totalCalls += session.stats.totalCalls;
+                }
+                // Keep best first response (lower is better)
+                if (session.stats?.firstResponseCall !== null && session.stats?.firstResponseCall !== undefined) {
+                    if (aggregated[gameId].firstResponseCall === null ||
+                        session.stats.firstResponseCall < aggregated[gameId].firstResponseCall) {
+                        aggregated[gameId].firstResponseCall = session.stats.firstResponseCall;
+                    }
                 }
             }
         });

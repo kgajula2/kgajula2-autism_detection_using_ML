@@ -290,7 +290,7 @@ export const SCREENING_REQUIREMENTS = {
 export const validateScreening = (gamesData) => {
     const playedGames = Object.keys(gamesData).filter(gameId => {
         const game = gamesData[gameId];
-        return game?.score > 0 || game?.correct > 0 || game?.attempts > 0 || game?.totalTaps > 0 || game?.totalResponses !== undefined;
+        return game?.score > 0 || game?.correct > 0 || game?.attempts > 0 || game?.totalTaps > 0 || game?.totalCalls > 0 || (game?.duration || 0) > 0;
     });
 
     const { MANDATORY_GAMES, MIN_TOTAL_GAMES } = SCREENING_REQUIREMENTS;
@@ -321,7 +321,10 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
         const score = game?.score || 0;
         const correct = game?.correct || 0;
         const attempts = game?.attempts || 0;
-        return score > 0 || correct > 0 || attempts > 0;
+        const totalTaps = game?.totalTaps || 0;
+        const totalCalls = game?.totalCalls || 0;
+        const duration = game?.duration || 0;
+        return score > 0 || correct > 0 || attempts > 0 || totalTaps > 0 || totalCalls > 0 || duration > 0;
     });
 
     // No games played at all
