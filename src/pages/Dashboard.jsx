@@ -421,7 +421,34 @@ export const Dashboard = () => {
                                     (session.stats?.duration || 0) > 0 ||
                                     (session.stats?.totalCalls || 0) > 0 ||
                                     (session.stats?.totalTaps || 0) > 0;
-                                const mistakes = session.stats?.mistakes || session.stats?.errors || session.stats?.wrong || 0;
+
+                                // Calculate mistakes based on game type
+                                let mistakes = 0;
+                                let isPerfect = false;
+
+                                if (session.gameId === 'attention-call') {
+                                    // For attention-call: missed responses are the "mistakes"
+                                    const missed = (session.stats?.totalCalls || 0) - (session.stats?.totalResponses || 0);
+                                    mistakes = missed;
+                                    // Perfect only if all calls were responded to
+                                    isPerfect = session.stats?.totalCalls > 0 &&
+                                        session.stats?.totalResponses === session.stats?.totalCalls;
+                                } else if (session.gameId === 'free-toy-tap') {
+                                    // For free-toy-tap: high repetition rate indicates potential concern
+                                    const repRate = session.stats?.repetitionRate || 0;
+                                    const entropy = session.stats?.objectFixationEntropy || 0;
+                                    // Low entropy or high repetition indicates concerning pattern
+                                    if (repRate > 0.5 || entropy < 1.0) {
+                                        mistakes = 1; // Flag as having concerning patterns
+                                        isPerfect = false;
+                                    } else {
+                                        isPerfect = true;
+                                    }
+                                } else {
+                                    // Standard games: use mistakes/errors/wrong
+                                    mistakes = session.stats?.mistakes || session.stats?.errors || session.stats?.wrong || 0;
+                                    isPerfect = mistakes === 0 && hasPlayed;
+                                }
 
                                 return (
                                     <React.Fragment key={idx}>
@@ -438,13 +465,13 @@ export const Dashboard = () => {
                                                     <span className="inline-flex items-center gap-1 text-gray-500 font-bold bg-gray-100 px-2 py-1 rounded-full text-xs">
                                                         🎮 Not Played
                                                     </span>
-                                                ) : mistakes === 0 ? (
+                                                ) : isPerfect ? (
                                                     <span className="inline-flex items-center gap-1 text-green-600 font-bold bg-green-50 px-2 py-1 rounded-full text-xs">
                                                         <CheckCircle size={12} /> Perfect!
                                                     </span>
                                                 ) : (
                                                     <span className="inline-flex items-center gap-1 text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-full text-xs">
-                                                        <AlertTriangle size={12} /> {mistakes} misses
+                                                        <AlertTriangle size={12} /> {session.gameId === 'free-toy-tap' ? 'Patterns noted' : `${mistakes} misses`}
                                                     </span>
                                                 )}
                                             </td>
