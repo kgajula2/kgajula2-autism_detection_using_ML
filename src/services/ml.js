@@ -290,7 +290,14 @@ export const SCREENING_REQUIREMENTS = {
 export const validateScreening = (gamesData) => {
     const playedGames = Object.keys(gamesData).filter(gameId => {
         const game = gamesData[gameId];
-        return game?.score > 0 || game?.correct > 0 || game?.attempts > 0 || game?.totalTaps > 0 || game?.totalCalls > 0 || (game?.duration || 0) > 0;
+        // Check for count > 0 (indicates game was played) OR any activity metrics
+        return (game?.count || 0) > 0 ||
+            game?.score > 0 ||
+            game?.correct > 0 ||
+            game?.attempts > 0 ||
+            game?.totalTaps > 0 ||
+            game?.totalCalls > 0 ||
+            (game?.duration || 0) > 0;
     });
 
     const { MANDATORY_GAMES, MIN_TOTAL_GAMES } = SCREENING_REQUIREMENTS;
@@ -316,15 +323,16 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
         await loadModel();
     }
 
-    // Check if user has played any games
+    // Check if user has played any games (check count property or activity)
     const hasPlayed = Object.values(gamesData).some(game => {
+        const count = game?.count || 0;
         const score = game?.score || 0;
         const correct = game?.correct || 0;
         const attempts = game?.attempts || 0;
         const totalTaps = game?.totalTaps || 0;
         const totalCalls = game?.totalCalls || 0;
         const duration = game?.duration || 0;
-        return score > 0 || correct > 0 || attempts > 0 || totalTaps > 0 || totalCalls > 0 || duration > 0;
+        return count > 0 || score > 0 || correct > 0 || attempts > 0 || totalTaps > 0 || totalCalls > 0 || duration > 0;
     });
 
     // No games played at all
@@ -342,9 +350,15 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
     // Validate screening requirements
     const screeningValidation = validateScreening(gamesData);
 
-    // If screening requirements not met, return partial result
+    // If screening requirements not met, return partial result WITH calculated risk
     if (!screeningValidation.isValid) {
         const { gameRisks, insights } = calculateGameRisks(gamesData);
+
+        // Calculate partial risk score from games played so far
+        const playedRisks = Object.values(gameRisks).filter(r => r !== 0.3);
+        const partialRiskScore = playedRisks.length > 0
+            ? playedRisks.reduce((a, b) => a + b, 0) / playedRisks.length
+            : 0.15;
 
         let message = "To get a complete analysis, please:\n";
         if (screeningValidation.missingMandatory.length > 0) {
@@ -360,7 +374,7 @@ export const analyzeUserPerformance = async (gamesData, demographics = {}) => {
         }
 
         return {
-            riskScore: null,
+            riskScore: partialRiskScore, // Return partial risk instead of null
             notPlayed: false,
             screeningValid: false,
             insights,
