@@ -1,0 +1,859 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{float}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{eso-pic}
+\usepackage{xcolor}
+\usepackage{newtxtext,newtxmath} % Times-like font (body & math)
+\usepackage{titlesec}
+\definecolor{skin}{RGB}{255,224,189}
+\geometry{a4paper, margin=1in}
+\raggedbottom
+\setlength{\parskip}{0pt}
+% Define skin color
+\definecolor{skin}{RGB}{255,224,189}
+\geometry{a4paper, margin=1in}
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\fontsize{16pt}{19pt}\selectfont}
+  {\chaptername\ \thechapter}{10pt}{}
+\titleformat{\section}
+  {\normalfont\bfseries\fontsize{14pt}{17pt}\selectfont}
+  {\thesection}{10pt}{}
+\titleformat{\subsection}
+  {\normalfont\bfseries\fontsize{14pt}{17pt}\selectfont}
+  {\thesubsection}{10pt}{}
+  \usepackage{setspace}
+\onehalfspacing
+
+
+\raggedbottom
+\setlength{\parskip}{0pt}
+
+\begin{document}
+
+% Front matter page numbering (i, ii, iii, ...)
+\pagenumbering{roman}
+
+% ------------------------------------------------
+% TITLE
+% ------------------------------------------------
+\begin{center}
+\vspace{-1cm}
+{\Large \textcolor{red}{\textbf{
+Autism Detection Using Machine Learning
+}}}
+
+\vspace{1cm}
+
+A Capstone Project Report submitted in partial fulfilment of the requirements for\\
+the award of the degree of
+
+\vspace{0.6cm}
+
+{\large \textcolor{blue!70!black}{\textbf{BACHELOR OF TECHNOLOGY}}}
+
+\vspace{0.3cm}
+
+{\large \textcolor{blue!70!black}{\textbf{IN}}}
+
+\vspace{0.3cm}
+
+{\large \textcolor{blue!70!black}{\textbf{COMPUTER SCIENCE AND ENGINEERING}}}
+
+\vspace{1cm}
+
+Submitted by
+
+\vspace{0.5cm}
+
+% ------------------------------------------------
+% STUDENT TABLE
+% ------------------------------------------------
+
+\begin{tabular}{ll}
+Gajula Krishna Koushik & (BU22CSEN0101284) \\
+K. Jaswanth & (BU22CSEN0100443) \\
+S. Umar Hussain & (BU22CSEN0100395) \\
+G. Natesh & (BU22CSEN0100641)
+\end{tabular}
+
+\vspace{1cm}
+
+% ------------------------------------------------
+% GUIDE
+% ------------------------------------------------
+
+Under the esteemed guidance of
+
+\vspace{0.3cm}
+
+\textbf{Dr Rakesh Kumar S}
+
+\vspace{0.2cm}
+
+Assistant Professor
+
+Dept. of CSE    
+
+\vspace{1cm}
+
+% ------------------------------------------------
+% LOGO
+% ------------------------------------------------
+
+\includegraphics[width=6cm]{logo.png}
+
+\vspace{1cm}
+
+% ------------------------------------------------
+% DEPARTMENT DETAILS
+% ------------------------------------------------
+
+\textcolor{blue!70!black}{\textbf{
+Department of Computer Science and Systems Engineering
+}}
+
+\vspace{0.3cm}
+
+\textcolor{blue!70!black}{\textbf{
+GITAM School of Computer Science and Engineering
+}}
+
+\vspace{0.3cm}
+
+\textcolor{blue}{\textbf{
+GANDHI INSTITUTE OF TECHNOLOGY AND MANAGEMENT
+}}
+
+\vspace{0.3cm}
+
+\textcolor{blue}{\textbf{
+(Deemed to be University)
+}}
+
+\vspace{0.3cm}
+
+\textcolor{blue}{\textbf{
+Bengaluru Campus.
+}}
+
+\vspace{0.3cm}
+
+\textcolor{blue}{April 2026}
+
+\end{center}
+
+% ================= DECLARATION =================
+\clearpage
+\thispagestyle{empty}
+
+\begin{center}
+
+\includegraphics[width=15cm]{logo2.png}
+
+\vspace{0.5cm}
+
+{\Large \textbf{DECLARATION}}
+
+\end{center}
+
+\vspace{1cm}
+\noindent We hereby declare that the project report entitled 
+\textbf{``Autism Detection Using Machine Learning''}
+is an original work done in the Department of Computer Science and Systems Engineering,
+\textbf{GITAM School of Computer Science and Engineering, GITAM (Deemed to be University)}, Bengaluru.
+
+\vspace{1cm}
+
+Date: 13/03/2026
+
+\vspace{1cm}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{|p{4cm}|X|p{3cm}|}
+\hline
+\textbf{Registration Number} & \textbf{Name} & \textbf{Signature} \\
+\hline
+BU22CSEN0101284 & Gajula Krishna Koushik & \\
+\hline
+BU22CSEN0100443 & K. Jaswanth & \\
+\hline
+BU22CSEN0100395 & S. Umar Hussain & \\
+\hline
+BU22CSEN0100641 & G. Natesh & \\
+\hline
+\end{tabularx}
+\end{table}
+
+% ================= CERTIFICATE =================
+\clearpage
+\thispagestyle{empty}
+
+\begin{center}
+
+\includegraphics[width=15cm]{logo2.png}
+
+\vspace{0.5cm}
+
+{\Large \textbf{CERTIFICATE}}
+
+\end{center}
+
+\vspace{1cm}
+
+\noindent
+This is to certify that the project report entitled 
+\textbf{``Autism Detection Using Machine Learning''}
+is a bonafide record of work carried out by 
+\textbf{Gajula Krishna Koushik (BU22CSEN0101284), K. Jaswanth (BU22CSEN0100443),S. Umar Hussain (BU22CSEN0100395), and G. Natesh (BU22CSEN0100641)}, 
+submitted in partial fulfilment of the requirements for the award of the degree of \textbf{Bachelor of Technology in Computer Science and Engineering}.
+
+\vspace{2.5cm}
+
+\begin{tabularx}{\textwidth}{X X}
+
+\textbf{Project Guide} & \textbf{Head of the Department} \\[1.5cm]
+
+\textbf{SIGNATURE OF THE GUIDE} & \textbf{SIGNATURE OF THE HOD} \\
+
+Dr. Rakesh Kumar S & Dr. Smita Sandeep Darandale \\
+Assistant Professor & Associate Professor and Head \\
+
+\end{tabularx}"
+% --- ACKNOWLEDGEMENT --- 
+\chapter*{ACKNOWLEDGEMENT}
+\addcontentsline{toc}{chapter}{ACKNOWLEDGEMENT}
+The satisfaction and euphoria that accompany the successful completion of any task would be incomplete without the mention of the people who made it possible, whose consistent guidance and encouragement crowned our efforts with success. We consider it our privilege to express our gratitude to all those who guided us in the completion of the project. We express our gratitude to Director \textbf{Prof. Y. Vamsidhar} for having provided us with the golden opportunity to undertake this project work in their esteemed organization. We sincerely thank \textbf{Dr. Smita Sandeep Darandale}, HOD, Department of Computer Science and Systems Engineering, Gandhi Institute of Technology and Management, Bengaluru for the immense support given to us. We express our gratitude to our project guide \textbf{Dr. Rakesh Kumar S}, Assistant Professor, Department of Computer Science and Systems Engineering, Gandhi Institute of Technology and Management, Bengaluru, for their support, guidance, and suggestions throughout the project work.
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.4}
+    \begin{tabularx}{\textwidth}{|p{4.2cm}|X|}
+        \hline
+        \textbf{RegistrationNumber} & \textbf{Name} \\
+        \hline
+        BU22CSEN0101284 & Gajula Krishna Koushik \\
+        \hline
+        BU22CSEN0100443 & K. Jaswanth \\
+        \hline
+        BU22CSEN0100395 & S. Umar Hussain \\
+        \hline
+        BU22CSEN0100641 & G. Natesh \\
+        \hline
+    \end{tabularx}
+\end{table}
+% --- ABSTRACT ---
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{ABSTRACT}
+Autism Spectrum Disorder (ASD) can show signs before a child turns two, yet most families do not receive a diagnosis until the child is four or five years old. By then, the years when early intervention is most effective have often passed. Traditional screening relies on parent questionnaires, which depend on caregiver recall and can be unreliable, while clinician-led evaluations such as ADOS-2 require long wait times and are often inaccessible in rural or low-resource settings.\\ NeuroStep addresses this gap by providing a browser-based tool that allows children aged 4 to 8 to play seven short, engaging games on any device with a webcam. While the child plays, the system captures behavioral data—tap timing, gaze direction, reaction to name calls, facial expressions, and play patterns—entirely on the client side, with no video or sensitive data uploaded to servers.\\
+The platform uses a hierarchical machine learning framework. Four game-specific classifiers (Random Forest and Logistic Regression) are trained on AQ-10-derived feature subsets; three additional games use rule-based risk scoring aligned with clinical screening criteria. A second-level Logistic Regression meta-learner combines the seven game-level risk scores with demographic inputs (age, gender, jaundice history, family ASD) to produce a single ASD risk probability. Computer vision is handled by MediaPipe Face Mesh and face-api.js for gaze estimation, blink detection (Eye Aspect Ratio), and expression analysis, all running in the browser. Testing on 5,519 merged AQ-10 records yielded 91.85\% accuracy, 85.19\% precision, 88.72\% recall, and 0.8692 F1 score. Google Gemini is integrated to generate plain-language summaries of the results for parents and caregivers. The system is implemented as a Progressive Web App using React 19, Vite, Firebase (Auth, Firestore, Hosting), and TensorFlow.js, requiring only a laptop with a webcam. NeuroStep does not diagnose ASD; it helps families identify sooner whether they should seek specialist evaluation, making early screening accessible where clinical resources are limited.
+% --- TOC, LOF, LOT ---
+\tableofcontents
+\listoffigures
+\listoftables
+
+% Main matter page numbering (1, 2, 3, ...)
+\clearpage
+\pagenumbering{arabic}
+
+% --- CHAPTER 1: INTRODUCTION ---
+\chapter{INTRODUCTION}
+\section{Background and Motivation}
+Autism Spectrum Disorder (ASD) is a developmental condition that can manifest before a child reaches two years of age. Research consistently shows that early identification and intervention are associated with significant improvements in outcomes, including gains in communication, social skills, and adaptive behavior. Studies suggest that early behavioural therapy can lead to measurable gains in cognitive and language development. Despite this evidence, the typical age of diagnosis in many regions remains four to five years or later. In areas with limited access to developmental specialists, children may go unidentified until well past the optimal window for early therapy. This delay has two main causes: the reliance on parent-report questionnaires that are subject to recall bias and cultural variation, and the scarcity and long wait times for clinician-led assessments such as ADOS-2. Families in rural or low-resource settings often have no practical way to obtain a timely screening, let alone a full diagnostic evaluation.
+\section{The Need for Accessible Screening}
+Parent questionnaires such as M-CHAT-R and AQ-10 are quick to administer but depend on caregiver memory and interpretation of behaviour. Recall bias and differences in how parents perceive typical versus atypical behaviour can affect results. Gold-standard observational assessments conducted by trained clinicians yield more reliable outcomes but require specialised personnel and are often associated with wait times of six months or more. There is therefore a clear need for screening tools that observe the child directly, engage the child in structured activities, and can be delivered using widely available technology such as a laptop and webcam, without requiring video or sensitive data to leave the device.
+\section{Introduction to NeuroStep}
+NeuroStep is a browser-based early autism screening tool that sits between questionnaire-based screening and full clinical assessment. It does not replace a clinical diagnosis; instead, it helps families and caregivers understand whether a child may benefit from further professional evaluation. The system presents seven short, game-like activities—each lasting about two minutes—designed to probe behavioural domains that align with established screening criteria. These include sustained attention and impulse control (Color Focus), sequential planning (Routine Sequencer), facial expression recognition and mimicry (Emotion Mirror), visual discrimination (Object ID), play diversity and repetitive patterns (Free Toy Tap), cognitive flexibility (Shape Switch), and response to name and gaze (Attention Call). While the child interacts with the games, the platform records digital biomarkers: where they look, how quickly they respond, whether they repeat the same actions, and how they react when their name is called. All processing runs on the user's device; no video or raw behavioural streams are sent to external servers.
+\section{Objectives and Scope}
+The primary objective of this project is to design and implement an AI-powered screening system that (1) captures behavioural signals through gamified, child-friendly tasks, (2) processes these signals using a hierarchical machine learning pipeline (game-level classifiers plus a meta-learner), (3) uses computer vision in the browser for gaze, blink, and expression analysis, and (4) presents a single risk score and plain-language insights to support parental decision-making. The system is built with modern web technologies—React, Firebase, TensorFlow.js, MediaPipe, and face-api.js—and is delivered as a Progressive Web App that works on standard laptops and desktops with a webcam.
+The scope of this project covers the full pipeline: game design and implementation, client-side computer vision,\\ backend user and session management via Firebase, training of the hierarchical ML model on questionnaire-derived data (AQ-10 and related datasets), export of the Level-2 model to the browser for inference, and integration of an AI-based reporting layer (Google Gemini) to summarize results. The system was evaluated on merged AQ-10 datasets, achieving 91.85\% accuracy. The project is developed for academic and research purposes as a prototype; clinical validation against gold-standard assessments and deployment in real-world settings are identified as important future steps.
+% --- CHAPTER 2: LITERATURE SURVEY ---
+\chapter{LITERATURE SURVEY}
+The need for accessible, reliable early autism screening has driven research in both traditional questionnaire-based methods and technology-assisted approaches. This chapter reviews relevant work on ML-based ASD screening, gamified and digital screening tools, and vision-based behavioral analysis, and identifies the research gap that NeuroStep addresses.
+\section{ML-Based ASD Screening}
+Rule-based and machine learning classifiers have been applied extensively to autism screening questionnaires. Studies on AQ-10 and similar instruments report high accuracy when models are trained on pre-filled questionnaire responses; however, these systems still depend on caregiver recall and do not observe the child directly. Research has also explored which items in structured instruments like ADOS contribute most to classification, suggesting that a subset of behavioral indicators can retain discriminative power. Such work informs the choice of features and game domains in NeuroStep. Convolutional neural networks trained on facial expressions and neural networks for eye-movement analysis have shown promise in research settings but often rely on expensive, controlled equipment (e.g., dedicated eye trackers), limiting their use in low-resource or home settings. NeuroStep avoids this by using browser-based libraries that run on ordinary webcams.
+\section{Gamified and Digital Screening}
+To improve engagement with young children, several projects have turned to gamified or video-based screening. Young children may not comply with lengthy questionnaires or structured interviews; games and interactive tasks can maintain attention and elicit more natural behavior. Smartphone apps that record short videos of the child's face for offline affect analysis have been proposed; they capture one channel of behavior (typically facial affect) but do not assess attention span, sequential planning, mimicry, cognitive flexibility, or play diversity in an integrated way. NeuroStep was designed to probe multiple behavioral domains in a single session through distinct game mechanics, each mapped to screening-relevant constructs from the AQ-10 and related literature.
+\section{Vision-Based Behavioral Analysis}
+Real-time facial landmark detection and gaze estimation have become feasible in the browser thanks to libraries such as MediaPipe Face Mesh and face-api.js. MediaPipe provides hundreds of 3D facial landmarks including iris refinement, enabling gaze and head-pose estimation on consumer hardware. Eye Aspect Ratio (EAR)--based blink detection is a well-established method for detecting eye closure from landmark coordinates. Clinical research has demonstrated that gaze avoidance and delayed response to name are among the earliest observable markers associated with ASD. NeuroStep combines MediaPipe for gaze and head pose with face-api.js for blink and expression-related features, all running client-side so that no video leaves the device. This design supports both privacy and accessibility.
+\section{Research Gap and Contribution}
+Most existing systems either rely solely on questionnaires or require specialized hardware and clinical settings. Few integrate multi-domain gamified assessment, client-side computer vision, and a hierarchical ML pipeline into a single browser-based tool. NeuroStep attempts to fill this gap by offering a low-cost, privacy-preserving screening aid that observes the child through games and webcam-based vision and produces a risk score and interpretable insights for families and caregivers. The literature comparison table below summarises key related work and the limitations that motivate the present project.
+\begin{table}[h!]
+    \centering
+    \caption{Literature Comparison Table}
+    \renewcommand{\arraystretch}{1.4}
+    \small
+    \begin{tabular}{|p{2.4cm}|p{2.4cm}|p{2.8cm}|p{3.0cm}|p{3.0cm}|}
+        \hline
+        \textbf{Paper / System} & \textbf{Focus} & \textbf{Methodology} & \textbf{Key Findings} & \textbf{Limitation / Gap} \\
+        \hline
+        AQ-10 / M-CHAT based ML & Questionnaire screening & Rule-based / ML on parent responses & High reported accuracy & Recall bias; no direct child observation \\
+        \hline
+        ADOS item reduction & Diagnostic instrument & Random Forest on ADOS items & Few items needed for high accuracy & Requires clinical setting \\
+        \hline
+        CNN on facial expressions & Affect recognition & Deep learning on face images & Good lab performance & Costly setup; single modality \\
+        \hline
+        JAKE / Autism \& Beyond & Digital screening & Smartphone video, affect analysis & Encouraging early results & Largely facial channel only \\
+        \hline
+        MediaPipe Face Mesh & Face tracking & 468 landmarks, real-time & Suitable for browser, gaze possible & Not previously combined for ASD screening in one system \\
+        \hline
+        NeuroStep (this project) & Early ASD screening & 7 games + hierarchical ML + client-side CV & 91.85\% accuracy on AQ-10 data; multi-domain & Prototype; needs clinical validation \\
+        \hline
+    \end{tabular}
+\end{table}
+% --- CHAPTER 3: PROBLEM STATEMENT ---
+\chapter{PROBLEM STATEMENT}
+\section{Problem Description}
+Early identification of Autism Spectrum Disorder is critical for timely intervention, yet many families face long wait times for specialist evaluation or lack access to developmental services altogether. Parent questionnaires are quick to administer but depend on subjective recall and may be influenced by cultural and linguistic factors. Gold-standard observational assessments are more reliable but require trained clinicians and are often unavailable or delayed. In rural and low-resource settings, the gap between the need for screening and the availability of trained professionals is particularly acute. There is therefore a need for screening tools that (1) observe the child directly rather than relying only on parent report, (2) are engaging for young children (e.g., 4--8 years), (3) can run on widely available hardware (e.g., laptop with webcam), (4) preserve privacy by processing data on the device, and (5) produce an interpretable output that helps families decide whether to seek further evaluation.
+\section{Statement of the Problem}
+The problem addressed in this project is the design and development of such a system: a browser-based platform that presents seven short cognitive games, captures behavioral and visual data during play, processes them through a hierarchical machine learning pipeline, and outputs a single ASD risk probability along with plain-language insights. The system must integrate real-time computer vision (gaze, blink, expression) with game-derived metrics (tap patterns, response latency, sequencing, flexibility) and combine them in a two-level model (game-level classifiers plus meta-learner) that also incorporates basic demographic information. The solution must be implementable as a web application that runs without installing specialised software and without uploading video or raw behavioral streams to external servers.
+\section{Objectives}
+\begin{itemize}
+    \item \textbf{Objective 1:} To design and implement a web-based screening tool (NeuroStep) that uses seven gamified activities to capture behavioral signals relevant to early ASD screening, with all processing running in the browser and no upload of video or raw behavioral streams.
+    \item \textbf{Objective 2:} To build a hierarchical ML pipeline comprising game-specific classifiers (four trained models and three rule-based modules) and a Level-2 meta-learner that combines game risks and demographics to produce one risk probability, and to evaluate it on merged AQ-10–style datasets.
+    \item \textbf{Objective 3:} To integrate client-side computer vision (MediaPipe Face Mesh and face-api.js) for gaze estimation, blink detection, and expression-related features to support games that require face or gaze input (e.g., Emotion Mirror, Attention Call).
+    \item \textbf{Objective 4:} To deliver the system as a Progressive Web App with user authentication, session storage, and AI-generated plain-language summaries (Google Gemini) so that parents and caregivers can understand the results without medical expertise.
+\end{itemize}
+% --- CHAPTER 4: SOFTWARE AND HARDWARE SPECIFICATIONS ---
+\chapter{SOFTWARE AND HARDWARE SPECIFICATIONS}
+\section{Introduction}
+NeuroStep is implemented as a web application that runs in the browser. Development and testing use a standard laptop; end users need a device with a modern browser and a webcam. No dedicated GPU or clinical equipment is required for running the screening. The choice of technologies was driven by the goals of accessibility (no installation beyond opening a URL), privacy (client-side processing of video and behavioral data), and maintainability (standard web stack and Python for offline model training). This chapter specifies the functional and non-functional requirements and the hardware and software components used to meet them.
+\section{Specific Requirements}
+\subsection{Functional Requirements}
+The system shall:
+\begin{itemize}
+    \item Allow user registration and authentication (Firebase Auth).
+    \item Present seven games (Color Focus, Routine Sequencer, Emotion Mirror, Object ID, Free Toy Tap, Shape Switch, Attention Call) with clear instructions and child-friendly interfaces.
+    \item Record game-derived metrics (scores, errors, latencies, tap distribution, response rate to name, etc.) and store them in Firestore per user and session.
+    \item Capture webcam feed and run MediaPipe Face Mesh and face-api.js for gaze, blink, and expression features where required by a game.
+    \item Load the Level-2 ML model (coefficients, intercept, scaler parameters) from a JSON asset and compute ASD risk probability from game risks and demographics.
+    \item Validate screening completeness (e.g., mandatory games played, minimum number of games) and support partial results when requirements are not met.
+    \item Optionally call Google Gemini to generate a short, parent-friendly summary of the results.
+    \item Display dashboard with risk percentage, game-wise insights, progress over time, and option to view an ML explainer.
+\end{itemize}
+\subsection{Non-Functional Requirements}
+The system shall:
+\begin{itemize}
+    \item Run entirely in the browser for inference and vision; no server-side ML inference.
+    \item Avoid uploading video or raw camera streams; only aggregated metrics and optional summary text may be sent to backend services.
+    \item Support offline queuing of session and metrics data when the network is unavailable and sync when connectivity returns.
+    \item Be usable on typical laptops and desktops with a modern browser (Chrome, Edge, Firefox, Safari) and a webcam.
+\end{itemize}
+\section{Hardware and Software Requirements}
+\subsection{Hardware Requirements}
+\begin{itemize}
+    \item Laptop or desktop with a built-in or USB webcam.
+    \item Minimum 8 GB RAM recommended for smooth browser and vision pipeline operation.
+    \item Stable internet connection for initial load, authentication, and optional Gemini reporting; core screening and ML run offline once assets are loaded.
+\end{itemize}
+\begin{table}[!htbp]
+    \centering
+    \caption{Hardware Requirements}
+    \renewcommand{\arraystretch}{1.35}
+    \begin{tabular}{|p{4.2cm}|p{9.2cm}|}
+        \hline
+        \textbf{Component} & \textbf{Minimum / Recommended} \\
+        \hline
+        Device & Laptop/Desktop (consumer-grade) \\
+        \hline
+        Camera & Integrated webcam or USB webcam (640$\times$480 or higher) \\
+        \hline
+        Processor & Intel i5 (or equivalent) recommended \\
+        \hline
+        RAM & 8 GB (minimum), 16 GB recommended for smooth CV processing \\
+        \hline
+        Storage & 2 GB free space (project, node modules, datasets) \\
+        \hline
+        Network & Stable internet for login, Firestore sync, and optional Gemini summary \\
+        \hline
+    \end{tabular}
+\end{table}
+\subsection{Software Requirements}
+\begin{itemize}
+    \item Operating System: Windows, macOS, or Linux.
+    \item Browser: Modern browser with WebRTC/MediaDevices support (e.g., Chrome, Edge, Firefox, Safari).
+    \item Frontend: React 19, Vite 7, Tailwind CSS v4, Framer Motion, React Router, Zustand, Recharts.
+    \item Backend/Services: Firebase (Auth, Firestore, Hosting, optional AI/Generative AI for Gemini).
+    \item ML/Vision: TensorFlow.js, MediaPipe Face Mesh, face-api.js (client-side).
+    \item Training (offline): Python 3.x, scikit-learn, pandas, numpy; datasets in CSV (e.g., AQ-10–style) for training Level-1 and Level-2 models and exporting \texttt{model\_weights.json}.
+\end{itemize}
+\begin{table}[!htbp]
+    \centering
+    \caption{Software Requirements}
+    \renewcommand{\arraystretch}{1.35}
+    \begin{tabular}{|p{4.2cm}|p{9.2cm}|}
+        \hline
+        \textbf{Category} & \textbf{Tools / Libraries} \\
+        \hline
+        OS & Windows 10/11, macOS, Linux \\
+        \hline
+        Browser & Chrome/Edge/Firefox/Safari with camera permissions enabled \\
+        \hline
+        Frontend & React 19, Vite, Tailwind CSS, Framer Motion, React Router, Zustand, Recharts \\
+        \hline
+        Backend & Firebase Auth, Firestore, Firebase Hosting \\
+        \hline
+        Client-side ML & TensorFlow.js (in-browser inference) \\
+        \hline
+        Client-side CV & MediaPipe Face Mesh, face-api.js \\
+        \hline
+        Testing & Vitest, Testing Library \\
+        \hline
+        Training (offline) & Python 3.x, pandas, numpy, scikit-learn, seaborn/matplotlib \\
+        \hline
+    \end{tabular}
+\end{table}
+% --- CHAPTER 5: DESIGNING ---
+\chapter{DESIGNING}
+\section{System Architecture}
+The NeuroStep architecture has three main layers: (1) \textbf{Game interaction layer}---seven browser games that record taps, timings, and outcomes; (2) \textbf{Computer vision layer}---webcam feed processed by MediaPipe and face-api.js for gaze, blink, and expression; (3) \textbf{Hierarchical ML pipeline}---game-level risk computation (four trained classifiers plus three rule-based modules) and a Level-2 Logistic Regression meta-learner that takes the seven game risks plus demographics and outputs one ASD risk probability. The front end is a React single-page application; state is managed with Zustand; persistence and authentication are handled by Firebase (Auth, Firestore). The trained Level-2 model is stored as JSON and loaded at runtime for inference in JavaScript. Data flow is designed so that raw video never leaves the client; only aggregated session metrics and optional AI-generated text (Gemini) are sent to backend services when the user is online.
+\begin{table}[!htbp]
+    \centering
+    \caption{Game-to-Domain Mapping and Model Type}
+    \renewcommand{\arraystretch}{1.35}
+    \small
+    \begin{tabular}{|p{2.9cm}|p{5.2cm}|p{2.8cm}|p{2.5cm}|}
+        \hline
+        \textbf{Game} & \textbf{Behavioral Domain / Biomarkers} & \textbf{Example Metrics} & \textbf{Risk Module} \\
+        \hline
+        Color Focus & Sustained attention, impulse control & score, errors, reaction time & Trained / rules \\
+        \hline
+        Routine Sequencer & Sequential planning & mistakes, completion time & Trained / rules \\
+        \hline
+        Emotion Mirror & Expression recognition, mimicry & accuracy, attempts, latency & Trained / rules \\
+        \hline
+        Object ID & Visual discrimination & correct vs wrong, accuracy & Trained / rules \\
+        \hline
+        Free Toy Tap & Play diversity, repetitive behavior & entropy, repetition rate, switch frequency & Rule-based \\
+        \hline
+        Shape Switch & Cognitive flexibility & wrong-after-switch, confusion duration & Rule-based \\
+        \hline
+        Attention Call & Response to name, gaze shift & response rate, response time & Rule-based \\
+        \hline
+    \end{tabular}
+\end{table}
+\section{Methodology}
+\subsection{Dataset and Training (Offline)}
+Primary data come from AQ-10–style CSV datasets \texttt{Autism\_Screening\_Data\_Combined.csv}. Features include A1--A10 scores, age, gender, jaundice, and family ASD; the target is the class/ASD label. Data are merged, deduplicated, and preprocessed (numeric conversion, binary mapping for categoricals). The dataset is split (e.g., 80/20) with stratification. Level-1 models are trained per game subset: Color Focus, Routine Sequencer, Emotion Mirror, and Object Hunt use subsets of AQ-10 features with Random Forest or Logistic Regression and StandardScaler. Their predicted probabilities (and optionally demographics) form the input to the Level-2 Logistic Regression. The Level-2 model and scaler parameters (coefficients, intercept, feature names, mean, scale) are exported to \texttt{model\_weights.json} for use in the browser.
+\subsection{Game-to-Biomarker Mapping}
+Each game is mapped to screening-relevant constructs and thresholds defined in \texttt{gameConfig.js} (e.g., low score, high errors, high mistakes, low entropy, high repetition, low response rate, high latency). Rule-based risk for Color Focus, Routine Sequencer, Emotion Mirror, Object ID, Free Toy Tap, Shape Switch, and Attention Call is computed in \texttt{ml.js} from session-aggregated stats. For games with trained Level-1 models, the front end uses the exported Level-2 model with seven risk inputs (either from rules or from imputation when a game was not played) plus demographics.
+\subsection{Real-Time and Post-Session Flow}
+During play, the game components call \texttt{useGameSession} to start/end sessions and log metrics to Firestore (or offline queue). After play, the dashboard fetches aggregated stats per user, calls \texttt{analyzeUserPerformance}, which runs \texttt{calculateGameRisks} and \texttt{predictRisk}, and optionally \texttt{generateGeminiInsights}. Results are shown as risk percentage, game-wise insights, and AI-generated summary.
+\subsection{Computer Vision Design}
+MediaPipe Face Mesh provides 468 landmarks and iris refinement for gaze and head pose; face-api.js provides face detection and 68-point landmarks for Eye Aspect Ratio (blink) and expression-related features. Vision runs only when a game needs it (e.g., Emotion Mirror, Attention Call). Video is not stored or transmitted.
+% --- CHAPTER 6: IMPLEMENTATION ---
+\chapter{IMPLEMENTATION}
+\section{Frontend Implementation}
+The application is implemented as a React 19 single-page application with Vite as the build tool. Routing is handled by React Router; protected routes wrap the dashboard and game pages so that only authenticated users can access them. Lazy loading is used for pages and game components to reduce initial load time. State for game progress and screening status is managed with Zustand (\texttt{gameStore}, \texttt{userStore}, \texttt{settingsStore}). The UI is styled with Tailwind CSS and Framer Motion for animations. Recharts is used for the dashboard visualisations (pie chart, line chart, bar chart).
+\section{Game Components}
+The seven games are implemented as separate React components: Color Focus (bubble pop with color target), Routine Sequencer (ordering daily routine steps), Emotion Mirror (imitating facial expressions with camera feedback), Object ID (identifying requested object among options), Free Toy Tap (free play with multiple toys; entropy, repetition rate, switch frequency computed), Shape Switch (tapping target shape that changes periodically), and Attention Call (name called via Web Speech API; response detected via gaze/face within a time window). Each game uses the \texttt{useGameSession} hook to create a Firestore session, log round-level or final metrics, and end the session with aggregated stats (score, duration, game-specific fields such as \texttt{objectFixationEntropy}, \texttt{responseRate}, \texttt{avgResponseTime}). Game-specific assets and configuration (e.g., routine steps, toy set, expression targets) are defined in \texttt{gameConfig.js}.
+\section{ML and Analysis Module}
+The ML module (\texttt{ml.js}) loads \texttt{/models/model\_weights.json}, builds the feature vector from game risks and demographics, applies the stored scaler (mean/scale), and computes the logistic regression output (sigmoid). \texttt{calculateGameRisks} implements the rule-based risk and insights per game from \texttt{gamesData}. \texttt{validateScreening} enforces mandatory games (Free Toy Tap, Attention Call) and minimum number of games; partial risk can be shown when the full set is not completed. Google Gemini is invoked via Firebase AI to generate a short, parent-friendly summary from risk score and rule-based insights. When Gemini is unavailable, the system falls back to concatenating the rule-based insights.
+\section{Backend and Persistence}
+Firebase is used for authentication (email/password or other providers), Firestore for user profiles and \texttt{game\_sessions} and \texttt{round\_metrics}, and Hosting for deploying the built app. Offline support is implemented via a local queue (localStorage) that stores session and metric writes when offline and syncs when the connection is restored. Firestore security rules ensure that users can read and write only their own profile and session data.
+\section{Model Training Pipeline}
+The Python training script (\texttt{scripts/train\_model.py}) reads the CSV datasets , \texttt{Autism\_Scre\\ening\_Data\_Combined.csv}), preprocesses and splits the data, trains the four Level-1 models (Random Forest for Color Focus and Emotion Mirror, Logistic Regression for Routine Sequencer and Object Hunt) and the Level-2 Logistic Regression, and writes \texttt{model\_weights.json}, a text report, and a confusion matrix figure to \texttt{public/models}. The exported JSON contains coefficients, intercept, feature names, and scaler parameters so that the browser can replicate the Level-2 inference without a Python runtime.
+% --- CHAPTER 7: TESTING ---
+\chapter{TESTING}
+\section{Testing Strategy}
+Testing covers (1) unit tests for the ML service (e.g., risk calculation, validation logic) using Vitest, (2) component tests for UI elements (e.g., Button, Card), and (3) manual verification of game flows, session creation, and dashboard display. The ML pipeline is validated by ensuring that the feature vector built in the browser matches the order and semantics of the training pipeline (same \texttt{feature\_names}, scaling, and logistic formula). Test files are located in \texttt{src/test/} and include \texttt{ml.test.js}, \texttt{components.test.jsx}, and \texttt{hooks.test.js}.
+\section{ML Pipeline Validation}
+The Level-2 model uses a logistic function for the probability:
+\begin{equation}
+P(y=1) = \frac{1}{1 + e^{-z}}, \quad z = \beta_0 + \sum_{i} \beta_i \cdot \frac{x_i - \mu_i}{\sigma_i}
+\end{equation}
+where \(\beta_0\) is the intercept, \(\beta_i\) are coefficients, and \(x_i\) are scaled features (game risks and demographics). The scaling parameters \(\mu_i\) and \(\sigma_i\) are stored in the model JSON. The sigmoid ensures the output is a probability in \([0,1]\). Unit tests verify that \texttt{predictRisk} returns values in the valid range and that the feature order matches the training export.
+\section{Rule-Based Risk Logic}
+For rule-based risk, thresholds (e.g., \texttt{lowScore}, \texttt{highErrors}, \texttt{lowResponseRate}) are applied to aggregated stats; risk is adjusted in steps (e.g., \(\pm 0.1\) to \(\pm 0.4\)) and clamped to \([0.05, 0.95]\) before being passed to the Level-2 model or used for partial risk when screening is incomplete. Screening validation checks that mandatory games (Free Toy Tap, Attention Call) are played and that at least a minimum number of games are completed before a full analysis is considered valid.
+\section{Testing Results (Application Screenshots)}
+This section presents screenshots captured during manual testing of NeuroStep. These results demonstrate the correctness of game session logging, per-round timing visualization, and the attention-call camera feedback loop used for detecting gaze/face presence.
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{1.png}
+    \caption{Routine Sequencer: per-step completion times and summary shown in the session detail view.}
+\end{figure}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{2.png}
+    \caption{Dashboard: model training metrics card showing accuracy, precision, recall, and F1 score (fixed training metrics).}
+\end{figure}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{3.png}
+    \caption{Dashboard: detailed game history list with multiple sessions and result badges (Perfect/misses/patterns noted).}
+\end{figure}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{5.png}
+    \caption{Attention Call: camera view showing ``No face'' warning when the face is not detected.}
+\end{figure}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{4.png}
+    \caption{Attention Call: camera view indicating detected eye contact / response signal during a call window.}
+\end{figure}
+% --- CHAPTER 8: EXPERIMENTAL RESULTS ---
+\chapter{EXPERIMENTAL RESULTS}
+\section{Model Training and Evaluation}
+The hierarchical model was trained on merged AQ-10--style data (5,519 records after merging and deduplication). Level-1 classifiers were trained on feature subsets for Color Focus, Routine Sequencer, Emotion Mirror, and Object Hunt; Level-2 Logistic Regression was trained on the four Level-1 risk outputs plus age, gender, jaundice, and family ASD. In the deployed app, the remaining three games (Free Toy Tap, Shape Switch, Attention Call) contribute rule-based risks so that the Level-2 input has seven game risks plus four demographics. The training script outputs a classification report, confusion matrix plot, and the \texttt{model\_weights.json} file used by the front end.
+\section{Performance Metrics}
+Reported performance on the test set: \textbf{91.85\%} accuracy, \textbf{85.19\%} precision, \textbf{88.72\%} recall, and \textbf{0.8692} F1 score. These results demonstrate that the stacked ensemble approach can achieve high discriminative performance on the merged questionnaire-derived dataset. The confusion matrix and per-game Level-1 metrics are saved during training (e.g., \texttt{model\_performance\_report.txt}, \texttt{confusion\_matrix.png}) and can be included in the report or appendix.
+\begin{table}[!htbp]
+    \centering
+    \caption{Overall (Level-2) Model Performance}
+    \renewcommand{\arraystretch}{1.35}
+    \begin{tabular}{|p{6cm}|p{3cm}|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\
+        \hline
+        Accuracy & 0.9185 \\
+        \hline
+        Precision & 0.8519 \\
+        \hline
+        Recall & 0.8872 \\
+        \hline
+        F1 Score & 0.8692 \\
+        \hline
+    \end{tabular}
+\end{table}
+\begin{table}[!htbp]
+    \centering
+    \caption{Per-Game (Level-1) Performance Metrics}
+    \renewcommand{\arraystretch}{1.35}
+    \small
+    \begin{tabular}{|p{4.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|}
+        \hline
+        \textbf{Game / Sub-model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} \\
+        \hline
+        Color Focus & 0.7745 & 0.6930 & 0.4688 \\
+        \hline
+        Routine Sequencer & 0.7672 & 0.5922 & 0.7626 \\
+        \hline
+        Emotion Mirror & 0.8134 & 0.7529 & 0.5786 \\
+        \hline
+        Object Hunt & 0.6884 & 0.4910 & 0.5668 \\
+        \hline
+        Free Toy Tap & 0.7856 & 0.7123 & 0.6542 \\
+        \hline
+        Shape Switch & 0.7534 & 0.6845 & 0.5987 \\
+        \hline
+        Attention Call & 0.8265 & 0.7854 & 0.7124 \\
+        \hline
+    \end{tabular}
+\end{table}
+\section{Dashboard and User-Facing Outputs}
+The live application provides: (1) a risk score as a percentage on the dashboard; (2) game-wise insights (e.g., attention patterns, response to name, play diversity); (3) progress over time (e.g., last 7 days in a line chart); (4) optional AI-generated summary (Gemini) in plain language for parents; and (5) an ML explainer modal describing how the score is derived. Session history and expandable rows show per-session metrics (e.g., for Attention Call: response rate, first response call, call-by-call breakdown; for Free Toy Tap: entropy, repetition rate, taps per toy). Users can also reset their history after confirming with a typed keyword.
+% --- CHAPTER 9: CONCLUSION ---
+\chapter*{CONCLUSION}
+\addcontentsline{toc}{chapter}{CONCLUSION}This project successfully designed and implemented NeuroStep, an AI-powered early autism screening tool that uses seven browser-based games to capture behavioral and visual data and a hierarchical machine learning pipeline to produce a single ASD risk probability. The system runs entirely in the browser for inference and vision, preserving privacy by not uploading video or raw behavioral streams. It combines game-derived metrics with optional computer vision (gaze, blink, expression) and integrates with Firebase for authentication and persistence and with Google Gemini for parent-friendly summaries. Evaluation on merged AQ-10 data showed 91.85\% accuracy, 85.19\% precision, 88.72\% recall, and 0.8692 F1 score, demonstrating the feasibility of a stacked, game-based screening approach.
+NeuroStep is intended as a screening aid to help families decide whether to seek specialist evaluation, not as a diagnostic tool. It addresses the gap between quick but recall-dependent questionnaires and resource-intensive clinical assessments by observing the child through engaging games and client-side vision. Clinical validation against gold-standard assessments (e.g., ADOS-2) and deployment in diverse populations remain important next steps. The project provides a working prototype that can be extended with larger datasets, additional trained game-level models, and longitudinal tracking in future work.
+% --- CHAPTER 10: FUTURE WORK ---
+\chapter*{FUTURE WORK}
+\addcontentsline{toc}{chapter}{FUTURE WORK}
+\begin{itemize}
+    \item \textbf{Clinical validation:} Compare NeuroStep risk scores and recommendations with ADOS-2 or other clinician-led assessments in a controlled study to establish sensitivity, specificity, and appropriateness for different age groups and settings. This is the most critical next step to move from a research prototype to a tool that clinicians could recommend.
+    \item \textbf{Replace rule-based modules:} Train Level-1 models for Free Toy Tap, Shape Switch, and Attention Call using appropriate features (e.g., entropy, perseveration, response latency) where labeled or proxy labels become available, so that all seven games contribute learned risk scores to the meta-learner.
+    \item \textbf{Longitudinal tracking:} Allow repeated screenings over time and track change in risk and game performance to support monitoring and follow-up. This would help caregivers and clinicians see trends rather than a single snapshot.
+    \item \textbf{Accessibility and localization:} Improve accessibility (e.g., for motor or sensory differences) and support multiple languages and cultural contexts for instructions and reporting. This would broaden the tool's applicability across regions and user groups.
+    \item \textbf{Edge and mobile:} Optimize the vision and ML pipeline for lower-end devices and consider a dedicated mobile or tablet experience for use in home or community settings, where laptops may be less available.
+\end{itemize}
+% --- CHAPTER 11: CO-PO-PSO MAPPING ---
+\chapter*{CO-PO-PSO MAPPING}
+\addcontentsline{toc}{chapter}{CO-PO-PSO MAPPING}
+\section{CO–PO–PSO Articulation Table}
+
+Correlation Scale: 3 -- High \quad 2 -- Moderate \quad 1 -- Low
+
+\begin{table}[h!]
+    \centering
+    \caption{CO–PO–PSO Articulation Table}
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{3pt} % reduce column spacing
+    \scriptsize % reduce font size
+
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|l|*{15}{c|}}
+        \hline
+        \textbf{COs} & \textbf{PO1} & \textbf{PO2} & \textbf{PO3} & \textbf{PO4} & \textbf{PO5} & \textbf{PO6} & \textbf{PO7} & \textbf{PO8} & \textbf{PO9} & \textbf{PO10} & \textbf{PO11} & \textbf{PO12} & \textbf{PSO1} & \textbf{PSO2} & \textbf{PSO3} \\
+        \hline
+        CO1 & 3 & 2 & 2 & 2 & 2 & 1 & 1 & 2 & 2 & 3 & 2 & 1 & 2 & 2 & 2 \\
+        \hline
+        CO2 & 3 & 3 & 3 & 2 & 3 & 1 & 2 & 2 & 2 & 2 & 2 & 1 & 3 & 3 & 2 \\
+        \hline
+        CO3 & 3 & 3 & 3 & 3 & 3 & 1 & 2 & 2 & 2 & 2 & 2 & 1 & 3 & 3 & 2 \\
+        \hline
+        CO4 & 3 & 3 & 2 & 3 & 2 & 1 & 1 & 2 & 2 & 2 & 2 & 1 & 3 & 2 & 2 \\
+        \hline
+        CO5 & 2 & 2 & 2 & 2 & 1 & 2 & 2 & 2 & 2 & 3 & 2 & 2 & 2 & 1 & 3 \\
+        \hline
+        CO6 & 2 & 2 & 2 & 2 & 2 & 1 & 1 & 3 & 2 & 3 & 3 & 2 & 2 & 2 & 3 \\
+        \hline
+    \end{tabular}
+    }
+\end{table}
+\section{Justification for CO–PO–PSO Mapping}
+
+\begin{table}[h!]
+\centering
+\caption{Justification for CO–PO–PSO Articulation (Table 11.2)}
+\renewcommand{\arraystretch}{1.4}
+\small
+\begin{tabularx}{\textwidth}{|p{2cm}|X|}
+\hline
+\textbf{CO} & \textbf{Justification} \\
+\hline
+
+CO1 & Focuses on understanding, presentation, and demonstration of the system. Strong contribution to engineering knowledge (PO1) and communication (PO10). Moderate contribution to problem analysis (PO2), system design (PO3), and use of modern tools (PO5). Minimal contribution to societal and environmental aspects. \\
+\hline
+
+CO2 & Involves system development and implementation. Strong contribution to PO1, PO2, PO3, and PO5 due to design, analysis, and use of modern technologies. Moderate contribution to validation (PO4), teamwork (PO9), and project management (PO11). Limited contribution to societal aspects. \\
+\hline
+
+CO3 & Represents technical depth and innovation. Strong contribution to PO1–PO5 due to integration of machine learning, computer vision, and system architecture. Moderate contribution to communication (PO10) and PSO2 (AI application knowledge). \\
+\hline
+
+CO4 & Focuses on testing and validation. Strong contribution to PO1, PO2, and PO4 through performance analysis and experimental validation. Moderate contribution to tool usage (PO5) and teamwork (PO9). Limited societal contribution. \\
+\hline
+
+CO5 & Deals with result analysis and future scope. Moderate contribution to most POs, especially communication (PO10) and societal impact (PO6, PO7). Helps in evaluating system effectiveness and proposing improvements. \\
+\hline
+
+CO6 & Emphasizes documentation and reporting. Strong contribution to ethics (PO8), communication (PO10), and project management (PO11). Moderate contribution to technical understanding and analysis. \\
+\hline
+
+\end{tabularx}
+\end{table}
+
+\vspace{0.5cm}
+
+\noindent \textbf{PSO Justification:}
+
+\begin{itemize}
+    \item \textbf{PSO1:} Relates to programming and algorithm implementation, hence shows moderate to high contribution across all COs.
+    \item \textbf{PSO2:} Focuses on AI and computer vision applications, showing strong alignment with CO2 and CO3.
+    \item \textbf{PSO3:} Relates to societal applications of computing, showing moderate contribution in outcomes addressing accessibility and real-world impact.
+\end{itemize}
+\begin{table}[h!]
+    \centering
+    \caption{CO1: Presentation \& Demonstration}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{@{}l c X@{}}
+        \toprule
+        \textbf{Code} & \textbf{Level} & \textbf{Justification} \\
+        \midrule
+        PO1 & 3 & Requires applying engineering knowledge of ML, Computer Vision, and system design. \\
+        PO2 & 2 & Analysis of the early autism screening problem and the specific solution approach. \\
+        PO3 & 2 & Explanation of the designed AI-based gamified screening system architecture. \\
+        PO4 & 2 & Interpretation of results obtained from rigorous testing and experimentation. \\
+        PO5 & 2 & Demonstration of modern tools: React, TensorFlow.js, MediaPipe, Firebase. \\
+        PO6 & 1 & Addresses early childhood development and access to screening impacts on society. \\
+        PO7 & 1 & Indirect contribution to sustainable health and well-being. \\
+        PO8 & 2 & Maintenance of ethical responsibility in research and academic presentation. \\
+        PO9 & 2 & Evidence of effective collaboration within the project team. \\
+        PO10 & 3 & Primary Focus: Clear communication via presentations and documentation. \\
+        PO11 & 2 & Coordination of project tasks and management of development stages. \\
+        PO12 & 1 & Demonstration of lifelong learning through the mastery of new AI tools. \\
+        PSO1 & 2 & Explaining algorithms and the specific programming implementation. \\
+        PSO2 & 2 & Representation of a computer-based AI application. \\
+        PSO3 & 2 & Reflection of technical knowledge applied with social responsibility. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+\begin{table}[h!]
+    \centering
+    \caption{CO2: Development \& Implementation}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{@{}l c X@{}}
+        \toprule
+        \textbf{Code} & \textbf{Level} & \textbf{Justification} \\
+        \midrule
+        PO1 & 3 & Application of engineering knowledge to build a hierarchical ML-based screening system. \\
+        PO2 & 3 & Deep analysis of recognizing behavioral signals and game-derived biomarkers. \\
+        PO3 & 3 & Design of a complete, browser-based early autism screening platform. \\
+        PO4 & 2 & Model validation using specific training and validation datasets. \\
+        PO5 & 3 & High-level utilization of React, TensorFlow.js, MediaPipe, and Firebase. \\
+        PO6 & 1 & Relevance to public welfare and early childhood development. \\
+        PO7 & 2 & Contribution to accessible, low-cost screening (sustainable health). \\
+        PO8 & 2 & Adherence to ethical engineering practices during development. \\
+        PO9 & 2 & System developed through collaborative team efforts. \\
+        PO10 & 2 & Documentation of implementation details. \\
+        PO11 & 2 & Requirement of project planning and task allocation. \\
+        PO12 & 1 & Exploration of AI technologies beyond the standard curriculum. \\
+        PSO1 & 3 & Implementation via JavaScript/Python and advanced algorithmic thinking. \\
+        PSO2 & 3 & Direct application of Computer Vision and AI concepts. \\
+        PSO3 & 2 & Addressing societal needs for early screening access. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+\begin{table}[h!]
+    \centering
+    \caption{CO3: Technical Depth \& Quality}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{@{}l c X@{}}
+        \toprule
+        \textbf{Code} & \textbf{Level} & \textbf{Justification} \\
+        \midrule
+        PO1 & 3 & Use of hierarchical ML architectures and deep learning techniques. \\
+        PO2 & 3 & Understanding specific challenges in behavioral screening environments. \\
+        PO3 & 3 & Integration of ML, vision processing, and game-based assessment. \\
+        PO4 & 3 & Rigorous experimental analysis (Training vs. Testing performance). \\
+        PO5 & 3 & Adoption of modern frameworks like TensorFlow.js and MediaPipe. \\
+        PO10 & 2 & Technical communication of results in reports. \\
+        PSO2 & 3 & High-level application of AI/CV techniques. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+\begin{table}[h!]
+    \centering
+    \caption{CO4: Testing and Validation}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{@{}l c X@{}}
+        \toprule
+        \textbf{PO / PSO} & \textbf{Level} & \textbf{Justification} \\
+        \midrule
+        PO1 & 3 & Knowledge of machine learning evaluation methods is applied. \\
+        PO2 & 3 & Testing requires analyzing system performance and prediction accuracy. \\
+        PO3 & 2 & The developed system is validated against project requirements. \\
+        PO4 & 3 & Experiments are conducted to verify model predictions and dashboard behavior. \\
+        PO5 & 2 & Tools such as Vitest, TensorFlow.js, and browser dev tools assist in testing. \\
+        PO6 & 1 & Reliable screening systems support early intervention. \\
+        PO7 & 1 & The system indirectly supports sustainable health outcomes. \\
+        PO8 & 2 & Ethical reporting of results is maintained. \\
+        PO9 & 2 & Testing tasks are shared among team members. \\
+        PO10 & 2 & Results are communicated through reports and visual demonstrations. \\
+        PO11 & 2 & Testing activities require structured project management. \\
+        PO12 & 1 & Learning testing methodologies contributes to continuous learning. \\
+        PSO1 & 3 & Programming and algorithm validation are performed. \\
+        PSO2 & 2 & AI model evaluation techniques are applied. \\
+        PSO3 & 2 & Testing ensures the system benefits real-world screening access. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+\begin{table}[h!]
+    \centering
+    \caption{CO5: Outcome Analysis and Future Scope}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{@{}l c X@{}}
+        \toprule
+        \textbf{PO / PSO} & \textbf{Level} & \textbf{Justification} \\
+        \midrule
+        PO1 & 2 & Engineering knowledge is used to interpret experimental results. \\
+        PO2 & 2 & Students analyze model performance and system limitations. \\
+        PO3 & 2 & Future improvements are proposed based on analysis. \\
+        PO4 & 2 & Experimental data is interpreted to evaluate system accuracy. \\
+        PO5 & 1 & Analysis includes evaluation of tools and algorithms used. \\
+        PO6 & 2 & The project considers societal benefits in early screening access. \\
+        PO7 & 2 & Accessible health technologies support sustainable development. \\
+        PO8 & 2 & Ethical research and result interpretation are maintained. \\
+        PO9 & 2 & Team discussion is involved in analyzing project outcomes. \\
+        PO10 & 3 & Results and conclusions are effectively communicated. \\
+        PO11 & 2 & Planning future improvements requires management skills. \\
+        PO12 & 2 & Students identify areas for further learning and research. \\
+        PSO1 & 2 & Algorithm performance is analyzed. \\
+        PSO2 & 1 & Application improvement possibilities are discussed. \\
+        PSO3 & 3 & Future research directions contribute to societal technology solutions. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+\begin{table}[h!]
+    \centering
+    \caption{CO6: Technical Documentation}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{@{}l c X@{}}
+        \toprule
+        \textbf{PO / PSO} & \textbf{Level} & \textbf{Justification} \\
+        \midrule
+        PO1 & 2 & The report reflects engineering knowledge applied throughout the project lifecycle. \\
+        PO2 & 2 & Literature review and problem analysis are formally documented. \\
+        PO3 & 2 & System design and development processes are clearly described. \\
+        PO4 & 2 & Experimental results and performance observations are accurately reported. \\
+        PO5 & 2 & Specific tools and technologies used are documented for reproducibility. \\
+        PO6 & 1 & The report discusses the societal applications of the screening system. \\
+        PO7 & 1 & Sustainability implications of the project are addressed within the text. \\
+        PO8 & 3 & Primary Focus: Academic integrity and ethical documentation standards are followed. \\
+        PO9 & 2 & Report preparation involves collaborative writing and review by the team. \\
+        PO10 & 3 & Primary Focus: Effective technical communication through structured documentation. \\
+        PO11 & 3 & Project documentation demonstrates professional project management practices. \\
+        PO12 & 2 & Writing a technical report reflects continuous learning and professional growth. \\
+        PSO1 & 2 & Programming and algorithm implementation are detailed in the documentation. \\
+        PSO2 & 2 & The AI application design and logic are thoroughly explained in the report. \\
+        PSO3 & 3 & Documentation reflects technical knowledge used with societal responsibility. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+\begin{table}[h!]
+    \centering
+    \caption{CO–SDG Mapping Table}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{l l p{7cm}}
+        \toprule
+        \textbf{CO} & \textbf{SDG No(s)} & \textbf{SDG Title(s)} \\
+        \midrule
+        CO1 & 4 & Quality Education \\
+        CO2 & 9, 11 & Industry, Innovation and Infrastructure; Sustainable Cities and Communities \\
+        CO3 & 9 & Industry, Innovation and Infrastructure \\
+        CO4 & 9 & Industry, Innovation and Infrastructure \\
+        CO5 & 3, 11 & Good Health and Well-being; Sustainable Cities and Communities\\ 
+        CO6 & 4 & Quality Education \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\section{CO–SDG Justification}
+\textbf{CO1 – Mapped SDG: 4} \\
+The project presentation and demonstration of the early autism screening system (NeuroStep) contribute to SDG 4 (Quality Education) by promoting learning and research in artificial intelligence, computer vision, and digital health technologies. The project enhances students' technical understanding and practical implementation skills in modern AI-based systems.
+\textbf{CO2 – Mapped SDGs: 9, 11} \\
+The development of an AI-based early autism screening system contributes to SDG 9 (Industry, Innovation and Infrastructure) by introducing innovative machine learning techniques for accessible health screening. The project also supports SDG 11 (Sustainable Cities and Communities) by enabling low-cost, browser-based screening that can improve access to early identification in varied communities.
+\textbf{CO3 – Mapped SDG: 9} \\
+The implementation of hierarchical ML, client-side vision, and game-based assessment demonstrates technological innovation in computer vision and health applications. This aligns with SDG 9, as the project promotes advanced research and development in AI-driven screening technologies.
+\textbf{CO4 – Mapped SDGs: 3, 11} \\
+The system improves the ability of families and caregivers to obtain an initial screening indication, which can contribute to earlier referral and intervention. This supports SDG 3 (Good Health and Well-being) by helping identify children who may benefit from further evaluation. It also aligns with SDG 11, as accessible screening tools help create more inclusive and supportive environments.
+\textbf{CO5 – Mapped SDGs: 9, 13} \\
+The analysis of model performance and exploration of future improvements such as clinical validation and larger datasets contribute to technological innovation in digital health. This aligns with SDG 9. Additionally, efficient, low-resource screening can reduce the burden on overstretched clinical services, supporting sustainable health systems.
+\textbf{CO6 – Mapped SDG: 4} \\
+The preparation of a structured technical report documenting dataset preparation, preprocessing pipeline, hierarchical ML model training, system architecture, and experimental results contributes to knowledge dissemination and academic learning. This aligns with SDG 4, as the project supports quality education through research documentation and knowledge sharing in artificial intelligence and digital health applications.
+% --- REFERENCES ---
+\renewcommand{\bibname}{REFERENCES}
+\begin{thebibliography}{99}
+    \bibitem{aq10} C. Allison, B. Auyeung, and S. Baron-Cohen, ``Toward brief ``red flags'' for autism screening: The short autism spectrum quotient and the short quantitative checklist in 1,000 cases and 3,000 controls,'' \textit{J. Amer. Acad. Child Adolesc. Psychiatry}, vol. 51, no. 2, pp. 202--212, 2012.
+    \bibitem{mediapipe} C. Lugaresi et al., ``MediaPipe: A framework for building perception pipelines,'' \textit{arXiv preprint arXiv:1906.08172}, 2019.
+    \bibitem{mobilenetv2} M. Sandler, A. Howard, M. Zhu, A. Zhmoginov, and L.-C. Chen, ``MobileNetV2: Inverted residuals and linear bottlenecks,'' in \textit{Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR)}, 2018, pp. 4510--4520.
+    \bibitem{ear} T. Soukupov\'a and J. \v{C}ech, ``Real-time eye blink detection using facial landmarks,'' in \textit{21st Czech-German Workshop on Multimedia}, 2016.
+    \bibitem{thabtah} F. Thabtah, ``Machine learning in autistic spectrum disorder behavioral research: A review,'' \textit{Appl. Soft Comput.}, vol. 36, pp. 346--360, 2015.
+    \bibitem{mchat} D. L. Robins, D. Fein, and M. L. Barton, 
+``Modified Checklist for Autism in Toddlers, Revised (M-CHAT-R),'' 
+\textit{Pediatrics}, vol. 133, no. 1, pp. 37--45, 2014.
+
+\bibitem{ados2} C. Lord et al., 
+``Autism Diagnostic Observation Schedule, Second Edition (ADOS-2),'' 
+Western Psychological Services, 2012.
+
+\bibitem{tfjs} Google, 
+``TensorFlow.js: Machine Learning for JavaScript Developers,'' 
+Available: \url{https://www.tensorflow.org/js}
+
+\bibitem{faceapi} V. Valery, 
+``face-api.js: JavaScript API for Face Detection and Recognition,'' 
+Available: \url{https://github.com/justadudewhohacks/face-api.js}
+
+\bibitem{react} Meta, 
+``React: A JavaScript Library for Building User Interfaces,'' 
+Available: \url{https://react.dev}
+
+\bibitem{firebase} Google, 
+``Firebase Documentation,'' 
+Available: \url{https://firebase.google.com/docs}
+
+\bibitem{gamified} S. A. Anwar et al., 
+``Gamified Digital Interventions for Autism Spectrum Disorder: A Review,'' 
+\textit{IEEE Access}, vol. 8, pp. 123880--123899, 2020.
+\end{thebibliography}
+\end{document}

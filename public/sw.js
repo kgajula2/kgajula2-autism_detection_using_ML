@@ -1,44 +1,39 @@
 // Service Worker for NeuroStep PWA
-// Provides offline caching and faster load times
+// Uses Network-First strategy to ensure fresh content
 
-const CACHE_NAME = 'neurostep-v1';
+const CACHE_NAME = 'neurostep-v2'; // Incremented to force cache refresh
 const STATIC_ASSETS = [
     '/',
     '/index.html',
     '/manifest.json',
 ];
 
-// Install event - cache static assets
+// Install event - skip caching to ensure fresh content
 self.addEventListener('install', (event) => {
-    console.log('[SW] Installing service worker...');
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            console.log('[SW] Caching static assets');
-            return cache.addAll(STATIC_ASSETS);
-        })
-    );
+    console.log('[SW] Installing service worker v2...');
+    // Force immediate activation
     self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clear ALL old caches
 self.addEventListener('activate', (event) => {
-    console.log('[SW] Activating service worker...');
+    console.log('[SW] Activating service worker v2...');
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames
-                    .filter((name) => name !== CACHE_NAME)
-                    .map((name) => {
-                        console.log('[SW] Deleting old cache:', name);
-                        return caches.delete(name);
-                    })
+                cacheNames.map((name) => {
+                    console.log('[SW] Deleting cache:', name);
+                    return caches.delete(name);
+                })
             );
         })
     );
+    // Take control immediately
     self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - NETWORK FIRST strategy
+// Always try network first, only use cache as fallback
 self.addEventListener('fetch', (event) => {
     // Skip cross-origin requests
     if (!event.request.url.startsWith(self.location.origin)) {
@@ -53,15 +48,10 @@ self.addEventListener('fetch', (event) => {
     }
 
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                // Return cached version
-                return cachedResponse;
-            }
-
-            // Fetch from network
-            return fetch(event.request).then((networkResponse) => {
-                // Cache successful GET responses
+        // Try network first
+        fetch(event.request)
+            .then((networkResponse) => {
+                // Optionally cache for offline use
                 if (event.request.method === 'GET' && networkResponse.status === 200) {
                     const responseClone = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
@@ -69,14 +59,20 @@ self.addEventListener('fetch', (event) => {
                     });
                 }
                 return networkResponse;
-            }).catch(() => {
-                // Offline fallback for navigation requests
-                if (event.request.mode === 'navigate') {
-                    return caches.match('/index.html');
-                }
-                return new Response('Offline', { status: 503 });
-            });
-        })
+            })
+            .catch(() => {
+                // Network failed, try cache
+                return caches.match(event.request).then((cachedResponse) => {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    // Offline fallback for navigation requests
+                    if (event.request.mode === 'navigate') {
+                        return caches.match('/index.html');
+                    }
+                    return new Response('Offline', { status: 503 });
+                });
+            })
     );
 });
 
@@ -84,5 +80,12 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', (event) => {
     if (event.data === 'skipWaiting') {
         self.skipWaiting();
+    }
+    if (event.data === 'clearCache') {
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((name) => caches.delete(name))
+            );
+        });
     }
 });
