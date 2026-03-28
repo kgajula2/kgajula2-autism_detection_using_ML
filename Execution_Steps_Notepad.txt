@@ -1,0 +1,226 @@
+NeuroStep - Execution Steps (Notepad)
+=====================================
+
+Goal:
+Execution steps documented in a notepad file along with code and supporting files.
+
+
+1) Prerequisites
+----------------
+- Node.js (v18+ recommended)
+- npm
+- Python 3.x (for model training script)
+- Internet connection (for Firebase/Gemini services)
+
+
+2) Project Location
+-------------------
+Root folder:
+C:\Users\koush\Downloads\kgajula2-autism_detection_using_ML-main\kgajula2-autism_detection_using_ML-main
+
+
+3) Install Dependencies
+-----------------------
+Open terminal in project root and run:
+
+1. npm install
+
+
+4) Configure Environment Variables
+----------------------------------
+Create a .env file in project root with Firebase values:
+
+VITE_FIREBASE_API_KEY=your_key
+VITE_FIREBASE_AUTH_DOMAIN=your_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+
+
+5) Run Development Server
+-------------------------
+Command:
+
+1. npm run dev
+
+Expected:
+- Vite starts local server
+- Open URL shown in terminal (usually http://localhost:5173)
+
+
+6) Build for Production
+-----------------------
+Command:
+
+1. npm run build
+
+Output:
+- Production files generated in dist/
+
+
+7) Run Tests
+------------
+Commands:
+
+1. npm run test
+2. npm run test:coverage
+
+Main test files:
+- src/test/ml.test.js
+- src/test/components.test.jsx
+- src/hooks/hooks.test.js
+- src/test/stores.test.js
+
+
+8) Train/Refresh ML Export File (Optional)
+------------------------------------------
+Command:
+
+1. python scripts/train_model.py
+
+Expected output files:
+- public/models/model_weights.json
+- public/models/model_performance_report.txt
+- public/models/confusion_matrix.png
+
+
+9) Core Execution Flow (Application)
+------------------------------------
+1. User logs in (Firebase Auth).
+2. User plays games in src/games/.
+3. Sessions/metrics are saved through src/services/db.js.
+4. Aggregated game stats are fetched for dashboard.
+5. Risk analysis runs from src/services/ml.js.
+6. Dashboard presents score, insights, trends.
+
+
+10) Main Code Files
+-------------------
+Frontend entry and routing:
+- src/main.jsx
+- src/App.jsx
+
+Dashboard and analysis display:
+- src/pages/Dashboard.jsx
+- src/components/ml/MLExplainer.jsx
+
+Game modules:
+- src/games/color-focus/ColorFocusGame.jsx
+- src/games/routine-sequencer/RoutineSequencerGame.jsx
+- src/games/emotion-mirror/EmotionMirrorGame.jsx
+- src/games/object-id/ObjectIdGame.jsx
+- src/games/free-toy-tap/FreeToyTapGame.jsx
+- src/games/shape-switch/ShapeSwitchGame.jsx
+- src/games/attention-call/AttentionCallGame.jsx
+
+ML + data services:
+- src/services/ml.js
+- src/services/db.js
+- src/services/firebase.js
+- src/services/vision.js
+- scripts/train_model.py
+
+Configuration:
+- src/config/gameConfig.js
+- firebase.json
+- firestore.rules
+- package.json
+
+
+11) Supporting Files
+--------------------
+Documentation and report:
+- README.md
+- report-1.tex
+- report-2.tex
+- ieee_paper.tex
+
+Model assets:
+- public/models/model_weights.json
+- public/models/model_performance_report.txt
+- public/models/confusion_matrix.png
+
+Static assets:
+- public/
+- report-assets/
+
+Datasets:
+- DATASETS/
+
+
+12) Submission Checklist
+------------------------
+- [ ] Project runs with npm run dev
+- [ ] Build succeeds with npm run build
+- [ ] Tests executed (npm run test)
+- [ ] Model file exists in public/models/model_weights.json
+- [ ] This execution notepad file included
+
+13) Important Codes (Copy/Paste Ready)
+--------------------------------------
+
+A) Essential terminal commands
+------------------------------
+1. npm install
+2. npm run dev
+3. npm run build
+4. npm run test
+5. npm run test:coverage
+6. python scripts/train_model.py
+
+
+B) Git tracking commands (for submission)
+-----------------------------------------
+1. git status
+2. git add .
+3. git commit -m "Add execution steps and project documentation"
+4. git log --oneline -n 5
+
+
+C) Core ML risk formula (from src/services/ml.js)
+-------------------------------------------------
+const sigmoid = (z) => 1 / (1 + Math.exp(-z));
+const z = scaledFeatures.reduce((sum, x, i) => sum + x * coefficients[i], intercept);
+const probability = sigmoid(z);
+
+
+D) Model loading code (from src/services/ml.js)
+-----------------------------------------------
+const response = await fetch('/models/model_weights.json');
+if (!response.ok) throw new Error(`HTTP ${response.status}: Failed to fetch model`);
+modelData = await response.json();
+
+
+E) Firestore session create/end (from src/services/db.js)
+---------------------------------------------------------
+const sessionRef = await addDoc(collection(db, "game_sessions"), {
+  userId,
+  gameId,
+  startTime: serverTimestamp(),
+  status: 'ACTIVE',
+  score: 0
+});
+
+await updateDoc(doc(db, "game_sessions", sessionId), {
+  endTime: serverTimestamp(),
+  status: 'COMPLETE',
+  score: finalScore,
+  stats
+});
+
+
+F) Optional Firebase deploy commands
+------------------------------------
+1. npm run build
+2. firebase login
+3. firebase deploy --only hosting
+
+
+G) Latex report compile commands (if needed)
+--------------------------------------------
+1. pdflatex report-1.tex
+2. pdflatex report-2.tex
+3. pdflatex ieee_paper.tex
+
